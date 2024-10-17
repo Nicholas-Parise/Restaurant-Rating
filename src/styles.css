@@ -1,1 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    color:white;
+  }
+
+  html{ 
+    background: rgb(36,48,60);
+    background: -moz-linear-gradient(194deg, rgba(36,48,60,1) 0%, rgba(55,81,108,1) 100%) fixed;
+    background: -webkit-linear-gradient(194deg, rgba(36,48,60,1) 0%, rgba(55,81,108,1) 100%) fixed;
+    background: linear-gradient(194deg, rgba(36,48,60,1) 0%, rgba(55,81,108,1) 100%) fixed;
+}
