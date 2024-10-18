@@ -19,7 +19,7 @@ export class RestaurantDataService {
     return this.restaurantEntry;
   }
 
-  GetProjectById(id:number) : RestaurantEntry{
+  GetResturauntsById(id:number) : RestaurantEntry{
     let rest = this.restaurantEntry.find(restaurantEntry => restaurantEntry.id == id);
     
     if(rest === undefined){
