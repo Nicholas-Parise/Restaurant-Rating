@@ -2,21 +2,30 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
+import { TagDataService } from '../shared/tag-data.component';
+import { TagEntry } from '../shared/tag-entry.model';
+import { TagCardComponent } from "../tag-card/tag-card.component";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-restaurant',
   standalone: true,
-  imports: [],
+  imports: [TagCardComponent,CommonModule],
   templateUrl: './restaurant.component.html',
   styleUrl: './restaurant.component.css'
 })
+
 export class RestaurantComponent implements OnInit{
   
   restaurantEntry: RestaurantEntry
+  tagEntry: TagEntry[]
 
-  constructor(private restaurantDataService: RestaurantDataService, private route: ActivatedRoute ){} 
+  constructor(private restaurantDataService: RestaurantDataService,private tagDataService: TagDataService, private route: ActivatedRoute ){} 
 
   ngOnInit() : void{
+
+    this.tagEntry = this.tagDataService.GetTags();
+
     this.route.params.subscribe(params => {
         
       console.log(this.route.snapshot.params)
@@ -29,6 +38,7 @@ export class RestaurantComponent implements OnInit{
       }else{
         try{
           this.restaurantEntry = this.restaurantDataService.GetResturauntsById(id);
+          
         }catch(e){
           this.restaurantEntry = this.restaurantDataService.GetResturaunts()[0];
         }

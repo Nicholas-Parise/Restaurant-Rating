@@ -1,0 +1,52 @@
+
+
+.actionsPanel{
+    max-width: 600px;
+}
+
+
+.actionsPanel>ul>li{
+        background-color: #456;
+        border-bottom: 1px solid #2c3440;
+        box-sizing: border-box;
+        color: #bcd;
+        padding: 10px 0;
+        text-align: center;
+}
+
+ul {
+    list-style: none;
+}
+
+
+.image{
+
+    max-width: 90%;
+    min-width: 50px;
+    
+    max-height: 250px;
+    min-height: 100px;
+}
+
+
+.grid-container {
+    display: flex;
+}
+
+.grid-item{
+    display:block;
+    max-width: 100%;
+  }
+
+
+  @media (max-width: 800px) {
+    .grid-container {
+      display: block;
+    }
+    .grid-item{
+      align-items: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+ 
+  }

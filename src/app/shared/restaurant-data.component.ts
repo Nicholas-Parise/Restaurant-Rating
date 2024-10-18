@@ -8,8 +8,8 @@ import { RestaurantEntry } from './restaurant-entry.model';
 export class RestaurantDataService {
 
     restaurantEntry: RestaurantEntry[] = [
-    new RestaurantEntry(0, 'Video Editor Interface', 'description', 'April 20 2024',['../../assets/Editor/VideoEditor.png','../../assets/Editor/HomePage.png']),
-    new RestaurantEntry(1, 'Traffic Simulator',  'description', 'April 18 2024', ['../../assets/traffic.png','picture2'])   
+    new RestaurantEntry(0, 'Video Editor Interface', 'description', 'April 20 2024',['assets/placeholder-restaurant.png','picture2']),
+    new RestaurantEntry(1, 'Traffic Simulator',  'description', 'April 18 2024', ['assets/placeholder-restaurant.png','picture2'])   
   ];
   
 
