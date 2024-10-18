@@ -1,1 +1,9 @@
-<p>home works!</p>
+<div class="container">
+    <p>home works!</p>
+    <div class="spacer grid-container">
+        <div class="center grid-item" *ngFor="let restaurantEntry of restaurantEntry">
+            <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
+        </div>
+    </div>
+
+</div>
