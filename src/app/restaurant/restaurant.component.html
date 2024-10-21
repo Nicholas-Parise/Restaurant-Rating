@@ -33,7 +33,7 @@
     </div>
     
     <div class="tags">
-        <div class="center grid-item" *ngFor="let tagEntry of tagEntry">
+        <div class="center tag-item" *ngFor="let tagEntry of tagEntry">
             <app-tag-card [tagEntry]="tagEntry"></app-tag-card>
         </div>
     </div>
@@ -58,6 +58,16 @@
                 <input id="submit" type="submit" value="Comment">
             </div> 
          </form>
+
+        <ul class="all-reviews">
+            <li> 
+                <div class="" *ngFor="let reviewEntry of reviewEntry">
+                    <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
+                </div>
+            </li>
+
+        </ul>
+
 
         <!-- ngfor to place all the reviews (page by page) -->
     </div>

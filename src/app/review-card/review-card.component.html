@@ -1,0 +1,13 @@
+{{reviewEntry.favourited}}
+{{reviewEntry.review}}
+{{reviewEntry.score}}
+{{reviewEntry.visited}}
+
+
+<div class="stars">
+    <span class="star" [class.on]="reviewEntry.score >= 2" [class.half]="reviewEntry.score == 1 "></span>
+    <span class="star" [class.on]="reviewEntry.score >= 4" [class.half]="reviewEntry.score == 3 "></span>
+    <span class="star" [class.on]="reviewEntry.score >= 6" [class.half]="reviewEntry.score == 5 "></span>
+    <span class="star" [class.on]="reviewEntry.score >= 8" [class.half]="reviewEntry.score == 7 "></span>
+    <span class="star" [class.on]="reviewEntry.score >= 10" [class.half]="reviewEntry.score == 9 "></span>
+  </div>

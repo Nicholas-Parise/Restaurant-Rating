@@ -6,11 +6,14 @@ import { TagDataService } from '../shared/tag-data.component';
 import { TagEntry } from '../shared/tag-entry.model';
 import { TagCardComponent } from "../tag-card/tag-card.component";
 import { CommonModule } from '@angular/common';
+import { ReviewCardComponent } from "../review-card/review-card.component";
+import { ReviewEntry } from '../shared/review-entry.model';
+import { ReviewDataService } from '../shared/review-data.component';
 
 @Component({
   selector: 'app-restaurant',
   standalone: true,
-  imports: [TagCardComponent,CommonModule],
+  imports: [TagCardComponent, CommonModule, ReviewCardComponent],
   templateUrl: './restaurant.component.html',
   styleUrl: './restaurant.component.css'
 })
@@ -19,12 +22,14 @@ export class RestaurantComponent implements OnInit{
   
   restaurantEntry: RestaurantEntry
   tagEntry: TagEntry[]
+  reviewEntry : ReviewEntry[]
 
-  constructor(private restaurantDataService: RestaurantDataService,private tagDataService: TagDataService, private route: ActivatedRoute ){} 
+  constructor(private restaurantDataService: RestaurantDataService,private tagDataService: TagDataService, private reviewDataService: ReviewDataService, private route: ActivatedRoute ){} 
 
   ngOnInit() : void{
 
     this.tagEntry = this.tagDataService.GetTags();
+    this.reviewEntry = this.reviewDataService.GetReviews();
 
     this.route.params.subscribe(params => {
         
