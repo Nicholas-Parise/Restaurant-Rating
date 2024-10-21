@@ -1,3 +1,18 @@
+
+.comment{
+    margin-bottom: 20px;
+    border-bottom: 1px solid #456;
+}
+
+.signature{
+    color: gray;
+}
+
+.signature a{
+    color: gray;
+    text-decoration: none;        
+}
+
 .star {
     font-size: x-large;
     width: 20px;
@@ -20,4 +35,21 @@
     margin-left: -20px;
     width: 10px;
     overflow: hidden;
+}
+
+
+.heart {
+    font-size: x-large;
+    width: 20px;
+    display: inline-block;
+    color: gray;
+    display: none;
+    margin-left: 10px;
+}
+.heart:before {
+    content:'\2665';
+}
+.heart.on {
+    color: darkorange;
+    display: inline;
 }

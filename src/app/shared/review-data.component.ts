@@ -8,10 +8,10 @@ import { ReviewEntry } from './review-entry.model';
 export class ReviewDataService {
 
     reviewEntry: ReviewEntry[] = [
-    new ReviewEntry(0, 'This place is horrible',false,true,1),
-    new ReviewEntry(1, 'Love ths PLACE!!!!', true, true,10),
-    new ReviewEntry(2, 'eh its mid', false, true,5),
-    new ReviewEntry(3, 'been going here since I was a kid and its still bad', false, true, 3)
+    new ReviewEntry(0, 'This place is horrible',false,true,1,'treasureHound'),
+    new ReviewEntry(1, 'Love ths PLACE!!!!', true, true,10,'admin'),
+    new ReviewEntry(2, 'eh its mid', false, true,5,'nickpar03'),
+    new ReviewEntry(3, 'been going here since I was a kid and its still bad', false, true, 3,'jesus')
   ];
   
 
