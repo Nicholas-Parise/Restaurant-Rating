@@ -12,5 +12,6 @@ export const routes: Routes = [
     {path: 'user', component: UserComponent},
     {path: 'restaurant/:id', component: RestaurantComponent},
     {path: 'restaurant', component: RestaurantComponent},
+    {path: 'user/:username', component: UserComponent},
     {path: '**', component: HomeComponent, pathMatch: 'full'}
 ];
