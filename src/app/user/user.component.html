@@ -1,4 +1,48 @@
 <div class="container">
-<p>user works!</p>
-<p>{{userEntry.username}}</p>
+
+
+
+<div class="grid-container">
+
+    <div class="grid-item">
+        <img class = "image" src="{{userEntry.avatar}}" alt="">
+    </div>
+
+    <div class="grid-item">
+        <h2>{{userEntry.username}}</h2>
+        <p>{{userEntry.description}}</p>
+    </div>
+</div>
+
+
+<h2 class="section-header">Favourites</h2>
+<div class="spacer grid-container">
+    <div class="center grid-item" *ngFor="let favRestaurantEntry of favRestaurantEntry">
+        <app-restaurant-card [restaurantEntry]="favRestaurantEntry"></app-restaurant-card>
+    </div>
+</div>
+
+
+<h2 class="section-header">Recent</h2>
+<div class="spacer grid-container">
+
+    <div class="center grid-item" *ngFor="let recentRestaurantEntry of recentRestaurantEntry">
+        <app-restaurant-card [restaurantEntry]="recentRestaurantEntry"></app-restaurant-card>
+    </div>
+</div>
+
+
+<ul class="all-reviews">
+    <li> 
+        <div class="" *ngFor="let reviewEntry of reviewEntry">
+            <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
+        </div>
+    </li>
+</ul>
+
+<button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+<p>{{this.currentPage}}</p>
+<button (click)="onNextPage()">Next</button>
+
+
 </div>

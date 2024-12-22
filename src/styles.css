@@ -1,4 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --background:rgb(36,48,60);
+  --review:rgb(54, 66, 78);
+}
+
 body{
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;

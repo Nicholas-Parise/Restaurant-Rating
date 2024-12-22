@@ -1,0 +1,19 @@
+<div class="formContainer" [style.display]="isFormVisible ? 'block' : 'none'">
+   
+    <button (click)="closeForm()" class="menuClose">X</button>
+
+    <form (ngSubmit)="onSubmit()" [formGroup]="reviewForm">
+        <div class="form-group">
+            <label for="review">review</label>
+            <input type="text" class="form-control" formControlName="review">
+
+            <label for="score">score</label>
+            <input type="text" class="form-control" formControlName="score">
+
+            <label for="love">love</label>
+            <input type="checkbox" class="form-control" formControlName="love">
+
+        </div>
+        <button class="btn btn-success">Submit</button>
+    </form>
+</div>

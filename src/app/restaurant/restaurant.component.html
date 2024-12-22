@@ -1,4 +1,5 @@
 <div class="container">
+    <app-review-form></app-review-form>
     <h2>{{restaurantEntry.name}}</h2>
     
     <div class="grid-container">
@@ -22,13 +23,12 @@
                     </li>
         
                     <li>Rate</li>
-                    <li>add a review</li>
+                    <li><button (click)="showReviewForm()">add a review</button></li>
                     <li>Log visit</li>
                 </ul>
             </div>
 
         </div>
-
 
     </div>
     
@@ -65,8 +65,11 @@
                     <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
                 </div>
             </li>
-
         </ul>
+        
+        <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+        <p>{{this.currentPage}}</p>
+        <button (click)="onNextPage()">Next</button>
 
 
         <!-- ngfor to place all the reviews (page by page) -->
