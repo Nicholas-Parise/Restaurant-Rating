@@ -10,6 +10,7 @@ import { ReviewCardComponent } from "../review-card/review-card.component";
 import { ReviewEntry } from '../shared/review-entry.model';
 import { ReviewDataService } from '../shared/review-data.component';
 import { ReviewFormComponent } from '../review-form/review-form.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-restaurant',
@@ -24,8 +25,13 @@ export class RestaurantComponent implements OnInit{
   @ViewChild(ReviewFormComponent) reviewFormComponent: ReviewFormComponent;
 
   restaurantEntry: RestaurantEntry
+  restaurantSubscription = new Subscription();  
+  
   tagEntry: TagEntry[]
+  tagSubscription = new Subscription();
+  
   reviewEntry : ReviewEntry[]
+  reviewSubscription = new Subscription();
 
   restaurantId: number;
   currentPage: number = 1;
@@ -34,10 +40,26 @@ export class RestaurantComponent implements OnInit{
 
   constructor(private restaurantDataService: RestaurantDataService,private tagDataService: TagDataService, private reviewDataService: ReviewDataService, private route: ActivatedRoute ){} 
 
+
+  ngOnDestroy() : void{
+    this.reviewSubscription.unsubscribe();
+    this.tagSubscription.unsubscribe();
+  }
+
   ngOnInit() : void{
 
+    this.reviewDataService.GetReviews();
+    this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry =>{
+      this.reviewEntry = reviewEntry;
+    });
+
+
+
+    this.tagSubscription = this.tagDataService.tagSubject.subscribe(tagEntry =>{
+      this.tagEntry = tagEntry;
+    });
     this.tagEntry = this.tagDataService.GetTags();
-    this.reviewEntry = this.reviewDataService.GetReviews();
+
 
     this.route.params.subscribe(params => {
         
@@ -70,10 +92,7 @@ export class RestaurantComponent implements OnInit{
 
 
   loadReviews(): void {
-    this.reviewEntry = this.reviewDataService.getRestaurantReviews(this.restaurantId, this.currentPage, this.pageSize);
-    //  .subscribe((data: any) => {
-       // this.reviewEntry = data.reviews;
-     // });
+    this.reviewDataService.getReviews(this.restaurantId, this.currentPage, this.pageSize);
   }
 
 

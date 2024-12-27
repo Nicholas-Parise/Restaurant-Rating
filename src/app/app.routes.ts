@@ -4,6 +4,7 @@ import { ExploreComponent } from './explore/explore.component';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
 import { RestaurantComponent } from './restaurant/restaurant.component';
+import { TagComponent } from './tag/tag.component';
 
 export const routes: Routes = [
     {path: 'home', component: HomeComponent},
@@ -13,5 +14,6 @@ export const routes: Routes = [
     {path: 'restaurant/:id', component: RestaurantComponent},
     {path: 'restaurant', component: RestaurantComponent},
     {path: 'user/:username', component: UserComponent},
+    {path: 'tag/:id', component: TagComponent},
     {path: '**', component: HomeComponent, pathMatch: 'full'}
 ];

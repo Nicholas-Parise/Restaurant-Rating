@@ -1,5 +1,5 @@
 <div class="container">
-    <app-review-form></app-review-form>
+    <app-review-form [restaurantEntry]="restaurantEntry" ></app-review-form>
     <h2>{{restaurantEntry.name}}</h2>
     
     <div class="grid-container">
@@ -51,13 +51,6 @@
 
     <h2>Reviews</h2>
     <div class="reviews">
-
-        <form>
-            <textarea id="" placeholder="Add Your Comment" value=" "></textarea>
-            <div class="btn">
-                <input id="submit" type="submit" value="Comment">
-            </div> 
-         </form>
 
         <ul class="all-reviews">
             <li> 

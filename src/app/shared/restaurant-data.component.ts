@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RestaurantEntry } from './restaurant-entry.model';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class RestaurantDataService {
     new RestaurantEntry(1, 'mcdonalds',  'description', 'April 18 2024', ['assets/placeholder-restaurant.png','picture2'])   
   ];
   
+  restaurantSubject = new Subject<RestaurantEntry[]>();
 
   constructor() { }
 

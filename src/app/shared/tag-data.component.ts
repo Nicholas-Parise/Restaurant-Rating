@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TagEntry } from './tag-entry.model';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,8 @@ export class TagDataService {
     new TagEntry(3, 'buffet',  'description')
   ];
   
+  tagSubject = new Subject<TagEntry[]>();
+
   constructor() { }
 
   GetTags() : TagEntry[]{
