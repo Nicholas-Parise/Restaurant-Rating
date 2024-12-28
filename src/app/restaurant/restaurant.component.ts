@@ -61,6 +61,7 @@ export class RestaurantComponent implements OnInit{
     this.tagEntry = this.tagDataService.GetTags();
 
 
+    
     this.route.params.subscribe(params => {
         
       console.log(this.route.snapshot.params)

@@ -9,6 +9,7 @@ import { RestaurantCardComponent } from '../restaurant-card/restaurant-card.comp
 import { ReviewEntry } from '../shared/review-entry.model';
 import { ReviewDataService } from '../shared/review-data.component';
 import { ReviewCardComponent } from '../review-card/review-card.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user',
@@ -22,7 +23,9 @@ export class UserComponent {
   userEntry: UserEntry;
   favRestaurantEntry: RestaurantEntry[];
   recentRestaurantEntry: RestaurantEntry[];
-  reviewEntry: ReviewEntry[];
+
+  reviewEntry : ReviewEntry[]
+  reviewSubscription = new Subscription();
 
   username: string;
   currentPage: number = 1;
@@ -38,8 +41,16 @@ ngOnInit() : void{
     this.username = params['username'];
     console.log('test: '+this.username);
 
-    this.favRestaurantEntry = this.restaurantDataService.GetResturaunts();
-    this.recentRestaurantEntry = this.restaurantDataService.GetResturaunts();
+
+    this.reviewDataService.GetReviews();
+    this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry =>{
+      this.reviewEntry = reviewEntry;
+    });
+
+
+
+    this.favRestaurantEntry = this.restaurantDataService.restaurantEntry;
+    this.recentRestaurantEntry = this.restaurantDataService.restaurantEntry;
 
     if(this.username == null){
       console.log('empty');
@@ -64,7 +75,7 @@ ngOnInit() : void{
 
 
 loadReviews(): void {
-  this.reviewEntry = this.reviewDataService.getUserReviews(this.username,this.currentPage,this.pageSize);
+  this.reviewDataService.getUserReviews(this.username,this.currentPage,this.pageSize);
   //  .subscribe((data: any) => {
      // this.reviewEntry = data.reviews;
    // });

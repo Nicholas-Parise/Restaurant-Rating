@@ -29,7 +29,7 @@ export class ReviewDataService {
 
   onAddReviewEntry(singleReviewEntry:ReviewEntry){
 
-    this.http.post<{message: string}>('http://localhost:3000/add-review',singleReviewEntry).subscribe((jsonData) =>{
+    this.http.post<{message: string}>('http://localhost:3000/reviews/add',singleReviewEntry).subscribe((jsonData) =>{
       this.GetReviews();
     })
 
@@ -39,7 +39,7 @@ export class ReviewDataService {
 
 
   getReviews(restaurantId: number, page: number, pageSize: number){
-    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}/restaurants/${restaurantId}/reviews?&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
+    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}/reviews/restaurants/${restaurantId}?&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
       this.reviewEntry = jsonData.reviews;
       this.reviewSubject.next(this.reviewEntry);
     })
