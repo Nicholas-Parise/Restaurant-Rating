@@ -5,7 +5,7 @@ const pool = new Pool({
   password: 'your_password',
   host: 'localhost',
   port: 5432, // default Postgres port
-  database: 'your_database_name'
+  database: 'fooddb'
 });
 
 module.exports = {
