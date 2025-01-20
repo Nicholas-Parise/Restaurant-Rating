@@ -1,7 +1,9 @@
 <a href="restaurant/{{restaurantEntry.id}}">
 <div class="cardBody">
     <h2>{{restaurantEntry.name}}</h2>
-    <img class = "image" src="{{restaurantEntry.pictures[0]}}" alt="">
+    <img class = "image" [src]="restaurantEntry.pictures?.[0] || 'assets/placeholder-restaurant.png'" alt="">
     <p>{{restaurantEntry.date}}</p>
 </div>
 </a>
+
+

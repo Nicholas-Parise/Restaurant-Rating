@@ -1,10 +1,10 @@
 const express = require('express');
+const db = require('./db');
 const bodyParser = require('body-parser');
 const reviewRoutes = require('./reviews');
 const restaurantRoutes = require('./restaurant');
 
 const app = express();
-
 
 // Middleware
 app.use(bodyParser.json());

@@ -1,4 +1,5 @@
 const express = require('express');
+const db = require('./db');
 const router = express.Router();
 
 let restaurantEntry = [
@@ -8,6 +9,7 @@ let restaurantEntry = [
 
 
 // localhost:3000/restaurants?page=1&pageSize=10
+/*
 router.get('/',(req,res,next)=>{
     
     const page = parseInt(req.query.page) || 1;
@@ -22,7 +24,36 @@ router.get('/',(req,res,next)=>{
         restaurants: paginatedRestaurants,
       });
 })
+*/
 
+// localhost:3000/restaurants?page=1&pageSize=10
+router.get('/', async (req, res,next) => {
+
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+  
+  
+  try {
+    const result = await db.query('SELECT * FROM restaurants');
+    const paginatedRestaurants =  result.rows.slice((page - 1) * pageSize, page * pageSize);
+
+    res.json({
+      page,
+      pageSize,
+      totalRestaurants: result.rows.length,
+      restaurants: paginatedRestaurants,
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+/*
 // localhost:3000/restaurants/0
 router.get('/:restaurantId', (req, res, next) => {
     const restaurantId = parseInt(req.params.restaurantId);
@@ -33,6 +64,34 @@ router.get('/:restaurantId', (req, res, next) => {
       restaurants: allReviews,
     });
   });
+
+*/
+
+// localhost:3000/restaurants?page=1&pageSize=10
+router.get('/:restaurantId', async (req, res,next) => {
+
+  const restaurantId = parseInt(req.params.restaurantId);
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+  
+  
+  try {
+    const result = await db.query('SELECT * FROM restaurants WHERE id = '+restaurantId);
+    const restaurantFromServer =  result.rows.slice((page - 1) * pageSize, page * pageSize);
+
+    res.json({
+      restaurants: restaurantFromServer,
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
 
 
   router.post('/add', (req, res) => {
