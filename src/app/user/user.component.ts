@@ -33,6 +33,11 @@ export class UserComponent {
 
 constructor(private userDataService : UserDataService, private restaurantDataService: RestaurantDataService, private reviewDataService : ReviewDataService , private route: ActivatedRoute){}
 
+ngOnDestroy() : void{
+  this.reviewSubscription.unsubscribe();
+}
+
+
 ngOnInit() : void{
 
   this.route.params.subscribe(params => {

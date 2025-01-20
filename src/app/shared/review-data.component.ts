@@ -9,10 +9,9 @@ import { Subject } from 'rxjs';
 
 export class ReviewDataService {
 
-    reviewEntry: ReviewEntry[] = [];
+  reviewEntry: ReviewEntry[] = [];
   
   reviewSubject = new Subject<ReviewEntry[]>();
-
 
   constructor(private http: HttpClient) { }
 
@@ -25,7 +24,6 @@ export class ReviewDataService {
     })
   }
 
-  
 
   onAddReviewEntry(singleReviewEntry:ReviewEntry){
 
@@ -39,7 +37,7 @@ export class ReviewDataService {
 
 
   getReviews(restaurantId: number, page: number, pageSize: number){
-    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}/reviews/restaurants/${restaurantId}?&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
+    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}reviews/restaurants/${restaurantId}?&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
       this.reviewEntry = jsonData.reviews;
       this.reviewSubject.next(this.reviewEntry);
     })
@@ -47,7 +45,7 @@ export class ReviewDataService {
 
 
  getUserReviews(username: string, page: number, pageSize: number){
-    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}/reviews?&username=${username}&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
+    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}reviews?&username=${username}&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
       this.reviewEntry = jsonData.reviews;
       this.reviewSubject.next(this.reviewEntry);
     })  

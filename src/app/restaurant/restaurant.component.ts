@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { TagDataService } from '../shared/tag-data.component';
@@ -38,7 +38,7 @@ export class RestaurantComponent implements OnInit{
   pageSize: number = 10;
 
 
-  constructor(private restaurantDataService: RestaurantDataService,private tagDataService: TagDataService, private reviewDataService: ReviewDataService, private route: ActivatedRoute ){} 
+  constructor(private router: Router,private restaurantDataService: RestaurantDataService,private tagDataService: TagDataService, private reviewDataService: ReviewDataService, private route: ActivatedRoute ){} 
 
 
   ngOnDestroy() : void{
@@ -54,14 +54,18 @@ export class RestaurantComponent implements OnInit{
     });
 
 
-
     this.tagSubscription = this.tagDataService.tagSubject.subscribe(tagEntry =>{
       this.tagEntry = tagEntry;
     });
     this.tagEntry = this.tagDataService.GetTags();
 
 
-    
+    this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry =>{
+      this.restaurantEntry = restaurantEntry[0];
+    });
+
+
+
     this.route.params.subscribe(params => {
         
       console.log(this.route.snapshot.params)
@@ -70,13 +74,14 @@ export class RestaurantComponent implements OnInit{
 
       if(this.restaurantId == null){
         console.log('empty');
-        this.restaurantEntry = this.restaurantDataService.GetResturaunts()[0];
+        this.router.navigate(['/']);
       }else{
         try{
-          this.restaurantEntry = this.restaurantDataService.GetResturauntsById(this.restaurantId);
+          this.restaurantDataService.GetResturauntsById(this.restaurantId);
           
         }catch(e){
-          this.restaurantEntry = this.restaurantDataService.GetResturaunts()[0];
+          this.router.navigate(['/']);
+          //this.restaurantDataService.GetResturaunts();
         }
       }
         //this.restaurantDataService.GetResturauntsById(this.id).subscribe( restaurantEntry => {

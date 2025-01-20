@@ -36,6 +36,7 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+osm2pgsql-bin/*
 
 # System files
 .DS_Store

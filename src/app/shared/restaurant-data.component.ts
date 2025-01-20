@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RestaurantEntry } from './restaurant-entry.model';
+import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -8,27 +9,26 @@ import { Subject } from 'rxjs';
 
 export class RestaurantDataService {
 
-    restaurantEntry: RestaurantEntry[] = [
-    new RestaurantEntry(0, 'Nonnas kitchen', 'description', 'April 20 2024',['assets/placeholder-restaurant.png','picture2']),
-    new RestaurantEntry(1, 'mcdonalds',  'description', 'April 18 2024', ['assets/placeholder-restaurant.png','picture2'])   
-  ];
+  restaurantEntry: RestaurantEntry[] = [];
   
   restaurantSubject = new Subject<RestaurantEntry[]>();
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
-  GetResturaunts() : RestaurantEntry[]{
-    return this.restaurantEntry;
+  private baseUrl = 'http://localhost:3000/';
+
+  GetResturaunts(){
+    this.http.get<{restaurants: RestaurantEntry[], totalReviews: Number}>(`${this.baseUrl}restaurants`).subscribe((jsonData) =>{
+      this.restaurantEntry = jsonData.restaurants;
+      this.restaurantSubject.next(this.restaurantEntry);
+    })
   }
 
-  GetResturauntsById(id:number) : RestaurantEntry{
-    let rest = this.restaurantEntry.find(restaurantEntry => restaurantEntry.id == id);
-    
-    if(rest === undefined){
-      throw new TypeError('index Does not exist');
-    }
-    
-    return rest;
+  GetResturauntsById(id:number){
+    this.http.get<{restaurants: RestaurantEntry[], totalReviews: Number}>(`${this.baseUrl}restaurants/${id}`).subscribe((jsonData) =>{
+          this.restaurantEntry = jsonData.restaurants;
+          this.restaurantSubject.next(this.restaurantEntry);
+      })
   }
 
 }

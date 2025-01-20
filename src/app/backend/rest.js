@@ -19,7 +19,7 @@ app.use((req,res,next)=>{
 
 // Routes
 app.use('/reviews', reviewRoutes);
-app.use('/restaurant', restaurantRoutes);
+app.use('/restaurants', restaurantRoutes);
 
 
 module.exports = app;

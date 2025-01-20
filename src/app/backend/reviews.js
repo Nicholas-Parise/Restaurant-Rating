@@ -8,7 +8,7 @@ let reviewEntry = [
     {id:3, review:'been going here since I was a kid and its still bad', favourited:false, visited:true, score:3,username:'jesus'}
 ]
 
-// localhost:3000/reviews?page=1&pageSize=10
+// localhost:3000/reviews?page=1&pageSize=10?username=admin
 router.get('/',(req,res,next)=>{
     //res.send('hello from express');
     
@@ -46,7 +46,12 @@ router.get('/restaurants/:restaurantId', (req, res, next) => {
 
   router.post('/add', (req, res) => {
 
-    reviewEntry.push({id: req.body.id, review: req.body.review,favourited: req.body.favourited,visited: req.body.visited, score: req.body.score,username: req.body.username});
+    reviewEntry.push({id: req.body.id, 
+        review: req.body.review,
+        favourited: req.body.favourited,
+        visited: req.body.visited, 
+        score: req.body.score,
+        username: req.body.username});
     res.status(200).json({
         message: 'Post submitted'
     });

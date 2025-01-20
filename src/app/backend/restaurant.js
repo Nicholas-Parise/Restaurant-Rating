@@ -9,42 +9,35 @@ let restaurantEntry = [
 
 // localhost:3000/restaurants?page=1&pageSize=10
 router.get('/',(req,res,next)=>{
-    //res.send('hello from express');
     
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
-
-    const paginatedReviews = reviewEntry.slice((page - 1) * pageSize, page * pageSize);
+    
+    const paginatedRestaurants = restaurantEntry.slice((page - 1) * pageSize, page * pageSize);
 
     res.json({
         page,
         pageSize,
-        totalReviews: reviewEntry.length,
-        reviews: paginatedReviews,
+        totalRestaurants: restaurantEntry.length,
+        restaurants: paginatedRestaurants,
       });
 })
 
-// localhost:3000/restaurants/0?page=1&pageSize=10
+// localhost:3000/restaurants/0
 router.get('/:restaurantId', (req, res, next) => {
     const restaurantId = parseInt(req.params.restaurantId);
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
   
-    const allReviews = reviewEntry.filter(review => review.restaurantId === restaurantId);
-    const paginatedReviews = allReviews.slice((page - 1) * pageSize, page * pageSize);
-  
+    const allReviews = restaurantEntry.filter(restaurants => restaurants.id === restaurantId);
+    
     res.json({
-      page,
-      pageSize,
-      totalReviews: allReviews.length,
-      reviews: paginatedReviews,
+      restaurants: allReviews,
     });
   });
 
 
   router.post('/add', (req, res) => {
 
-    reviewEntry.push({id: req.body.id, 
+    restaurantEntry.push({id: req.body.id, 
       name: req.body.name,
       description: req.body.description,
       date: req.body.date, 
