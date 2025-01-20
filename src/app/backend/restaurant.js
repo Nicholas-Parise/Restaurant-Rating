@@ -31,11 +31,12 @@ router.get('/', async (req, res,next) => {
 
   const page = parseInt(req.query.page) || 1;
   const pageSize = parseInt(req.query.pageSize) || 10;
-  
+  const offset = (page - 1) * pageSize;
   
   try {
-    const result = await db.query('SELECT * FROM restaurants');
-    const paginatedRestaurants =  result.rows.slice((page - 1) * pageSize, page * pageSize);
+    const result = await db.query('SELECT * FROM restaurants LIMIT $1 OFFSET $2',[pageSize,offset]);
+
+    const paginatedRestaurants =  result.rows; //result.rows.slice((page - 1) * pageSize, page * pageSize);
 
     res.json({
       page,
@@ -77,7 +78,7 @@ router.get('/:restaurantId', async (req, res,next) => {
   
   try {
     const result = await db.query('SELECT * FROM restaurants WHERE id = '+restaurantId);
-    const restaurantFromServer =  result.rows.slice((page - 1) * pageSize, page * pageSize);
+    const restaurantFromServer =  result.rows[0];
 
     res.json({
       restaurants: restaurantFromServer,

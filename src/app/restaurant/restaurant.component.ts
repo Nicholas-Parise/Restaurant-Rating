@@ -24,7 +24,7 @@ export class RestaurantComponent implements OnInit{
   
   @ViewChild(ReviewFormComponent) reviewFormComponent: ReviewFormComponent;
 
-  restaurantEntry: RestaurantEntry
+  restaurantEntry: any;
   restaurantSubscription = new Subscription();  
   
   tagEntry: TagEntry[]
@@ -44,6 +44,7 @@ export class RestaurantComponent implements OnInit{
   ngOnDestroy() : void{
     this.reviewSubscription.unsubscribe();
     this.tagSubscription.unsubscribe();
+   
   }
 
   ngOnInit() : void{
@@ -61,7 +62,8 @@ export class RestaurantComponent implements OnInit{
 
 
     this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry =>{
-      this.restaurantEntry = restaurantEntry[0];
+      console.log(restaurantEntry)
+      this.restaurantEntry = restaurantEntry;
     });
 
 

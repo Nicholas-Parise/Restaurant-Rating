@@ -1,74 +1,81 @@
-<div class="container">
-    <app-review-form [restaurantEntry]="restaurantEntry" ></app-review-form>
-    <h2>{{restaurantEntry.name}}</h2>
-    
-    <div class="grid-container">
-
-        <div class="grid-item">
-            <img class = "image" [src]="restaurantEntry.pictures?.[0] || 'assets/placeholder-restaurant.png'" alt="">
-        </div>
-        <div class="grid-item">
-            <p>{{restaurantEntry.description}}</p>
-            <br>
-            <p>address</p>
-        </div>
-
-        <div class="grid-item">
-            <div class="actionsPanel">
-                <ul>
-                    <li>
-                        <span class="icon">visited</span>
-                        <span class="icon">favourite</span>
-                        <span class="icon">Future Feasts</span>
-                    </li>
+<div class="container" >
+    <div *ngIf="restaurantEntry; else loading">
+        <app-review-form [restaurantEntry]="restaurantEntry" ></app-review-form>
+        <h2>{{restaurantEntry?.name}}</h2>
         
-                    <li>Rate</li>
-                    <li><button (click)="showReviewForm()">add a review</button></li>
-                    <li>Log visit</li>
-                </ul>
+        <div class="grid-container">
+
+            <div class="grid-item">
+                <img class = "image" [src]="restaurantEntry?.pictures?.[0] || 'assets/placeholder-restaurant.png'" alt="">
+            </div>
+            <div class="grid-item">
+                <p>{{restaurantEntry?.description}}</p>
+                <br>
+                <p>address</p>
+            </div>
+
+            <div class="grid-item">
+                <div class="actionsPanel">
+                    <ul>
+                        <li>
+                            <span class="icon">visited</span>
+                            <span class="icon">favourite</span>
+                            <span class="icon">Future Feasts</span>
+                        </li>
+            
+                        <li>Rate</li>
+                        <li><button (click)="showReviewForm()">add a review</button></li>
+                        <li>Log visit</li>
+                    </ul>
+                </div>
+
             </div>
 
         </div>
-
-    </div>
-    
-    <div class="tags">
-        <div class="center tag-item" *ngFor="let tagEntry of tagEntry">
-            <app-tag-card [tagEntry]="tagEntry"></app-tag-card>
-        </div>
-    </div>
-
-    
-    
-    <h2>Ratings</h2>
-
-
-    <h2>Food items</h2>
-    <div class="foods">
-        <!-- ngfor to place all foods -->
-    </div>
-
-
-    <h2>Reviews</h2>
-    <div class="reviews">
-
-        <ul class="all-reviews">
-            <li> 
-                <div class="" *ngFor="let reviewEntry of reviewEntry">
-                    <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
-                </div>
-            </li>
-        </ul>
         
-        <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
-        <p>{{this.currentPage}}</p>
-        <button (click)="onNextPage()">Next</button>
+        <div class="tags">
+            <div class="center tag-item" *ngFor="let tagEntry of tagEntry">
+                <app-tag-card [tagEntry]="tagEntry"></app-tag-card>
+            </div>
+        </div>
+
+        
+        
+        <h2>Ratings</h2>
 
 
-        <!-- ngfor to place all the reviews (page by page) -->
-    </div>
+        <h2>Food items</h2>
+        <div class="foods">
+            <!-- ngfor to place all foods -->
+        </div>
 
 
+        <h2>Reviews</h2>
+        <div class="reviews">
+
+            <ul class="all-reviews">
+                <li> 
+                    <div class="" *ngFor="let reviewEntry of reviewEntry">
+                        <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
+                    </div>
+                </li>
+            </ul>
+            
+            <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+            <p>{{this.currentPage}}</p>
+            <button (click)="onNextPage()">Next</button>
+
+
+            <!-- ngfor to place all the reviews (page by page) -->
+        </div>
+
+
+</div>
+
+
+<ng-template #loading>
+    <p>Loading...</p>
+  </ng-template>
 
 </div>
 
