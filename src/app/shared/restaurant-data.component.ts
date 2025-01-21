@@ -24,11 +24,19 @@ export class RestaurantDataService {
     })
   }
 
+  GetResturauntsFast(){
+    this.http.get<{restaurants: RestaurantEntry[], totalReviews: Number}>(`${this.baseUrl}restaurants?amount=0`).subscribe((jsonData) =>{
+      this.restaurantEntry = jsonData.restaurants;
+      this.restaurantSubject.next(this.restaurantEntry);
+    })
+  }
+  
+
   GetResturauntsById(id:number){
     this.http.get<{restaurants: RestaurantEntry[], totalReviews: Number}>(`${this.baseUrl}restaurants/${id}`).subscribe((jsonData) =>{
           this.restaurantEntry = jsonData.restaurants;
           this.restaurantSubject.next(this.restaurantEntry);
-      })
+    })
   }
 
 }

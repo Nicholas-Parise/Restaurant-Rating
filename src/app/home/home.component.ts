@@ -24,7 +24,8 @@ export class HomeComponent implements OnInit{
     this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry =>{
       this.restaurantEntry = restaurantEntry;
     });
-    this.restaurantDataService.GetResturaunts();  
+    //this.restaurantDataService.GetResturaunts();  
+    this.restaurantDataService.GetResturauntsFast();
   }
 
   ngOnDestroy() : void{

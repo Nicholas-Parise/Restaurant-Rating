@@ -26,15 +26,25 @@ router.get('/',(req,res,next)=>{
 })
 */
 
-// localhost:3000/restaurants?page=1&pageSize=10
+// amount = fast 0 or full 1
+
+// localhost:3000/restaurants?page=1&pageSize=10?amount=0
 router.get('/', async (req, res,next) => {
 
   const page = parseInt(req.query.page) || 1;
   const pageSize = parseInt(req.query.pageSize) || 10;
+  const amount = parseInt(req.query.amount) || 1;
   const offset = (page - 1) * pageSize;
-  
+  var result;
+
+ 
   try {
-    const result = await db.query('SELECT * FROM restaurants LIMIT $1 OFFSET $2',[pageSize,offset]);
+    if(amount == 1){
+      result = await db.query('SELECT * FROM restaurants LIMIT $1 OFFSET $2',[pageSize,offset]);
+    }else{
+      result = await db.query('SELECT id,name,subclass FROM restaurants LIMIT $1 OFFSET $2',[pageSize,offset]);
+    }
+
 
     const paginatedRestaurants =  result.rows; //result.rows.slice((page - 1) * pageSize, page * pageSize);
 
