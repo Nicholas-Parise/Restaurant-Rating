@@ -1,4 +1,5 @@
 const express = require('express');
+const db = require('./db');
 const router = express.Router();
 
 let reviewEntry = [
@@ -27,20 +28,28 @@ router.get('/',(req,res,next)=>{
 })
 
 // localhost:3000/reviews/restaurants/0?page=1&pageSize=10
-router.get('/restaurants/:restaurantId', (req, res, next) => {
+router.get('/restaurants/:restaurantId', async (req, res, next) => {
     const restaurantId = parseInt(req.params.restaurantId);
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
   
-    const allReviews = reviewEntry.filter(review => review.restaurantId === restaurantId);
-    const paginatedReviews = allReviews.slice((page - 1) * pageSize, page * pageSize);
-  
+ try {
+    const result = await db.query('SELECT * FROM reviews WHERE restaurant_id = $1 LIMIT $2 OFFSET $3',[restaurantId,pageSize,offset]);
+    const allReviews = 10; //await db.query('SELECT * FROM reviews WHERE restaurant_id = $1 LIMIT $2 OFFSET $3',[restaurantId,pageSize,offset]);
+    const reviewsFromServer =  result.rows;
+
     res.json({
       page,
       pageSize,
       totalReviews: allReviews.length,
-      reviews: paginatedReviews,
+      reviews: reviewsFromServer,
     });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
   });
 
 

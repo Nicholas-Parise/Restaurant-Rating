@@ -8,26 +8,7 @@ let restaurantEntry = [
 ];
 
 
-// localhost:3000/restaurants?page=1&pageSize=10
-/*
-router.get('/',(req,res,next)=>{
-    
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
-    
-    const paginatedRestaurants = restaurantEntry.slice((page - 1) * pageSize, page * pageSize);
-
-    res.json({
-        page,
-        pageSize,
-        totalRestaurants: restaurantEntry.length,
-        restaurants: paginatedRestaurants,
-      });
-})
-*/
-
 // amount = fast 0 or full 1
-
 // localhost:3000/restaurants?page=1&pageSize=10?amount=0
 router.get('/', async (req, res,next) => {
 
@@ -63,20 +44,6 @@ router.get('/', async (req, res,next) => {
 });
 
 
-
-/*
-// localhost:3000/restaurants/0
-router.get('/:restaurantId', (req, res, next) => {
-    const restaurantId = parseInt(req.params.restaurantId);
-  
-    const allReviews = restaurantEntry.filter(restaurants => restaurants.id === restaurantId);
-    
-    res.json({
-      restaurants: allReviews,
-    });
-  });
-
-*/
 
 // localhost:3000/restaurants?page=1&pageSize=10
 router.get('/:restaurantId', async (req, res,next) => {
