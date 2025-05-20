@@ -1,6 +1,6 @@
 const express = require('express');
-const db = require('./db');
 const bodyParser = require('body-parser');
+
 const reviewRoutes = require('./reviews');
 const restaurantRoutes = require('./restaurant');
 const authRoutes = require('./auth');
@@ -13,16 +13,17 @@ app.use(bodyParser.json());
 
 // CORS HEADERS
 app.use((req,res,next)=>{
-    res.setHeader('Access-Control-Allow-Origin','*');
-    res.setHeader('Access-Control-Allow-Headers','Origin, Content-Type, X-Requested-With, Accept');
+     res.setHeader('Access-Control-Allow-Origin','*');
+    res.setHeader('Access-Control-Allow-Headers','*');
+    //res.setHeader('Access-Control-Allow-Headers','Origin, Content-Type, X-Requested-With, Accept');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     next();
 })
 
 // Routes
-app.use('/auth', authRoutes);
 app.use('/reviews', reviewRoutes);
 app.use('/restaurants', restaurantRoutes);
+app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 
 

@@ -5,8 +5,9 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require("bcryptjs");
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 require("dotenv").config();
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const authenticate = require('./middleware/authenticate');
 const uploadPicture = require('./middleware/upload');
@@ -106,9 +107,9 @@ router.put('/', authenticate, async (req, res) => {
               bio = COALESCE($4, bio),
               notifications = COALESCE($5, notifications),
               setup = COALESCE($6, setup),
-              dateupdated = NOW()
+              updated = NOW()
           WHERE id = $7
-          RETURNING id, email, name, bio, notifications, setup, datecreated, dateupdated;`, [name, newHashedPassword, email, bio, notifications, setup, userId]);
+          RETURNING id, email, name, bio, notifications, setup, created, updated;`, [name, newHashedPassword, email, bio, notifications, setup, userId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
@@ -204,7 +205,7 @@ router.get('/:userId', async (req, res) => {
       return res.status(400).json({ message: "userId is required to get account" });
     }
 
-    const result = await db.query('SELECT id, name, bio, picture, notifications, pro, datecreated FROM users WHERE id = $1', [userId]);
+    const result = await db.query('SELECT id, name, bio, picture, notifications, pro, created FROM users WHERE id = $1', [userId]);
     const result2 = await db.query(
       `SELECT c.*, uc.love FROM categories c
         JOIN user_categories uc ON c.id = uc.category_id
@@ -221,10 +222,10 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
-
+/*
 // Assign a category from logged in user: post /categories/1234
 // Assign multiple categories from logged in user: post /categories
-router.post('/categories/:categoryId?', authenticate, async (req, res, next) => {
+router.post('/categories/:categoryId', authenticate, async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 
@@ -317,7 +318,7 @@ router.post('/categories/:categoryId?', authenticate, async (req, res, next) => 
 
 // remove a category from logged in user: delete /categories/1234
 // remove multiple categories from logged in user: delete /categories
-router.delete('/categories/:categoryId?', authenticate, async (req, res, next) => {
+router.delete('/categories/:categoryId', authenticate, async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 
@@ -382,7 +383,7 @@ router.delete('/categories/:categoryId?', authenticate, async (req, res, next) =
 
 // update a category from logged in user: PUT /categories/1234
 // update multiple categories from logged in user: PUT /categories
-router.put('/categories/:categoryId?', authenticate, async (req, res, next) => {
+router.put('/categories/:categoryId', authenticate, async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 
@@ -466,7 +467,7 @@ router.put('/categories/:categoryId?', authenticate, async (req, res, next) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
+*/
 
 
 // localhost:3000/users/upload-profile
@@ -514,8 +515,6 @@ async function deleteImage(userId) {
     }
   }
 }
-
-
 
 
 module.exports = router;
