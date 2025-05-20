@@ -77,11 +77,14 @@ location_id INTEGER REFERENCES locations (id),
 username TEXT UNIQUE NOT NULL,
 password TEXT NOT NULL,
 email TEXT,
+picture TEXT,
+bio TEXT,
+notifications BOOLEAN,
+isadmin BOOLEAN,
+iscritic BOOLEAN,
+isowner BOOLEAN,
 datecreated TIMESTAMP,
-dateupdated TIMESTAMP,
-isadmin BOOL,
-iscritic BOOL,
-isowner BOOL
+dateupdated TIMESTAMP
 );
 
 

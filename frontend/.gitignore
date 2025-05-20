@@ -37,6 +37,7 @@ yarn-error.log
 testem.log
 /typings
 osm2pgsql-bin/*
+*.env
 
 # System files
 .DS_Store
