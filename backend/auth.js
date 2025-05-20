@@ -7,6 +7,7 @@ const path = require('path');
 const router = express.Router();
 const db = require('./db');
 const passport = require('passport');
+
 const createNotification = require("./middleware/createNotification");
 const sendEmail = require("./middleware/sendEmail");
 require('./middleware/oauth');
@@ -43,8 +44,8 @@ router.post('/register', async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const result = await db.query(
-            `INSERT INTO users (displayName, password, email, picture, bio, notifications, pro, setup, dateCreated) 
-            VALUES ($1, $2, $3, $4, $5, COALESCE($6, true), false, true, NOW()) RETURNING id, displayName, email, notifications`,
+            `INSERT INTO users (displayName, password, email, picture, bio, notifications, pro, setup) 
+            VALUES ($1, $2, $3, $4, $5, COALESCE($6, true), false, true) RETURNING id, displayName, email, notifications`,
             [displayName, hashedPassword, email, picture, bio, notifications]
         );
 
@@ -96,7 +97,7 @@ router.post('/login', async (req, res, next) => {
             process.env.SECRET_KEY,
             { expiresIn: "7d" });
 
-        await db.query("INSERT INTO sessions (user_id, token, created) VALUES ($1, $2, NOW())", [user.rows[0].id, token]);
+        await db.query("INSERT INTO sessions (user_id, token) VALUES ($1, $2)", [user.rows[0].id, token]);
 
         return res.status(200).json({ message: "Login successful", token });
     } catch (error) {
@@ -291,7 +292,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false 
     process.env.SECRET_KEY,
     { expiresIn: "7d" });
 
-    await db.query("INSERT INTO sessions (user_id, token, created) VALUES ($1, $2, NOW())", [user.id, token]);
+    await db.query("INSERT INTO sessions (user_id, token) VALUES ($1, $2)", [user.id, token]);
 
 //    res.status(200).json({ message: "oauth successful", token });
     return res.redirect(`${process.env.FRONTEND_URL}/oauth-success?token=${token}`);

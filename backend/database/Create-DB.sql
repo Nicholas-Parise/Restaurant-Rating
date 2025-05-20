@@ -23,7 +23,7 @@ CREATE TABLE categories(
 id SERIAL PRIMARY KEY,   
 name TEXT,
 description TEXT,
-created TIMESTAMP
+created TIMESTAMP DEFAULT NOW()
 );
 
 
@@ -33,7 +33,6 @@ location_id BIGINT REFERENCES locations (id),
 name TEXT,
 description TEXT,
 pictures TEXT,
-lastupdated TIMESTAMP,
 type TEXT,
 cuisine TEXT,
 phone TEXT,
@@ -51,7 +50,8 @@ delivery BOOLEAN,
 cash BOOLEAN,
 visa BOOLEAN,
 mastercard BOOLEAN,
-vegetarian BOOLEAN
+vegetarian BOOLEAN,
+updated TIMESTAMP
 );
 
 CREATE TABLE menuItems(
@@ -59,16 +59,16 @@ id SERIAL PRIMARY KEY,
 restaurant_id BIGINT REFERENCES restaurants (id),
 name TEXT,
 description TEXT,
-lastupdated TIMESTAMP,
 price real,
-pictures TEXT
+pictures TEXT,
+updated TIMESTAMP
 );
 
 CREATE TABLE restaurant_cats(
 id SERIAL PRIMARY KEY,   
 restaurant_id BIGINT REFERENCES restaurants (id),
 category_id INTEGER REFERENCES categories (id),
-created TIMESTAMP
+created TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE users(
@@ -83,22 +83,31 @@ notifications BOOLEAN,
 isadmin BOOLEAN,
 iscritic BOOLEAN,
 isowner BOOLEAN,
-datecreated TIMESTAMP,
-dateupdated TIMESTAMP
+created TIMESTAMP DEFAULT NOW(),
+updated TIMESTAMP
 );
 
+CREATE TABLE notifications(
+id SERIAL PRIMARY KEY,   
+user_id integer REFERENCES users(id) ON DELETE CASCADE,
+title TEXT,
+body TEXT,
+url TEXT,
+is_read BOOLEAN,
+created TIMESTAMP DEFAULT NOW()
+);
 
 CREATE TABLE popular(
 id SERIAL PRIMARY KEY,   
 restaurant_id BIGINT REFERENCES restaurants (id) ,
-created TIMESTAMP
+created TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE sessions(
 id SERIAL PRIMARY KEY,   
 user_id integer REFERENCES users(id),
 token TEXT UNIQUE,
-created TIMESTAMP
+created TIMESTAMP DEFAULT NOW()
 );
 
 
@@ -111,6 +120,6 @@ visited BOOLEAN,
 desired BOOLEAN,
 score INT,
 description TEXT,
-dateUpdated TIMESTAMP,
-dateCreated TIMESTAMP
+updated TIMESTAMP,
+created TIMESTAMP DEFAULT NOW()
 );
