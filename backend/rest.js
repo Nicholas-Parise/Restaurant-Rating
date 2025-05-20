@@ -3,6 +3,8 @@ const db = require('./db');
 const bodyParser = require('body-parser');
 const reviewRoutes = require('./reviews');
 const restaurantRoutes = require('./restaurant');
+const authRoutes = require('./auth');
+const userRoutes = require('./users');
 
 const app = express();
 
@@ -18,8 +20,10 @@ app.use((req,res,next)=>{
 })
 
 // Routes
+app.use('/auth', authRoutes);
 app.use('/reviews', reviewRoutes);
 app.use('/restaurants', restaurantRoutes);
+app.use('/users', userRoutes);
 
 
 module.exports = app;

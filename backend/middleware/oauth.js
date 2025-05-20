@@ -11,7 +11,7 @@ passport.use(new GoogleStrategy({
         try {
             const email = profile.emails[0].value;
             const googleId = profile.id;
-            const name = profile.displayName;
+            const name = profile.name;
 
             // Check if user exists, depending on their 
             let result = await db.query('SELECT * FROM users WHERE google_id = $1 OR email = $2', [googleId, email]);
@@ -27,7 +27,7 @@ passport.use(new GoogleStrategy({
                 // Create user
                /*
                 const insertResult = await db.query(
-                    'INSERT INTO users (email, displayName, google_id) VALUES ($1, $2, $3) RETURNING *',
+                    'INSERT INTO users (email, name, google_id) VALUES ($1, $2, $3) RETURNING *',
                     [email, name, googleId]
                 );
                 */
@@ -36,8 +36,8 @@ passport.use(new GoogleStrategy({
                 const password = "Oauth-User";
 
                 const result = await db.query(
-                    `INSERT INTO users (email, password, displayName, google_id, picture, notifications, pro) 
-                    VALUES ($1, $2, $3, $4, $5, true, false) RETURNING id, displayName, email, notifications`,
+                    `INSERT INTO users (email, password, name, google_id, picture, notifications, pro) 
+                    VALUES ($1, $2, $3, $4, $5, true, false) RETURNING id, name, email, notifications`,
                     [email, password, name, googleId, picture]);
 
                 user = result.rows[0];

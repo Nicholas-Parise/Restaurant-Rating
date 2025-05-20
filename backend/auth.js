@@ -16,10 +16,10 @@ require("dotenv").config();
 // localhost:3000/auth/register
 // register account
 router.post('/register', async (req, res, next) => {
-    const { email, password, displayName, bio, notifications } = req.body;
+    const { email, password, name, bio, notifications } = req.body;
 
-    if (!email || !password || !displayName) {
-        return res.status(400).json({ message: "email, password and displayName are required" });
+    if (!email || !password || !name) {
+        return res.status(400).json({ message: "email, password and name are required" });
     }
 
     // Type checking
@@ -29,8 +29,8 @@ router.post('/register', async (req, res, next) => {
     if (password !== undefined && typeof password !== "string") {
         return res.status(400).json({ error: "password must be a string" });
     }
-    if (displayName !== undefined && typeof displayName !== "string") {
-        return res.status(400).json({ error: "displayName must be a string" });
+    if (name !== undefined && typeof name !== "string") {
+        return res.status(400).json({ error: "name must be a string" });
     }
 
     if (bio !== undefined && typeof bio !== "string") {
@@ -44,17 +44,19 @@ router.post('/register', async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const result = await db.query(
-            `INSERT INTO users (displayName, password, email, picture, bio, notifications, pro, setup) 
-            VALUES ($1, $2, $3, $4, $5, COALESCE($6, true), false, true) RETURNING id, displayName, email, notifications`,
-            [displayName, hashedPassword, email, picture, bio, notifications]
+            `INSERT INTO users (name, password, email, picture, bio, notifications, pro, setup) 
+            VALUES ($1, $2, $3, $4, $5, COALESCE($6, true), false, true) RETURNING id, name, email, notifications`,
+            [name, hashedPassword, email, picture, bio, notifications]
         );
 
         // send notification if allowed 
+        // not enabled for now.
+        /* 
         if (result.rows[0].notifications) {
-            await createNotification([result.rows[0].id], "Welcome to Wishify!", "Hello from the wishify team! we are so excited to welcome you to this platform.", "/home");
-            await welcomeEmail(email, displayName);
-        }
-
+            await createNotification([result.rows[0].id], "Welcome to TBD!", "Hello from the TBD team! we are so excited to welcome you to this platform.", "/home");
+            await welcomeEmail(email, name);
+        }*/
+        
         res.status(201).json({ message: "User registered successfully", user: result.rows[0] });
     } catch (error) {
         console.error(error);
@@ -93,7 +95,7 @@ router.post('/login', async (req, res, next) => {
         }
 
         const token = jwt.sign(
-            { userId: user.rows[0].id, email: user.rows[0].email, displayName: user.rows[0].displayname },
+            { userId: user.rows[0].id, email: user.rows[0].email, name: user.rows[0].name },
             process.env.SECRET_KEY,
             { expiresIn: "7d" });
 
@@ -144,7 +146,7 @@ router.get('/me', async (req, res, next) => {
             return res.status(401).json({ message: "Invalid token" });
         }
 
-        const user = await db.query("SELECT id, displayName, email, picture, bio, setup, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1", [session.rows[0].user_id]);
+        const user = await db.query("SELECT id, name, email, picture, bio, setup, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1", [session.rows[0].user_id]);
 
         if (user.rows.length === 0) { // If a user gets removed but the token is still active 
             return res.status(404).json({ message: "User not found" });
@@ -189,7 +191,7 @@ router.post('/forgot-password', async (req, res, next) => {
 
     try {
         // Check if user exists
-        const userCheck = await db.query("SELECT id, displayName, google_id FROM users WHERE email = $1", [email]);
+        const userCheck = await db.query("SELECT id, name, google_id FROM users WHERE email = $1", [email]);
 
         if (userCheck.rows.length === 0) {
             return res.status(404).json({ message: "No account with that email exists." });
@@ -200,7 +202,7 @@ router.post('/forgot-password', async (req, res, next) => {
         }
 
         const userId = userCheck.rows[0].id;
-        const user_displayName = userCheck.rows[0].displayname;
+        const user_name = userCheck.rows[0].name;
         const resetToken = await generateUniqueToken(); // need to ensure a unique token, don't want a crash
 
         await db.query("BEGIN"); // Start a transaction
@@ -209,7 +211,7 @@ router.post('/forgot-password', async (req, res, next) => {
 
         const resetLink = `https://www.wishify.ca/forgot?token=${resetToken}`;
 
-        await forgotEmail(email,user_displayName,resetLink,resetToken,1);
+        await forgotEmail(email,user_name,resetLink,resetToken,1);
 
         await db.query("COMMIT"); // Commit the transaction
         
@@ -288,7 +290,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false 
 
 
   const token = jwt.sign(
-    { userId: user.id, email: user.email, displayName: user.displayname },
+    { userId: user.id, email: user.email, name: user.name },
     process.env.SECRET_KEY,
     { expiresIn: "7d" });
 
