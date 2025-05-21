@@ -5,6 +5,8 @@ import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
 import { RestaurantComponent } from './restaurant/restaurant.component';
 import { TagComponent } from './tag/tag.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 export const routes: Routes = [
     {path: 'home', component: HomeComponent},
@@ -15,5 +17,7 @@ export const routes: Routes = [
     {path: 'restaurant', component: RestaurantComponent},
     {path: 'user/:username', component: UserComponent},
     {path: 'tag/:id', component: TagComponent},
+    {path: 'login', component: LoginComponent},
+    {path: 'register', component: RegisterComponent},
     {path: '**', component: HomeComponent, pathMatch: 'full'}
 ];
