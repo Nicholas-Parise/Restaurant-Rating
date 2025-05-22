@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS popular;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS restaurant_cats;
@@ -79,6 +80,7 @@ password TEXT NOT NULL,
 email TEXT UNIQUE NOT NULL,
 picture TEXT,
 bio TEXT,
+pro BOOLEAN,
 setup BOOLEAN,
 notifications BOOLEAN,
 isadmin BOOLEAN,

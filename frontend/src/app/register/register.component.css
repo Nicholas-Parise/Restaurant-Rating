@@ -43,6 +43,15 @@ input {
   font-size: 0.8rem;
 }
 
+.error-message {
+  margin-top: 1rem;
+  color: red;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+
 button {
   width: 100%;
   padding: 0.75rem;
