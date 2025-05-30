@@ -25,18 +25,31 @@ constructor(private reviewDataService: ReviewDataService){}
 
   ngOnInit(){
     this.reviewForm = new FormGroup({
-      "review": new FormControl(null),
+      "description": new FormControl(null),
       "score": new FormControl(null),
-      "favourited": new FormControl(null),
-      "visited": new FormControl(null)
+      "favorited": new FormControl(null),
+      "visited": new FormControl(null),
+      "desired": new FormControl(null)
     })
   }
 
   onSubmit(){
     console.log(this.reviewForm);
     console.log(this.restaurantEntry.name);
-    //constructor(public id:number, public review: string, public favourited: boolean, public visited: boolean, public score: number, public username:string){}
-    const newEntry = new ReviewEntry(-1,this.reviewForm.value.review,this.reviewForm.value.favourited,this.reviewForm.value.visited,this.reviewForm.value.score,"admin");
+    //constructor(public id:number, public review: string, public favorited: boolean, public visited: boolean, public score: number, public username:string){}
+    const newEntry = new ReviewEntry(
+        -1, 
+        this.restaurantEntry.id,
+        -1,
+        this.reviewForm.value.description, 
+        this.reviewForm.value.favorited, 
+        this.reviewForm.value.visited, 
+        this.reviewForm.value.desired, 
+        this.reviewForm.value.score, 
+        "null",
+        "null",
+        "null");
+
     this.reviewDataService.onAddReviewEntry(newEntry);
     this.closeForm();
   }

@@ -48,8 +48,9 @@ export class RestaurantComponent implements OnInit{
   }
 
   ngOnInit() : void{
-
-    this.reviewDataService.GetReviews();
+    
+//    this.reviewDataService.getRestauranReviews(this.restaurantId, this.currentPage, this.pageSize);
+    //this.reviewDataService.GetReviews();
     this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry =>{
       this.reviewEntry = reviewEntry;
     });
@@ -80,6 +81,7 @@ export class RestaurantComponent implements OnInit{
       }else{
         try{
           this.restaurantDataService.GetResturauntsById(this.restaurantId);
+          this.loadReviews();
           
         }catch(e){
           this.router.navigate(['/']);
@@ -100,7 +102,7 @@ export class RestaurantComponent implements OnInit{
 
 
   loadReviews(): void {
-    this.reviewDataService.getReviews(this.restaurantId, this.currentPage, this.pageSize);
+    this.reviewDataService.getRestauranReviews(this.restaurantId, this.currentPage, this.pageSize);
   }
 
 

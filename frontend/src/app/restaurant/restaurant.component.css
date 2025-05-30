@@ -83,6 +83,45 @@ ul {
 }
 
 
+.icon-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0;
+}
+
+.icon-list li {
+  font-size: 24px;
+}
+
+
+.text-white{
+   color: white;
+}
+
+.text-green {
+  color: #28a745;
+}
+
+.text-blue {
+  color: #007bff;
+}
+
+.text-red {
+  color: #dc3545;
+}
+
+.text-grey {
+  color: #ccc;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+
   @media (max-width: 800px) {
     .grid-container {
       display: block;

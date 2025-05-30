@@ -54,11 +54,15 @@ router.get('/:restaurantId', async (req, res,next) => {
   
   
   try {
-    const result = await db.query('SELECT * FROM restaurants WHERE id = '+restaurantId);
+    const result = await db.query(`SELECT * FROM restaurants WHERE id = $1`,[restaurantId]);
     const restaurantFromServer =  result.rows[0];
+
+    const reviewResult = await db.query('SELECT * FROM reviews WHERE restaurant_id = $1 AND visited = TRUE LIMIT 20',[restaurantId]);
+    const reviews =  reviewResult.rows;
 
     res.json({
       restaurants: restaurantFromServer,
+      reviews: reviews
     });
 
 

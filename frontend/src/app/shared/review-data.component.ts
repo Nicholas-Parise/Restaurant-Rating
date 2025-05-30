@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ReviewEntry } from './review-entry.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
+import { AuthDataService } from './auth-data.component';
+
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,7 @@ export class ReviewDataService {
   private baseUrl = 'http://localhost:3000/';
 
   GetReviews(){
-    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>('http://localhost:3000/reviews').subscribe((jsonData) =>{
+    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}reviews`).subscribe((jsonData) =>{
       this.reviewEntry = jsonData.reviews;
       this.reviewSubject.next(this.reviewEntry);
     })
@@ -27,8 +29,13 @@ export class ReviewDataService {
 
   onAddReviewEntry(singleReviewEntry:ReviewEntry){
 
-    this.http.post<{message: string}>('http://localhost:3000/reviews/add',singleReviewEntry).subscribe((jsonData) =>{
-      this.GetReviews();
+  //localStorage.setItem('authToken', token);
+
+    const headers = new HttpHeaders().set('Authorization',  `Bearer ${AuthDataService.getToken()}`);
+    
+
+    this.http.post<{message: string}>(`${this.baseUrl}reviews`,singleReviewEntry,{ headers } ).subscribe((jsonData) =>{
+      this.getRestauranReviews(singleReviewEntry.restaurant_id,0,10);
     })
 
     this.reviewEntry.push(singleReviewEntry);
@@ -36,7 +43,7 @@ export class ReviewDataService {
   }
 
 
-  getReviews(restaurantId: number, page: number, pageSize: number){
+  getRestauranReviews(restaurantId: number, page: number, pageSize: number){
     this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}reviews/restaurants/${restaurantId}?&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
       this.reviewEntry = jsonData.reviews;
       this.reviewSubject.next(this.reviewEntry);

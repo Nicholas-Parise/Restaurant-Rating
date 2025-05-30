@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('./db');
 const router = express.Router();
+const authenticate = require('./middleware/authenticate');
 
 let reviewEntry = [
     {id:0, review:'This place is horrible',favourited:false,visited:true,score:1,username:'treasureHound'},
@@ -55,18 +56,27 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
   });
 
 
-  router.post('/add', (req, res) => {
+  router.post('/', authenticate, async(req, res) => {
 
-    reviewEntry.push({id: req.body.id, 
-        review: req.body.review,
-        favourited: req.body.favourited,
-        visited: req.body.visited, 
-        score: req.body.score,
-        username: req.body.username});
-    res.status(200).json({
-        message: 'Post submitted'
-    });
+    const { restaurant_id, favorited, visited, desired, score, description } = req.body;
+    const userId = req.user.userId; // Get user ID from authenticated token
 
+    if (!restaurant_id) {
+        return res.status(400).json({ message: "restaurant_id is required" });
+    }
+    try{
+        const result = await db.query(
+                `INSERT INTO reviews (restaurant_id, user_id, favorited, visited, desired, score, description) 
+                VALUES ($1, $2, COALESCE($3, false), COALESCE($4, false), COALESCE($5, false), COALESCE($6, 0), $7) RETURNING *`,
+                [restaurant_id, userId, favorited, visited, desired, score, description]
+            );
+
+        return res.status(200).json(result.rows);
+    }catch(error){
+    console.error("Error creating review:", error);
+    res.status(500).json({ error: error.message });
+    }
+          
   });
 
 

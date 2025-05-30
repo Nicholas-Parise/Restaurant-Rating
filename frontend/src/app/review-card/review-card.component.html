@@ -1,7 +1,7 @@
 <div class="comment">
 
     <p class="signature">Review by: <a href="user/{{reviewEntry.username}}">{{reviewEntry.username}}</a></p>
-    <p>{{reviewEntry.review}}</p>
+    <p>{{reviewEntry.description}}</p>
 
     <div class="stars">
         <span class="star" [class.on]="reviewEntry.score >= 2" [class.half]="reviewEntry.score == 1 "></span>
@@ -9,7 +9,7 @@
         <span class="star" [class.on]="reviewEntry.score >= 6" [class.half]="reviewEntry.score == 5 "></span>
         <span class="star" [class.on]="reviewEntry.score >= 8" [class.half]="reviewEntry.score == 7 "></span>
         <span class="star" [class.on]="reviewEntry.score >= 10" [class.half]="reviewEntry.score == 9 "></span>
-        <span class="heart" [class.on]="reviewEntry.favourited == true"></span>   
+        <span class="heart" [class.on]="reviewEntry.favorited == true"></span>   
     </div>
 </div>
 

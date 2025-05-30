@@ -5,7 +5,7 @@
     <form (ngSubmit)="onSubmit()" [formGroup]="reviewForm">
         <div class="form-group">
             <label for="review">review</label>
-            <input type="text" class="form-control" formControlName="review">
+            <input type="text" class="form-control" formControlName="description">
 
             <label for="score">score</label>
             <input type="number" class="form-control" formControlName="score">
@@ -13,8 +13,8 @@
             <label for="visited">visited</label>
             <input type="checkbox" class="form-control" formControlName="visited">
 
-            <label for="favourited">love</label>
-            <input type="checkbox" class="form-control" formControlName="favourited">
+            <label for="favorited">love</label>
+            <input type="checkbox" class="form-control" formControlName="favorited">
 
         </div>
         <button class="btn btn-success">Submit</button>
