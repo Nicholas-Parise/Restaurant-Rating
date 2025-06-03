@@ -33,7 +33,6 @@ export class ReviewDataService {
 
     const headers = new HttpHeaders().set('Authorization',  `Bearer ${AuthDataService.getToken()}`);
     
-
     this.http.post<{message: string}>(`${this.baseUrl}reviews`,singleReviewEntry,{ headers } ).subscribe((jsonData) =>{
       this.getRestauranReviews(singleReviewEntry.restaurant_id,0,10);
     })

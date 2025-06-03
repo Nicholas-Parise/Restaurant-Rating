@@ -18,13 +18,13 @@ router.get('/', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
 
-    const result = await db.query('SELECT id, email, name, bio, picture, pro, setup, notifications, created, updated, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1', [userId]);
+    const result = await db.query('SELECT id, username, email, name, bio, picture, pro, setup, notifications, created, updated, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1', [userId]);
 
-    const result2 = await db.query(
+    const result2 = "null"/*await db.query(
       `SELECT c.*, uc.love FROM categories c
         JOIN user_categories uc ON c.id = uc.category_id
         WHERE uc.user_id = $1`, [userId]);
-
+*/
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -196,21 +196,22 @@ router.delete('/', authenticate, async (req, res) => {
 
 
 // localhost:3000/users/0
-// get specific user
+// get specific user by username
 router.get('/:userId', async (req, res) => {
   try {
-    const userId = parseInt(req.params.userId);
+    const userId = req.params.userId;
 
     if (!userId) {
-      return res.status(400).json({ message: "userId is required to get account" });
+      return res.status(400).json({ message: "username is required to get account" });
     }
 
-    const result = await db.query('SELECT id, name, bio, picture, notifications, pro, created FROM users WHERE id = $1', [userId]);
-    const result2 = await db.query(
+    const result = await db.query('SELECT username, name, bio, picture, notifications, pro, created FROM users WHERE username = $1', [userId]);
+    const result2 = "null" 
+    /*await db.query(
       `SELECT c.*, uc.love FROM categories c
         JOIN user_categories uc ON c.id = uc.category_id
         WHERE uc.user_id = $1`, [userId]);
-
+*/
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }

@@ -20,11 +20,13 @@ import { Subscription } from 'rxjs';
 })
 export class UserComponent {
 
-  userEntry: UserEntry;
+  userEntry: any;
+  userSubscription = new Subscription();
+
   favRestaurantEntry: RestaurantEntry[];
   recentRestaurantEntry: RestaurantEntry[];
 
-  reviewEntry : ReviewEntry[]
+  reviewEntry : ReviewEntry[];
   reviewSubscription = new Subscription();
 
   username: string;
@@ -35,42 +37,39 @@ constructor(private userDataService : UserDataService, private restaurantDataSer
 
 ngOnDestroy() : void{
   this.reviewSubscription.unsubscribe();
+  this.userSubscription.unsubscribe();
 }
-
 
 ngOnInit() : void{
 
-  this.route.params.subscribe(params => {
-        
-    console.log(this.route.snapshot.params)
-    this.username = params['username'];
-    console.log('test: '+this.username);
+    this.userSubscription = this.userDataService.userSubject.subscribe(userEntry =>{
+      console.log(userEntry);
+      this.userEntry = userEntry;
+    });
 
-
-    this.reviewDataService.GetReviews();
-    this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry =>{
+  this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry =>{
       this.reviewEntry = reviewEntry;
     });
 
 
+  this.route.params.subscribe(params => {
+        
+    this.username = params['username'];
+
+   if(this.username == null){
+        console.log('empty');
+        this.userDataService.GetUser();        
+      }else{
+        try{
+          this.userDataService.GetUserById(this.username);  
+          this.reviewDataService.GetReviews();
+        }catch(e){
+         
+        }
+      }
 
     this.favRestaurantEntry = this.restaurantDataService.restaurantEntry;
     this.recentRestaurantEntry = this.restaurantDataService.restaurantEntry;
-
-    if(this.username == null){
-      console.log('empty');
-      this.userEntry = this.userDataService.GetUserById('admin');
-    }else{
-      try{
-        this.userEntry = this.userDataService.GetUserById(this.username);
-        
-      }catch(e){
-        this.userEntry = this.userDataService.GetUserById('admin');
-      }
-    }
-      //this.restaurantDataService.GetResturauntsById(this.id).subscribe( restaurantEntry => {
-      //this.restaurantEntry = restaurantEntry
-      //}
     
   })
 

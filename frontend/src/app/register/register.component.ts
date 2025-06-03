@@ -20,7 +20,7 @@ ngOnInit(): void {}
 
   constructor(private fb: FormBuilder, private auth: AuthDataService) {
     this.registerForm = this.fb.group({
-      name: ['', Validators.required],
+      username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
@@ -42,14 +42,14 @@ onSubmit(): void {
     this.passwordMismatch = false;
 
     const userData = {
-      name: this.f['name'].value,
+      username: this.f['username'].value,
       email: this.f['email'].value,
       password: this.f['password'].value
     };
 
     console.log('Registering user:', userData);
     this.errorMessage = null;
-    this.auth.PostRegister(userData.name, userData.password, userData.email).subscribe({
+    this.auth.PostRegister(userData.username, userData.password, userData.email).subscribe({
       next: (response) => {
         console.log('register success:', response);
         // Navigate or show success

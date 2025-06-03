@@ -1,24 +1,166 @@
 .formContainer {
     display: none;
-    z-index: 2;
-    width: 200px;
-    height: 200px;
+    z-index: 999;
+    width: 400px;
+    max-width: 90%;
     background-color: var(--review);;
     
-    position: absolute;
-    top:0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    
-    margin: auto;
+    border-radius: 12px;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+    color: #f1f1f1;
 }
+
 
 .menuClose {
     position: absolute;
     color: red;
-    background-color: #383847;
-    border-radius: 10px;
-    top: 0px;
-    right: 0px;
+    background-color: transparent;
+    border: none;
+    font-size: 1.2rem;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+}
+
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  width: 300px;
+}
+
+
+.toggles {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+  resize: none;
+  overflow: auto;
+}
+
+
+.stars-input {
+  display: flex;
+  gap: 4px;
+}
+
+.star {
+      cursor: pointer;
+    font-size: x-large;
+    width: 20px;
+    display: inline-block;
+    color: gray;
+}
+.star:last-child {
+    margin-right: 0;
+}
+.star:before {
+    content:'\2605';
+}
+.star.on {
+    color: gold;
+}
+.star.half:after {
+    content:'\2605';
+    color: gold;
+    position: absolute;
+    margin-left: -20px;
+    width: 10px;
+    overflow: hidden;
+}
+
+
+.rating-extras {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  gap: 20px;
+}
+
+
+.heart, .visited {
+  font-size: 28px;
+  color: gray;
+   line-height: 1;
+   font-family: Arial, sans-serif;
+  display: inline-block;
+  width: 24px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+}
+
+
+.heart:before {
+    content:'\2665';
+}
+.heart.on {
+    color: darkorange;
+    display: inline;
+}
+
+
+.visited:before {
+  content: '\2713';
+}
+.visited.on {
+  color: green;
+}
+
+
+form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+form input[type="text"],
+form input[type="number"] {
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  background: #2e2e40;
+  color: white;
+}
+
+form .btn {
+  margin-top: 16px;
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+form .btn:hover {
+  background: #218838;
+}
+
+.icon-label {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.icon-text {
+  font-size: 12px;
+  color: gray;
+  margin-top: 2px;
 }

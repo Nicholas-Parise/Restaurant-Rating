@@ -13,9 +13,9 @@ export class AuthDataService {
 
   private baseUrl = 'http://localhost:3000/';
 
-  PostRegister(name:String, password:String, email:String): Observable<any> {
+  PostRegister(username:String, password:String, email:String): Observable<any> {
 
-    var sendData = {"name":name, "password":password, "email":email};
+    var sendData = {"username":username, "password":password, "email":email};
 
     return this.http.post<any>(`${this.baseUrl}auth/register`,sendData).pipe(
       catchError((error) => {

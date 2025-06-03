@@ -37,7 +37,12 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
     const offset = (page - 1) * pageSize;
 
  try {
-    const result = await db.query('SELECT * FROM reviews WHERE restaurant_id = $1 LIMIT $2 OFFSET $3',[restaurantId,pageSize,offset]);
+    const result = await db.query(`
+      SELECT r.id, r.restaurant_id, r.favorited, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username FROM reviews r 
+      LEFT JOIN users u ON r.user_id = u.id
+      WHERE r.restaurant_id = $1 LIMIT $2 OFFSET $3`,[restaurantId,pageSize,offset]);
+    
+      
     const allReviews = 10; //await db.query('SELECT * FROM reviews WHERE restaurant_id = $1 LIMIT $2 OFFSET $3',[restaurantId,pageSize,offset]);
     const reviewsFromServer =  result.rows;
 

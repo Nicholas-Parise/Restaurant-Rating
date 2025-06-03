@@ -1,6 +1,6 @@
 <div class="comment">
 
-    <p class="signature">Review by: <a href="user/{{reviewEntry.username}}">{{reviewEntry.username}}</a></p>
+    <p class="signature">Review by: <a [routerLink]="['/user', reviewEntry.username]">{{reviewEntry.name || reviewEntry.username}}</a></p>
     <p>{{reviewEntry.description}}</p>
 
     <div class="stars">

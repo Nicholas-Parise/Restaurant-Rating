@@ -2,19 +2,37 @@
    
     <button (click)="closeForm()" class="menuClose">X</button>
 
-    <form (ngSubmit)="onSubmit()" [formGroup]="reviewForm">
+    <form (ngSubmit)="onSubmit()" [formGroup]="reviewForm" class="review-form">
         <div class="form-group">
             <label for="review">review</label>
-            <input type="text" class="form-control" formControlName="description">
+            <textarea  placeholder="Type your review..." type="text"  class="form-control" rows="3" formControlName="description"></textarea>
 
-            <label for="score">score</label>
-            <input type="number" class="form-control" formControlName="score">
+            <label>Your rating</label>
+            <div class="stars-input">
+            <span
+                *ngFor="let star of stars; let i = index"
+                class="star"
+                [class.on]="selectedRating >= (i + 1) * 2"
+                [class.half]="selectedRating === (i * 2) + 1"
+                (click)="selectRating(i)"
+                (dblclick)="selectHalfRating(i)"
+            ></span>
+            </div>
 
-            <label for="visited">visited</label>
-            <input type="checkbox" class="form-control" formControlName="visited">
+            <input type="hidden" formControlName="score" [value]="selectedRating" />
 
-            <label for="favorited">love</label>
-            <input type="checkbox" class="form-control" formControlName="favorited">
+        <div class="rating-extras">
+            <div class="icon-label" (click)="toggleFavorite()">
+            <span class="heart" [class.on]="reviewForm.get('favorited')?.value"></span>
+        <div class="icon-text">Loved</div>
+        </div>
+
+        <div class="icon-label" (click)="toggleVisited()">
+            <span class="visited" [class.on]="reviewForm.get('visited')?.value"></span>
+            <div class="icon-text">Visited</div>
+        </div>    
+    </div>
+
 
         </div>
         <button class="btn btn-success">Submit</button>

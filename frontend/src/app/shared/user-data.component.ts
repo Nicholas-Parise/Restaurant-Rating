@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { UserEntry } from './user-entry.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { AuthDataService } from './auth-data.component';
 
 @Injectable({
   providedIn: 'root'
@@ -7,27 +10,37 @@ import { UserEntry } from './user-entry.model';
 
 export class UserDataService {
 
-    userEntry: UserEntry[] = [
-      new UserEntry(0,'admin','assets/placeholder-avatar.png','description',false,true),
-      new UserEntry(1,'treasureHound','assets/placeholder-avatar.png','description',false,false),
-      new UserEntry(2,'nickpar03','assets/placeholder-avatar.png','description',false,false),
-      new UserEntry(3,'jesus','assets/placeholder-avatar.png','description',false,false)  
-  ];
+  userEntry: UserEntry[] = [];
   
-  constructor() { }
+  userSubject = new Subject<UserEntry[]>();
 
-  GetUsers() : UserEntry[]{
-    return this.userEntry;
+  constructor(private http: HttpClient) { }
+
+  private baseUrl = 'http://localhost:3000/';
+
+
+  GetUsers(){
+    //return this.userEntry;
   }
 
-  GetUserById(username:string) : UserEntry{
-    let temp = this.userEntry.find(userEntry => userEntry.username == username);
-    
-    if(temp === undefined){
-      throw new TypeError('index Does not exist');
-    }
-    
-    return temp;
+  GetUserById(username:string){
+    this.http.get<{user: UserEntry[], totalReviews: Number}>(`${this.baseUrl}users/${username}`).subscribe((jsonData) =>{
+      this.userEntry = jsonData.user;
+      this.userSubject.next(this.userEntry);
+    })
   }
+
+  GetUser(){
+
+    const headers = new HttpHeaders().set('Authorization',  `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.get<{user: UserEntry[], totalReviews: Number}>(`${this.baseUrl}users`, { headers }).subscribe((jsonData) =>{
+      this.userEntry = jsonData.user;
+      this.userSubject.next(this.userEntry);
+    })
+  }
+
+
+
 
 }

@@ -1,15 +1,13 @@
 <div class="container">
-
-
-
+    <div *ngIf="userEntry; else loading"></div>
 <div class="grid-container">
 
     <div class="grid-item">
-        <img class = "image" src="{{userEntry.avatar}}" alt="">
+        <img class = "image" [src]="userEntry?.pictures?.[0] || 'assets/placeholder-avatar.png'" alt="">
     </div>
 
     <div class="grid-item">
-        <h2>{{userEntry.username}}</h2>
+        <h2>{{userEntry?.name || userEntry.username}}</h2>
         <p>{{userEntry.description}}</p>
     </div>
 </div>
@@ -32,6 +30,7 @@
 </div>
 
 
+<h2 class="section-header">Activity</h2>
 <ul class="all-reviews">
     <li> 
         <div class="" *ngFor="let reviewEntry of reviewEntry">
@@ -44,5 +43,10 @@
 <p>{{this.currentPage}}</p>
 <button (click)="onNextPage()">Next</button>
 
+
+
+<ng-template #loading>
+    <p>Loading...</p>
+  </ng-template>
 
 </div>

@@ -2,9 +2,9 @@
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
       <h2>Register</h2>
     <div>
-      <label>Name</label>
-      <input type="text" formControlName="name" />
-      <div *ngIf="f['name'].touched && f['name'].invalid" class="error">Name is required</div>
+      <label>Username</label>
+      <input type="text" formControlName="username" />
+      <div *ngIf="f['username'].touched && f['username'].invalid" class="error">Username is required</div>
     </div>
 
     <div>

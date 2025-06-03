@@ -16,10 +16,10 @@ require("dotenv").config();
 // localhost:3000/auth/register
 // register account
 router.post('/register', async (req, res, next) => {
-    const { email, password, name, bio, notifications } = req.body;
+    const { email, password, username, bio, notifications } = req.body;
 
-    if (!email || !password || !name) {
-        return res.status(400).json({ message: "email, password and name are required" });
+    if (!email || !password || !username) {
+        return res.status(400).json({ message: "email, password and username are required" });
     }
 
     // Type checking
@@ -29,8 +29,8 @@ router.post('/register', async (req, res, next) => {
     if (password !== undefined && typeof password !== "string") {
         return res.status(400).json({ error: "password must be a string" });
     }
-    if (name !== undefined && typeof name !== "string") {
-        return res.status(400).json({ error: "name must be a string" });
+    if (username !== undefined && typeof username !== "string") {
+        return res.status(400).json({ error: "username must be a string" });
     }
 
     if (bio !== undefined && typeof bio !== "string") {
@@ -44,9 +44,9 @@ router.post('/register', async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const result = await db.query(
-            `INSERT INTO users (name, password, email, picture, bio, notifications, pro, setup) 
-            VALUES ($1, $2, $3, $4, $5, COALESCE($6, true), false, true) RETURNING id, name, email, notifications`,
-            [name, hashedPassword, email, picture, bio, notifications]
+            `INSERT INTO users (username, password, email, picture, bio, notifications, pro, setup) 
+            VALUES ($1, $2, $3, $4, $5, COALESCE($6, true), false, true) RETURNING id, username, email, notifications`,
+            [username, hashedPassword, email, picture, bio, notifications]
         );
 
         // send notification if allowed 
@@ -64,10 +64,10 @@ router.post('/register', async (req, res, next) => {
         // Handle duplicate email error
         // error code 23505 means unique constraint violated.
         if (error.code === "23505") {
-            return res.status(409).json({ message: "Email is already in use" });
+            return res.status(409).json({ message: "Email or username is already in use" });
         }
 
-        res.status(500).json({ message: "Error registering user" });
+        return res.status(500).json({ message: "Error registering user" });
     }
 
 })
@@ -146,13 +146,39 @@ router.get('/me', async (req, res, next) => {
             return res.status(401).json({ message: "Invalid token" });
         }
 
-        const user = await db.query("SELECT id, name, email, picture, bio, setup, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1", [session.rows[0].user_id]);
+        const user = await db.query("SELECT id, username, email, picture, bio, setup, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1", [session.rows[0].user_id]);
 
         if (user.rows.length === 0) { // If a user gets removed but the token is still active 
             return res.status(404).json({ message: "User not found" });
         }
 
         return res.status(200).json(user.rows[0]);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+
+});
+
+
+// localhost:3000/auth/username
+// check if a username exists
+router.get('/username', async (req, res, next) => {
+
+   const { username } = req.body;
+
+    if (!username) {
+        return res.status(401).json({ message: "username required" });
+    }
+
+    try {
+        const user = await db.query("SELECT 1 FROM users WHERE username = $1", [username]);
+
+        if (user.rows.length === 0) {
+            return res.status(401).json({ message: "username exists" });
+        }
+
+        return res.status(200);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error" });

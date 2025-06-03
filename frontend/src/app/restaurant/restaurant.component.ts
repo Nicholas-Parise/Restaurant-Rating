@@ -44,7 +44,7 @@ export class RestaurantComponent implements OnInit{
   ngOnDestroy() : void{
     this.reviewSubscription.unsubscribe();
     this.tagSubscription.unsubscribe();
-   
+    this.restaurantSubscription.unsubscribe();
   }
 
   ngOnInit() : void{

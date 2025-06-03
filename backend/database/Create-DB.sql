@@ -65,18 +65,20 @@ pictures TEXT,
 updated TIMESTAMP
 );
 
-CREATE TABLE restaurant_cats(
-id SERIAL PRIMARY KEY,   
+CREATE TABLE restaurant_cats( 
 restaurant_id BIGINT REFERENCES restaurants (id),
 category_id INTEGER REFERENCES categories (id),
+PRIMARY KEY (restaurant_id, category_id),
 created TIMESTAMP DEFAULT NOW()
 );
+
 
 CREATE TABLE users(
 id SERIAL PRIMARY KEY,
 location_id INTEGER REFERENCES locations (id), 
 name TEXT,
 password TEXT NOT NULL,
+username TEXT UNIQUE NOT NULL,
 email TEXT UNIQUE NOT NULL,
 picture TEXT,
 bio TEXT,
@@ -86,6 +88,13 @@ notifications BOOLEAN,
 isadmin BOOLEAN,
 iscritic BOOLEAN,
 isowner BOOLEAN,
+google_id TEXT UNIQUE,
+provider TEXT,
+stripe_customer_id TEXT,
+stripe_subscription_id TEXT,
+subscription_status TEXT,
+subscription_plan TEXT,
+subscription_ends TIMESTAMP,
 created TIMESTAMP DEFAULT NOW(),
 updated TIMESTAMP
 );
@@ -106,10 +115,10 @@ restaurant_id BIGINT REFERENCES restaurants (id) ,
 created TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE sessions(
-id SERIAL PRIMARY KEY,   
+CREATE TABLE sessions(  
 user_id integer REFERENCES users(id),
 token TEXT UNIQUE,
+PRIMARY KEY(user_id, token),
 created TIMESTAMP DEFAULT NOW()
 );
 

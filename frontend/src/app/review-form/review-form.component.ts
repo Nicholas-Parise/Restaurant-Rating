@@ -3,11 +3,12 @@ import { ReactiveFormsModule, FormControl,FormGroup, Validators } from '@angular
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { ReviewEntry } from '../shared/review-entry.model';
 import { ReviewDataService } from '../shared/review-data.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-review-form',
   standalone: true,
-  imports: [ReactiveFormsModule,],
+  imports: [ReactiveFormsModule,CommonModule],
   templateUrl: './review-form.component.html',
   styleUrl: './review-form.component.css'
 })
@@ -18,7 +19,8 @@ export class ReviewFormComponent implements OnInit{
 
 reviewForm: FormGroup;
 isFormVisible: boolean = false;
-
+stars = [1, 2, 3, 4, 5];
+selectedRating = 0;
 
 
 constructor(private reviewDataService: ReviewDataService){}
@@ -40,12 +42,12 @@ constructor(private reviewDataService: ReviewDataService){}
     const newEntry = new ReviewEntry(
         -1, 
         this.restaurantEntry.id,
-        -1,
         this.reviewForm.value.description, 
         this.reviewForm.value.favorited, 
         this.reviewForm.value.visited, 
         this.reviewForm.value.desired, 
         this.reviewForm.value.score, 
+        "null",
         "null",
         "null",
         "null");
@@ -63,6 +65,28 @@ constructor(private reviewDataService: ReviewDataService){}
   showForm(){
     this.isFormVisible = true;
   }
+
+selectRating(index: number): void {
+  this.selectedRating = (index + 1) * 2; // Full star (2, 4, 6, 8, 10)
+  this.reviewForm.patchValue({ score: this.selectedRating });
+}
+
+selectHalfRating(index: number): void {
+  this.selectedRating = (index * 2) + 1; // Half star (1, 3, 5, 7, 9)
+  this.reviewForm.patchValue({ score: this.selectedRating });
+}
+
+
+toggleFavorite(): void {
+  const current = this.reviewForm.get('favorited')?.value;
+  this.reviewForm.patchValue({ favorited: !current });
+}
+
+toggleVisited(): void {
+  const current = this.reviewForm.get('visited')?.value;
+  this.reviewForm.patchValue({ visited: !current });
+}
+
 
 
 }

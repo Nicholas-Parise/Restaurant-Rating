@@ -9,10 +9,10 @@ import { Subject } from 'rxjs';
 export class TagDataService {
 
     tagEntry: TagEntry[] = [
-    new TagEntry(0, 'fast food', 'description'),
-    new TagEntry(1, 'cafe', 'description'),
-    new TagEntry(2, 'fine dining',  'description'),
-    new TagEntry(3, 'buffet',  'description')
+    new TagEntry(0, 'fast food', 'description',"null"),
+    new TagEntry(1, 'cafe', 'description',"null"),
+    new TagEntry(2, 'fine dining',  'description',"null"),
+    new TagEntry(3, 'buffet',  'description',"null")
   ];
   
   tagSubject = new Subject<TagEntry[]>();
