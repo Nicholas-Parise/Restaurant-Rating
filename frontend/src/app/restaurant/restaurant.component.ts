@@ -36,9 +36,13 @@ export class RestaurantComponent implements OnInit{
   restaurantId: number;
   currentPage: number = 1;
   pageSize: number = 10;
+  maxPages: number = 0;
 
-
-  constructor(private router: Router,private restaurantDataService: RestaurantDataService,private tagDataService: TagDataService, private reviewDataService: ReviewDataService, private route: ActivatedRoute ){} 
+  constructor(private router: Router,
+    private restaurantDataService: RestaurantDataService,
+    private tagDataService: TagDataService, 
+    private reviewDataService: ReviewDataService,
+    private route: ActivatedRoute ){} 
 
 
   ngOnDestroy() : void{
@@ -53,6 +57,7 @@ export class RestaurantComponent implements OnInit{
     //this.reviewDataService.GetReviews();
     this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry =>{
       this.reviewEntry = reviewEntry;
+      this.maxPages = this.reviewDataService.totalPages;
     });
 
 
@@ -105,6 +110,10 @@ export class RestaurantComponent implements OnInit{
     this.reviewDataService.getRestauranReviews(this.restaurantId, this.currentPage, this.pageSize);
   }
 
+
+  addToFavourites(): void{
+    this.restaurantDataService.addFavourite(this.restaurantId);
+  }
 
 
   onNextPage(): void {

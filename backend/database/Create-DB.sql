@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS favorite_restaurant
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS sessions;
 DROP TABLE IF EXISTS notifications;
@@ -127,11 +128,18 @@ CREATE TABLE reviews(
 id SERIAL PRIMARY KEY, 
 restaurant_id BIGINT REFERENCES restaurants(id),
 user_id BIGINT REFERENCES users(id),
-favorited BOOLEAN,
+liked BOOLEAN,
 visited BOOLEAN,
 desired BOOLEAN,
 score INT,
 description TEXT,
 updated TIMESTAMP,
 created TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE favorite_restaurant(
+restaurant_id BIGINT REFERENCES restaurants(id),
+user_id BIGINT REFERENCES users(id),
+created TIMESTAMP DEFAULT NOW(),
+PRIMARY KEY(restaurant_id, user_id)
 );

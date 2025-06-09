@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule,RestaurantCardComponent,ReviewCardComponent],
+  imports: [CommonModule, RestaurantCardComponent, ReviewCardComponent],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
 })
@@ -25,78 +25,93 @@ export class UserComponent {
 
   favRestaurantEntry: RestaurantEntry[];
   recentRestaurantEntry: RestaurantEntry[];
+  restaurantSubscription = new Subscription();
 
-  reviewEntry : ReviewEntry[];
+  reviewEntry: ReviewEntry[];
   reviewSubscription = new Subscription();
 
-  username: string;
+  username: string | null;
   currentPage: number = 1;
   pageSize: number = 10;
+  maxPages: number = 0;
 
-constructor(private userDataService : UserDataService, private restaurantDataService: RestaurantDataService, private reviewDataService : ReviewDataService , private route: ActivatedRoute){}
+  constructor(
+    private userDataService: UserDataService,
+    private restaurantDataService: RestaurantDataService,
+    private reviewDataService: ReviewDataService,
+    private route: ActivatedRoute) { }
 
-ngOnDestroy() : void{
-  this.reviewSubscription.unsubscribe();
-  this.userSubscription.unsubscribe();
-}
 
-ngOnInit() : void{
+  ngOnDestroy(): void {
+    this.reviewSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
+  }
 
-    this.userSubscription = this.userDataService.userSubject.subscribe(userEntry =>{
+  ngOnInit(): void {
+
+    this.userSubscription = this.userDataService.userSubject.subscribe(userEntry => {
       console.log(userEntry);
       this.userEntry = userEntry;
     });
 
-  this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry =>{
+    this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry => {
       this.reviewEntry = reviewEntry;
+      this.maxPages = this.reviewDataService.totalPages;
+    });
+
+   this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
+      this.favRestaurantEntry = restaurantEntry;
+      this.recentRestaurantEntry = restaurantEntry;
+      //this.maxPages = this.reviewDataService.totalPages;
     });
 
 
-  this.route.params.subscribe(params => {
-        
-    this.username = params['username'];
 
-   if(this.username == null){
+    this.route.paramMap.subscribe(params => {
+
+      this.username = params.get('username');
+
+      if (this.username) {
+
+        this.userDataService.GetUserById(this.username);
+        this.reviewDataService.getUserReviews(this.username, 0, 10);
+        
+      } else {
         console.log('empty');
-        this.userDataService.GetUser();        
-      }else{
-        try{
-          this.userDataService.GetUserById(this.username);  
-          this.reviewDataService.GetReviews();
-        }catch(e){
-         
-        }
+        this.userDataService.GetUser();
+        this.reviewDataService.GetReviews(0, 10);
+        this.restaurantDataService.GetFavouriteResturaunts();
       }
 
-    this.favRestaurantEntry = this.restaurantDataService.restaurantEntry;
-    this.recentRestaurantEntry = this.restaurantDataService.restaurantEntry;
+      this.favRestaurantEntry = this.restaurantDataService.restaurantEntry;
+      this.recentRestaurantEntry = this.restaurantDataService.restaurantEntry;
+
+    })
+
+  }
+
+
+  loadReviews(): void {
     
-  })
-
-  this.loadReviews();
-
-}
-
-
-loadReviews(): void {
-  this.reviewDataService.getUserReviews(this.username,this.currentPage,this.pageSize);
-  //  .subscribe((data: any) => {
-     // this.reviewEntry = data.reviews;
-   // });
-}
+    if (this.username) {
+        this.reviewDataService.getUserReviews(this.username, this.currentPage, this.pageSize);
+      } else {
+        this.reviewDataService.GetReviews(this.currentPage, this.pageSize);
+      }
+  }
 
 
-onNextPage(): void {
-  this.currentPage++;
-  this.loadReviews();
-}
-
-onPreviousPage(): void {
-  if (this.currentPage > 1) {
-    this.currentPage--;
+  onNextPage(): void {
+    this.currentPage++;
     this.loadReviews();
   }
-}
+
+  onPreviousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadReviews();
+    }
+  }
 
 
 

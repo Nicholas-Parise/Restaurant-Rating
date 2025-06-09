@@ -3,86 +3,147 @@ const db = require('./db');
 const router = express.Router();
 const authenticate = require('./middleware/authenticate');
 
-let reviewEntry = [
-    {id:0, review:'This place is horrible',favourited:false,visited:true,score:1,username:'treasureHound'},
-    {id:1, review:'Love ths PLACE!!!!', favourited:true, visited:true,score:10,username:'admin'},
-    {id:2, review:'eh its mid', favourited:false, visited:true,score:5,username:'nickpar03'},
-    {id:3, review:'been going here since I was a kid and its still bad', favourited:false, visited:true, score:3,username:'jesus'}
-]
+// get logged in users reviews
+router.get('/', authenticate, async (req, res, next) => {
 
-// localhost:3000/reviews?page=1&pageSize=10?username=admin
-router.get('/',(req,res,next)=>{
-    //res.send('hello from express');
-    
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
-    const offset = (page - 1) * pageSize;
-    const username = req.query.username || "";
+  const userId = req.user.userId; // Get user ID from authenticated token
 
-    const paginatedReviews = reviewEntry.slice((page - 1) * pageSize, page * pageSize);
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+  const offset = (page - 1) * pageSize;
 
-    res.json({
-        page,
-        pageSize,
-        totalReviews: reviewEntry.length,
-        reviews: paginatedReviews,
-      });
-})
-
-// localhost:3000/reviews/restaurants/0?page=1&pageSize=10
-router.get('/restaurants/:restaurantId', async (req, res, next) => {
-    const restaurantId = parseInt(req.params.restaurantId);
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
-    const offset = (page - 1) * pageSize;
-
- try {
+  try {
     const result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.favorited, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username FROM reviews r 
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username 
+      FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
-      WHERE r.restaurant_id = $1 LIMIT $2 OFFSET $3`,[restaurantId,pageSize,offset]);
-    
-      
-    const allReviews = 10; //await db.query('SELECT * FROM reviews WHERE restaurant_id = $1 LIMIT $2 OFFSET $3',[restaurantId,pageSize,offset]);
-    const reviewsFromServer =  result.rows;
+      WHERE r.user_id = $1
+      ORDER BY r.created DESC
+      LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
+
+    const countResult = await db.query(`
+      SELECT COUNT(*) AS total 
+      FROM reviews 
+      WHERE user_id = $1;`, [userId]);
+
+    const totalReviews = parseInt(countResult.rows[0].total, 10);
 
     res.json({
-      page,
-      pageSize,
-      totalReviews: reviewsFromServer.length,
-      reviews: reviewsFromServer,
+      page, pageSize, totalReviews, reviews: result.rows,
     });
-
 
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
   }
-  });
+})
 
 
-  router.post('/', authenticate, async(req, res) => {
+// get logged in users reviews
+router.get('/:username', async (req, res, next) => {
 
-    const { restaurant_id, favorited, visited, desired, score, description } = req.body;
-    const userId = req.user.userId; // Get user ID from authenticated token
+  const username = req.params.username;
 
-    if (!restaurant_id) {
-        return res.status(400).json({ message: "restaurant_id is required" });
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+  const offset = (page - 1) * pageSize;
+
+  try {
+
+    console.log(username);
+
+    const userResult = await db.query(`
+      SELECT id 
+      FROM users 
+      WHERE username = $1;`, [username]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
     }
-    try{
-        const result = await db.query(
-                `INSERT INTO reviews (restaurant_id, user_id, favorited, visited, desired, score, description) 
-                VALUES ($1, $2, COALESCE($3, false), COALESCE($4, false), COALESCE($5, false), COALESCE($6, 0), $7) RETURNING *`,
-                [restaurant_id, userId, favorited, visited, desired, score, description]
-            );
 
-        return res.status(200).json(result.rows);
-    }catch(error){
+    const userId = userResult.rows[0].id;
+
+    const result = await db.query(`
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username 
+      FROM reviews r 
+      LEFT JOIN users u ON r.user_id = u.id
+      WHERE r.user_id = $1 
+      ORDER BY r.created DESC
+      LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
+
+    const countResult = await db.query(`
+      SELECT COUNT(*) AS total 
+      FROM reviews 
+      WHERE user_id = $1;`, [userId]);
+
+    const totalReviews = parseInt(countResult.rows[0].total, 10);
+
+    res.json({
+      page, pageSize, totalReviews, reviews: result.rows,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+})
+
+
+// localhost:3000/reviews/restaurants/0?page=1&pageSize=10
+router.get('/restaurants/:restaurantId', async (req, res, next) => {
+  const restaurantId = parseInt(req.params.restaurantId);
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+  const offset = (page - 1) * pageSize;
+
+  try {
+    const result = await db.query(`
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username FROM reviews r 
+      LEFT JOIN users u ON r.user_id = u.id
+      WHERE r.restaurant_id = $1 
+      ORDER BY r.created DESC
+      LIMIT $2 OFFSET $3;`, [restaurantId, pageSize, offset]);
+
+    const countResult = await db.query(`
+      SELECT COUNT(*) AS total 
+      FROM reviews 
+      WHERE restaurant_id = $1;`, [restaurantId]);
+
+    const totalReviews = parseInt(countResult.rows[0].total, 10);
+
+    res.json({
+      page, pageSize, totalReviews, reviews: result.rows,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+router.post('/', authenticate, async (req, res) => {
+
+  const { restaurant_id, liked, visited, desired, score, description } = req.body;
+  const userId = req.user.userId; // Get user ID from authenticated token
+
+  if (!restaurant_id) {
+    return res.status(400).json({ message: "restaurant_id is required" });
+  }
+  try {
+    const result = await db.query(
+      `INSERT INTO reviews (restaurant_id, user_id, liked, visited, desired, score, description) 
+                VALUES ($1, $2, COALESCE($3, false), COALESCE($4, false), COALESCE($5, false), COALESCE($6, 0), $7) RETURNING *`,
+      [restaurant_id, userId, liked, visited, desired, score, description]
+    );
+
+    return res.status(200).json(result.rows);
+  } catch (error) {
     console.error("Error creating review:", error);
     res.status(500).json({ error: error.message });
-    }
-          
-  });
+  }
+
+});
 
 
-  module.exports = router;
+module.exports = router;

@@ -12,16 +12,24 @@ import { AuthDataService } from './auth-data.component';
 export class ReviewDataService {
 
   reviewEntry: ReviewEntry[] = [];
-  
+  totalReviews = 0;
+  totalPages = 0;
+
   reviewSubject = new Subject<ReviewEntry[]>();
 
   constructor(private http: HttpClient) { }
 
   private baseUrl = 'http://localhost:3000/';
 
-  GetReviews(){
-    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}reviews`).subscribe((jsonData) =>{
+  // get authenticated user reviews
+  GetReviews(page: number, pageSize: number){
+
+    const headers = new HttpHeaders().set('Authorization',  `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.get<{reviews: ReviewEntry[], totalReviews: number}>(`${this.baseUrl}reviews/?page=${page}&pageSize=${pageSize}`,{ headers }).subscribe((jsonData) =>{
       this.reviewEntry = jsonData.reviews;
+      this.totalReviews = jsonData.totalReviews;
+      this.totalPages = Math.ceil(this.totalReviews / pageSize);
       this.reviewSubject.next(this.reviewEntry);
     })
   }
@@ -43,16 +51,20 @@ export class ReviewDataService {
 
 
   getRestauranReviews(restaurantId: number, page: number, pageSize: number){
-    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}reviews/restaurants/${restaurantId}?&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
+    this.http.get<{reviews: ReviewEntry[], totalReviews: number}>(`${this.baseUrl}reviews/restaurants/${restaurantId}?page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
       this.reviewEntry = jsonData.reviews;
+      this.totalReviews = jsonData.totalReviews;
+      this.totalPages = Math.ceil(this.totalReviews / pageSize);
       this.reviewSubject.next(this.reviewEntry);
     })
   }
 
 
  getUserReviews(username: string, page: number, pageSize: number){
-    this.http.get<{reviews: ReviewEntry[], totalReviews: Number}>(`${this.baseUrl}reviews?&username=${username}&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
+    this.http.get<{reviews: ReviewEntry[], totalReviews: number}>(`${this.baseUrl}reviews/${username}?page=${page}&pageSize=${pageSize}`).subscribe((jsonData) =>{
       this.reviewEntry = jsonData.reviews;
+      this.totalReviews = jsonData.totalReviews;
+      this.totalPages = Math.ceil(this.totalReviews / pageSize);
       this.reviewSubject.next(this.reviewEntry);
     })  
   }

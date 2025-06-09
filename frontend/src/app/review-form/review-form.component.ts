@@ -29,7 +29,7 @@ constructor(private reviewDataService: ReviewDataService){}
     this.reviewForm = new FormGroup({
       "description": new FormControl(null),
       "score": new FormControl(null),
-      "favorited": new FormControl(null),
+      "liked": new FormControl(null),
       "visited": new FormControl(null),
       "desired": new FormControl(null)
     })
@@ -38,12 +38,12 @@ constructor(private reviewDataService: ReviewDataService){}
   onSubmit(){
     console.log(this.reviewForm);
     console.log(this.restaurantEntry.name);
-    //constructor(public id:number, public review: string, public favorited: boolean, public visited: boolean, public score: number, public username:string){}
+    //constructor(public id:number, public review: string, public liked: boolean, public visited: boolean, public score: number, public username:string){}
     const newEntry = new ReviewEntry(
         -1, 
         this.restaurantEntry.id,
         this.reviewForm.value.description, 
-        this.reviewForm.value.favorited, 
+        this.reviewForm.value.liked, 
         this.reviewForm.value.visited, 
         this.reviewForm.value.desired, 
         this.reviewForm.value.score, 
@@ -78,8 +78,8 @@ selectHalfRating(index: number): void {
 
 
 toggleFavorite(): void {
-  const current = this.reviewForm.get('favorited')?.value;
-  this.reviewForm.patchValue({ favorited: !current });
+  const current = this.reviewForm.get('liked')?.value;
+  this.reviewForm.patchValue({ liked: !current });
 }
 
 toggleVisited(): void {

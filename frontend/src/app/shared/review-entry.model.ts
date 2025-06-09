@@ -3,7 +3,7 @@ export class ReviewEntry{
         public id:number, 
         public restaurant_id: number,
         public description: string, 
-        public favorited: boolean, 
+        public liked: boolean, 
         public visited: boolean, 
         public desired: boolean,
         public score: number, 

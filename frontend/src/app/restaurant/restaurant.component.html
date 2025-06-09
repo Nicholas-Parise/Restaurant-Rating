@@ -6,7 +6,7 @@
     <div class="grid-container">
 
       <div class="grid-item">
-        <img class="image" [src]="restaurantEntry?.pictures?.[0] || 'assets/placeholder-restaurant.png'" alt="">
+        <img class="image" [src]="restaurantEntry?.pictures || 'assets/placeholder-restaurant.png'" alt="">
       </div>
       <div class="grid-item">
         <p>{{ restaurantEntry?.description }}</p>
@@ -30,10 +30,10 @@
               <span class="icon">favourite</span>
               <span class="icon">Future Feasts</span>
             </li>
-
             <li>Rate</li>
             <li><button (click)="showReviewForm()">add a review</button></li>
             <li>Log visit</li>
+            <li><button (click)="addToFavourites()">add to favourites</button></li>
           </ul>
         </div>
       </div>
@@ -123,7 +123,7 @@
 
       <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
       <p>{{this.currentPage}}</p>
-      <button (click)="onNextPage()">Next</button>
+      <button (click)="onNextPage()" [disabled]="maxPages >= currentPage">Next</button>
 
 
       <!-- ngfor to place all the reviews (page by page) -->

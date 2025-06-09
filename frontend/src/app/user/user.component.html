@@ -3,17 +3,17 @@
 <div class="grid-container">
 
     <div class="grid-item">
-        <img class = "image" [src]="userEntry?.pictures?.[0] || 'assets/placeholder-avatar.png'" alt="">
+        <img class = "image" [src]="userEntry?.pictures || 'assets/placeholder-avatar.png'" alt="">
     </div>
 
     <div class="grid-item">
-        <h2>{{userEntry?.name || userEntry.username}}</h2>
-        <p>{{userEntry.description}}</p>
+        <h2>{{userEntry?.name || userEntry?.username}}</h2>
+        <p>{{userEntry?.description}}</p>
     </div>
 </div>
 
 
-<h2 class="section-header">Favourites</h2>
+<h2 class="section-header">Favourite Restaurants</h2>
 <div class="spacer grid-container">
     <div class="center grid-item" *ngFor="let favRestaurantEntry of favRestaurantEntry">
         <app-restaurant-card [restaurantEntry]="favRestaurantEntry"></app-restaurant-card>
@@ -21,7 +21,7 @@
 </div>
 
 
-<h2 class="section-header">Recent</h2>
+<h2 class="section-header">Recent Activity</h2>
 <div class="spacer grid-container">
 
     <div class="center grid-item" *ngFor="let recentRestaurantEntry of recentRestaurantEntry">
@@ -30,7 +30,7 @@
 </div>
 
 
-<h2 class="section-header">Activity</h2>
+<h2 class="section-header">Recent reviews</h2>
 <ul class="all-reviews">
     <li> 
         <div class="" *ngFor="let reviewEntry of reviewEntry">
@@ -41,7 +41,7 @@
 
 <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
 <p>{{this.currentPage}}</p>
-<button (click)="onNextPage()">Next</button>
+<button (click)="onNextPage()" [disabled]="maxPages >= currentPage">Next</button>
 
 
 

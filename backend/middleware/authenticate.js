@@ -10,6 +10,9 @@ require("dotenv").config(); // Load environment variables
  */
 
 const authenticate = async (req, res, next) => {
+    
+     //console.log('AUTH middleware hit, headers:', req.headers.authorization);
+    
     const tempToken = req.header("Authorization");
 
     if (!tempToken) {
