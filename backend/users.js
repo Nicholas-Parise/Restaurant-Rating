@@ -194,6 +194,30 @@ router.delete('/', authenticate, async (req, res) => {
 });
 
 
+// localhost:3000/users
+// get logged in users
+router.get('/recent', authenticate, async (req, res, next) => {
+  try {
+    const userId = req.user.userId; // Get user ID from authenticated token
+
+    const result = await db.query(
+      `SELECT r.id, r.name, r.pictures FROM reviews rev
+        JOIN restaurants r ON rev.restaurant_id = r.id
+        WHERE rev.user_id = $1
+        ORDER BY rev.created DESC;`, [userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'No recents' });
+    }
+
+    res.status(200).json({ recents: result.rows, totalrecents: result.rows.length});
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: 'Error retrieving user data' });
+  }
+});
+
+
 
 // localhost:3000/users
 // get logged in users
@@ -202,7 +226,7 @@ router.get('/favourites', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
 
     const result = await db.query(
-      `SELECT fr.*, r.* FROM favorite_restaurant fr
+      `SELECT r.id, r.name, r.pictures FROM favorite_restaurant fr
         JOIN restaurants r ON fr.restaurant_id = r.id
         WHERE fr.user_id = $1`, [userId]);
 
@@ -210,7 +234,7 @@ router.get('/favourites', authenticate, async (req, res, next) => {
       return res.status(404).json({ message: 'No favourites' });
     }
 
-    res.status(200).json({ favourites: result.rows});
+    res.status(200).json({ favourites: result.rows, totalFavourites: result.rows.length});
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
@@ -226,6 +250,19 @@ router.post('/favourites/:restaurant_id', authenticate, async (req, res, next) =
 
   try {
     const restaurantId = parseInt(req.params.restaurant_id);
+
+      const count = await db.query(
+      `SELECT COUNT(fr.*) FROM favorite_restaurant fr
+        WHERE fr.user_id = $1`, [userId]);
+
+      const amount = count.rows[0].count;
+
+      console.log(count.rows[0].count);
+
+        if(amount >= 4){
+          return res.status(403).json({ error: "only 4 favourites allowed." });
+        }
+
 
     const result = await db.query(`
         INSERT INTO favorite_restaurant 

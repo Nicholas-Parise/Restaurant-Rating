@@ -9,7 +9,8 @@
         <span class="star" [class.on]="reviewEntry.score >= 6" [class.half]="reviewEntry.score == 5 "></span>
         <span class="star" [class.on]="reviewEntry.score >= 8" [class.half]="reviewEntry.score == 7 "></span>
         <span class="star" [class.on]="reviewEntry.score >= 10" [class.half]="reviewEntry.score == 9 "></span>
-        <span class="heart" [class.on]="reviewEntry.liked == true"></span>   
+        <span class="heart" [class.on]="reviewEntry.liked == true"></span> 
+         <span class="visited" [class.on]="reviewEntry.visited == true"></span>  
     </div>
 </div>
 

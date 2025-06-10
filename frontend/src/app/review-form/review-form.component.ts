@@ -37,7 +37,8 @@ constructor(private reviewDataService: ReviewDataService){}
 
   onSubmit(){
     console.log(this.reviewForm);
-    console.log(this.restaurantEntry.name);
+//    console.log(this.restaurantEntry.name);
+    console.log(this.restaurantEntry);
     //constructor(public id:number, public review: string, public liked: boolean, public visited: boolean, public score: number, public username:string){}
     const newEntry = new ReviewEntry(
         -1, 

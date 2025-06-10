@@ -23,9 +23,11 @@ export class UserComponent {
   userEntry: any;
   userSubscription = new Subscription();
 
-  favRestaurantEntry: RestaurantEntry[];
-  recentRestaurantEntry: RestaurantEntry[];
   restaurantSubscription = new Subscription();
+  recentRestaurantEntry: RestaurantEntry[];
+
+  favouriteSubscription = new Subscription();
+  favRestaurantEntry: RestaurantEntry[];
 
   reviewEntry: ReviewEntry[];
   reviewSubscription = new Subscription();
@@ -58,15 +60,16 @@ export class UserComponent {
       this.reviewEntry = reviewEntry;
       this.maxPages = this.reviewDataService.totalPages;
     });
-
-   this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
-      this.favRestaurantEntry = restaurantEntry;
-      this.recentRestaurantEntry = restaurantEntry;
-      //this.maxPages = this.reviewDataService.totalPages;
+    this.restaurantSubscription = this.restaurantDataService.recentSubject.subscribe(recentRestaurants => {
+      this.recentRestaurantEntry = recentRestaurants;
     });
 
+    this.favouriteSubscription = this.restaurantDataService.favouriteSubject.subscribe(favRestaurants => {
+      this.favRestaurantEntry = favRestaurants;
+    });
 
-
+    // fetch data
+    
     this.route.paramMap.subscribe(params => {
 
       this.username = params.get('username');
@@ -75,16 +78,14 @@ export class UserComponent {
 
         this.userDataService.GetUserById(this.username);
         this.reviewDataService.getUserReviews(this.username, 0, 10);
-        
+
       } else {
         console.log('empty');
         this.userDataService.GetUser();
         this.reviewDataService.GetReviews(0, 10);
+        this.restaurantDataService.GetRecentResturaunts();
         this.restaurantDataService.GetFavouriteResturaunts();
       }
-
-      this.favRestaurantEntry = this.restaurantDataService.restaurantEntry;
-      this.recentRestaurantEntry = this.restaurantDataService.restaurantEntry;
 
     })
 
@@ -92,12 +93,12 @@ export class UserComponent {
 
 
   loadReviews(): void {
-    
+
     if (this.username) {
-        this.reviewDataService.getUserReviews(this.username, this.currentPage, this.pageSize);
-      } else {
-        this.reviewDataService.GetReviews(this.currentPage, this.pageSize);
-      }
+      this.reviewDataService.getUserReviews(this.username, this.currentPage, this.pageSize);
+    } else {
+      this.reviewDataService.GetReviews(this.currentPage, this.pageSize);
+    }
   }
 
 

@@ -28,5 +28,10 @@ export class RestaurantEntry{
         public visa : boolean,
         public mastercard : boolean,
         public vegetarian : boolean,
-        public updated : string){}
+        public updated : string,
+        public housenumber: string,
+        public addr : string,
+        public city : string,
+        public province : string,
+        public country : string){}
 }

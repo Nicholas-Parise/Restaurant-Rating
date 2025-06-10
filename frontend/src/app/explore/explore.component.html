@@ -1,1 +1,38 @@
-<p>explore works!</p>
+<div class="container">
+    <h2>Explore Restaurants</h2>
+
+    <div class="search-controls">
+        <input type="text" [(ngModel)]="searchQuery" (input)="onSearchChange()" placeholder="Search by name"
+            class="search-input" />
+
+
+        <label class="switch-label">
+            <input type="checkbox" [(ngModel)]="nearbyEnabled" (change)="onToggleNearby()" />
+            <span class="slider"></span>
+            <span class="switch-text">Near Me</span>
+        </label>
+
+        <div *ngIf="nearbyEnabled" class="radius-control">
+            <label for="radius">Radius: {{ searchRadius }} km</label>
+            <input
+            type="range"
+            id="radius"
+            min="1"
+            max="50"
+            step="1"
+            [(ngModel)]="searchRadius"
+            (change)="onRadiusChange()"
+            (input)="onToggleNearby()"
+            />
+        </div>
+
+    </div>
+
+
+    <ul class="restaurant-list" *ngIf="restaurantEntry && restaurantEntry.length > 0">
+        <li class="restaurant-item" *ngFor="let restaurant of restaurantEntry">
+            {{ restaurant.name }} - {{ restaurant.city }}
+        </li>
+    </ul>
+    <p *ngIf="restaurantEntry && restaurantEntry.length === 0">No results found.</p>
+</div>

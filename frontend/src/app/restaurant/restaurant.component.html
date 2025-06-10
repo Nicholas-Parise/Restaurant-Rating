@@ -19,7 +19,17 @@
         <p><strong>Wikipedia:</strong> <a [href]="restaurantEntry?.wikipedia" target="_blank">{{
             restaurantEntry?.wikipedia }}</a></p>
         <br>
-        <p>address</p>
+        <p>address:
+          <span *ngIf="restaurantEntry?.housenumber">{{ restaurantEntry.housenumber }} </span>
+          <span *ngIf="restaurantEntry?.street">{{ restaurantEntry.street }} </span>
+          <span *ngIf="restaurantEntry?.city">
+            {{ restaurantEntry.city }}<span *ngIf="restaurantEntry.province || restaurantEntry.country">,</span>
+          </span>
+          <span *ngIf="restaurantEntry?.province">
+            {{ restaurantEntry.province }}<span *ngIf="restaurantEntry.country">,</span>
+          </span>
+          <span *ngIf="restaurantEntry?.country">{{ restaurantEntry.country }}</span>
+        </p>
       </div>
 
       <div class="grid-item">

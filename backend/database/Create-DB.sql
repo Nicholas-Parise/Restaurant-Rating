@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS favorite_restaurant
+DROP TABLE IF EXISTS favorite_restaurant;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS sessions;
 DROP TABLE IF EXISTS notifications;
@@ -10,16 +10,23 @@ DROP TABLE IF EXISTS restaurants;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS locations;
 
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 CREATE TABLE locations (
-id SERIAL PRIMARY KEY,       
+id SERIAL PRIMARY KEY,
+housenumber TEXT,       
 addr TEXT,
 city TEXT,
 province TEXT,
 country TEXT,
 postalcode TEXT,
-lat REAL,
-lon REAL
+lat DOUBLE PRECISION,
+lon DOUBLE PRECISION,
+geom GEOMETRY(Point, 4326)
 );
+
+CREATE INDEX idx_locations_geom ON locations USING GIST ((geom::geography));
 
 CREATE TABLE categories(
 id SERIAL PRIMARY KEY,   
@@ -143,3 +150,5 @@ user_id BIGINT REFERENCES users(id),
 created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, user_id)
 );
+
+

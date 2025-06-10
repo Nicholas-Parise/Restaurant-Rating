@@ -6,8 +6,8 @@ SET
 COMMIT;
 
 BEGIN;
-INSERT INTO locations (addr, city, province, country, postalcode, lat, lon)
-SELECT addr, city, province, country, postalcode, lat, lon
+INSERT INTO locations (housenumber, addr, city, province, country, postalcode, lat, lon, geom)
+SELECT housenumber, addr, city, province, country, postalcode, lat, lon, ST_Transform(geom, 4326)
 FROM temp_locations;
 COMMIT;
 
@@ -27,12 +27,11 @@ table temp_locations;
 table locations;
 
 BEGIN;
-INSERT INTO restaurants (id, location_id, name, lastupdated, type, cuisine, phone, brand, opening_hours, website, wikipedia, takeaway, internet_access, wheelchair, outdoor_seating, drive_through, air_conditioning, delivery, cash, visa, mastercard, vegetarian)
+INSERT INTO restaurants (id, location_id, name, type, cuisine, phone, brand, opening_hours, website, wikipedia, takeaway, internet_access, wheelchair, outdoor_seating, drive_through, air_conditioning, delivery, cash, visa, mastercard, vegetarian)
 SELECT 
 temp_restaurants.id,
 temp_restaurants.location_id,
 temp_restaurants.name,
-CURRENT_TIMESTAMP,
 temp_restaurants.type,
 temp_restaurants.cuisine,
 temp_restaurants.phone,

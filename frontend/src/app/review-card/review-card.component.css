@@ -38,7 +38,7 @@
 }
 
 
-.heart {
+.heart, .visited{
     font-size: x-large;
     width: 20px;
     display: inline-block;
@@ -46,10 +46,20 @@
     display: none;
     margin-left: 10px;
 }
+
+
 .heart:before {
     content:'\2665';
 }
 .heart.on {
     color: darkorange;
+    display: inline;
+}
+
+.visited:before {
+  content: '\2713';
+}
+.visited.on {
+  color: green;
     display: inline;
 }
