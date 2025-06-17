@@ -72,7 +72,13 @@ router.get('/search', async (req, res, next) => {
         console.log("running1");
 
         result = await db.query(`
-        SELECT r.id, r.name, r.pictures, l.city, similarity(r.name, $4) AS sim
+        SELECT *, COUNT(*) OVER() AS total_count 
+        FROM (
+          SELECT r.id, r.name, r.pictures, l.city, similarity(r.name, $4) AS sim,
+        ST_Distance(
+          l.geom::geography,
+          ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+        ) AS dist
         FROM locations l
         JOIN restaurants r ON l.id = r.location_id
         WHERE ST_DWithin(
@@ -81,10 +87,8 @@ router.get('/search', async (req, res, next) => {
           $3
         )
         AND r.name % $4
-        ORDER BY ST_Distance(
-          l.geom::geography,
-          ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
-        ), sim DESC
+        ) sub
+        ORDER BY dist ASC, sim DESC
         LIMIT $5 OFFSET $6;
       `, [lng, lat, radiusInMeters, searchTerm, pageSize, offset]);
 
@@ -94,9 +98,12 @@ router.get('/search', async (req, res, next) => {
         console.log("running2");
 
         result = await db.query(
-          `SELECT *, similarity(name, $1) AS sim
+          `SELECT *, COUNT(*) OVER() AS total_count 
+          FROM (
+          SELECT *, similarity(name, $1) AS sim
           FROM restaurants
           WHERE name % $1
+          ) sub
           ORDER BY sim DESC
           LIMIT $2 OFFSET $3;`, [searchTerm, pageSize, offset]);
 
@@ -109,7 +116,13 @@ router.get('/search', async (req, res, next) => {
         console.log("running3");
 
         result = await db.query(`
-        SELECT r.id, r.name, r.pictures, l.city
+        SELECT *, COUNT(*) OVER() AS total_count 
+          FROM (
+        SELECT r.id, r.name, r.pictures, l.city, 
+        ST_Distance(
+          l.geom::geography,
+          ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+        ) AS dist
         FROM locations l
         JOIN restaurants r ON l.id = r.location_id
         WHERE ST_DWithin(
@@ -117,10 +130,8 @@ router.get('/search', async (req, res, next) => {
           ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
           $3
         )
-        ORDER BY ST_Distance(
-          l.geom::geography,
-          ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
-        )
+        ) sub
+        ORDER BY dist ASC
         LIMIT $4 OFFSET $5;
       `, [lng, lat, radiusInMeters, pageSize, offset]);
 
@@ -128,21 +139,25 @@ router.get('/search', async (req, res, next) => {
 
         console.log("running4");
 
-        result = await db.query('SELECT id, name, pictures FROM restaurants LIMIT $1 OFFSET $2;', [pageSize, offset]);
+        result = await db.query(`
+            SELECT *, COUNT(*) OVER() AS total_count 
+          FROM (
+          SELECT id, name, pictures 
+          FROM restaurants
+          ) sub 
+          LIMIT $1 OFFSET $2;`, [pageSize, offset]);
 
       }
-
-
     }
+    const restaurants = result.rows; //result.rows.slice((page - 1) * pageSize, page * pageSize);
 
-
-    const paginatedRestaurants = result.rows; //result.rows.slice((page - 1) * pageSize, page * pageSize);
+    const total = restaurants[0]?.total_count ?? 0;
 
     res.json({
       page,
       pageSize,
-      totalRestaurants: result.rows.length,
-      restaurants: paginatedRestaurants,
+      totalRestaurants: total,
+      restaurants: restaurants,
     });
 
 

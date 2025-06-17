@@ -6,11 +6,12 @@ import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { Subscription, Subject, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { RestaurantCardComponent } from "../restaurant-card/restaurant-card.component";
 
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [RestaurantCardComponent, CommonModule, FormsModule],
   templateUrl: './explore.component.html',
   styleUrl: './explore.component.css'
 })
@@ -25,40 +26,12 @@ export class ExploreComponent {
 
   private searchQuerySubject = new Subject<string>();
   private searchRadiusSubject = new Subject<number>();
+  private searchPageSubject = new Subject<number>();
   private combinedSearchSub = new Subscription();
 
-  ngOnInit(): void {
-
-    this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
-      console.log(restaurantEntry)
-      this.restaurantEntry = restaurantEntry;
-    });
-
-    this.combinedSearchSub = combineLatest([
-      this.searchQuerySubject.pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      ),
-      this.searchRadiusSubject.pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-    ]).subscribe(([query, radius]) => {
-      this.restaurantDataService.GetSearchResturaunts(query, this.lat, this.lng, radius);
-    });
-
-
-
-    this.searchQuerySubject.next(this.searchQuery);
-    this.searchRadiusSubject.next(this.searchRadius);
-
-  }
-
-  ngOnDestroy(): void {
-    this.restaurantSubscription.unsubscribe();
-    this.combinedSearchSub.unsubscribe();
-  }
-
+  currentPage: number = 1;
+  pageSize: number = 10;
+  maxPages: number = 0;
   searchQuery = '';
   nearbyEnabled = false;
   lat: Number | null = null;
@@ -66,14 +39,59 @@ export class ExploreComponent {
   searchRadius = 10;
   searchResults: RestaurantEntry[] = [];
 
+  ngOnInit(): void {
+
+    this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
+      //console.log(restaurantEntry)
+      this.restaurantEntry = restaurantEntry;
+      this.maxPages = this.restaurantDataService.totalPages;
+      console.log(this.maxPages);
+    });
+
+    this.combinedSearchSub = combineLatest([
+      this.searchQuerySubject.pipe(
+        debounceTime(300)
+        // ,distinctUntilChanged()
+      ),
+      this.searchRadiusSubject.pipe(
+        debounceTime(300)
+       // ,distinctUntilChanged()
+      ),
+      this.searchPageSubject.pipe(
+        debounceTime(300)
+       // ,distinctUntilChanged()
+      )
+    ]).subscribe(([query, radius, page]) => {
+      this.restaurantDataService.GetSearchResturaunts(query, this.lat, this.lng, radius, page);
+    });
+
+    this.onSearchChange();
+    this.onRadiusChange();
+    this.onPageChange();
+  }
+
+  ngOnDestroy(): void {
+    this.restaurantSubscription.unsubscribe();
+    this.combinedSearchSub.unsubscribe();
+    this.searchPageSubject.unsubscribe();
+  }
+
+
   onSearchChange() {
     //if (this.searchQuery.length < 2) return; // avoid flooding server    
     this.searchQuerySubject.next(this.searchQuery);
+    this.currentPage = 1;
   }
 
   onRadiusChange(): void {
     this.searchRadiusSubject.next(this.searchRadius);
+    this.currentPage = 1;
   }
+
+   onPageChange(): void {
+    this.searchPageSubject.next(this.currentPage);
+  }
+
 
   onToggleNearby(): void {
 
@@ -82,8 +100,6 @@ export class ExploreComponent {
         navigator.geolocation.getCurrentPosition(position => {
           this.lat = position.coords.latitude;
           this.lng = position.coords.longitude;
-
-          this.onSearchChange();
         });
       }
     } else {
@@ -91,7 +107,23 @@ export class ExploreComponent {
       this.lng = null
     }
 
+    this.currentPage = 1;
+    this.onRadiusChange();
   }
+
+
+  onNextPage(): void {
+    this.currentPage++;
+    this.onPageChange();
+  }
+
+  onPreviousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.onPageChange();
+    }
+  }
+
 
 
 }

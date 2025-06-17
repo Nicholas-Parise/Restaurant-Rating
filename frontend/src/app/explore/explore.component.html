@@ -7,7 +7,10 @@
 
 
         <label class="switch-label">
-            <input type="checkbox" [(ngModel)]="nearbyEnabled" (change)="onToggleNearby()" />
+            <input 
+            type="checkbox" 
+            [(ngModel)]="nearbyEnabled" 
+            (change)="onToggleNearby()" />
             <span class="slider"></span>
             <span class="switch-text">Near Me</span>
         </label>
@@ -28,11 +31,22 @@
 
     </div>
 
-
+    <div class="spacer grid-container">
+        <div class="center grid-item" *ngFor="let restaurantEntry of restaurantEntry">
+            <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
+        </div>
+    </div>
+<!--
     <ul class="restaurant-list" *ngIf="restaurantEntry && restaurantEntry.length > 0">
         <li class="restaurant-item" *ngFor="let restaurant of restaurantEntry">
             {{ restaurant.name }} - {{ restaurant.city }}
         </li>
     </ul>
+    -->
     <p *ngIf="restaurantEntry && restaurantEntry.length === 0">No results found.</p>
+
+ <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+      <p>{{this.currentPage}}</p>
+      <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+
 </div>

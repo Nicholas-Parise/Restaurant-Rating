@@ -21,6 +21,10 @@ export class RestaurantDataService {
   favouriteSubject = new Subject<RestaurantEntry[]>();
   recentSubject = new Subject<RestaurantEntry[]>();
 
+  totalReviews = 0;
+  totalRestaurants = 0;
+  totalPages = 0;
+
   constructor(private http: HttpClient) { }
 
   private baseUrl = 'http://localhost:3000/';
@@ -33,15 +37,18 @@ export class RestaurantDataService {
   }
 
 
-  GetSearchResturaunts(searchQuery: string, lat: Number|null, lng: Number|null, radius: Number|null) {
+  GetSearchResturaunts(searchQuery: string, lat: Number|null, lng: Number|null, radius: Number|null, page: Number|null) {
 
-    let args = `?q=${searchQuery}`;
+    let args = `?q=${searchQuery}&page=${page}`;
     if(lat){
-      args = `?q=${searchQuery}&lat=${lat}&lng=${lng}&rad=${radius}`
+      args = `?q=${searchQuery}&lat=${lat}&lng=${lng}&rad=${radius}&page=${page}`
     }
 
-    this.http.get<{ restaurants: RestaurantEntry[] }>(`${this.baseUrl}restaurants/search${args}`).subscribe((jsonData) => {
+    this.http.get<{ restaurants: RestaurantEntry[], totalRestaurants: number, pageSize: number}>(`${this.baseUrl}restaurants/search${args}`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
+      this.totalRestaurants = jsonData.totalRestaurants;
+      this.totalPages = Math.ceil(this.totalRestaurants / jsonData.pageSize);
+      console.log(this.totalRestaurants, this.totalPages);
       this.restaurantSubject.next(this.restaurantEntry);
     })
   }

@@ -207,7 +207,7 @@ router.get('/recent', authenticate, async (req, res, next) => {
         ORDER BY rev.created DESC;`, [userId]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'No recents' });
+      return res.status(200).json({ message: 'No recents' });
     }
 
     res.status(200).json({ recents: result.rows, totalrecents: result.rows.length});
@@ -231,7 +231,7 @@ router.get('/favourites', authenticate, async (req, res, next) => {
         WHERE fr.user_id = $1`, [userId]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'No favourites' });
+      return res.status(200).json({ message: 'No favourites' });
     }
 
     res.status(200).json({ favourites: result.rows, totalFavourites: result.rows.length});
