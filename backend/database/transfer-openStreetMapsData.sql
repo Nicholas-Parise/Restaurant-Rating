@@ -27,7 +27,7 @@ table temp_locations;
 table locations;
 
 BEGIN;
-INSERT INTO restaurants (id, location_id, name, type, cuisine, phone, brand, opening_hours, website, wikipedia, takeaway, internet_access, wheelchair, outdoor_seating, drive_through, air_conditioning, delivery, cash, visa, mastercard, vegetarian)
+INSERT INTO restaurants (id, location_id, name, type, cuisine, phone, brand, opening_hours, website, wikipedia, takeaway, internet_access, wheelchair, outdoor_seating, drive_through, air_conditioning, delivery, cash, visa, mastercard, vegetarian, smoking, toilets, breakfast, lunch, dinner,facebook, indoor_seating)
 SELECT 
 temp_restaurants.id,
 temp_restaurants.location_id,
@@ -49,7 +49,14 @@ temp_restaurants.delivery,
 temp_restaurants.cash,
 temp_restaurants.visa,
 temp_restaurants.mastercard,
-temp_restaurants.vegetarian
+temp_restaurants.vegetarian,
+temp_restaurants.smoking,
+temp_restaurants.toilets,
+temp_restaurants.breakfast,
+temp_restaurants.lunch,
+temp_restaurants.dinner,
+temp_restaurants.facebook,
+temp_restaurants.indoor_seating
 FROM temp_restaurants
 WHERE temp_restaurants.name IS NOT NULL;
 COMMIT;

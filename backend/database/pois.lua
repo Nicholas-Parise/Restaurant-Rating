@@ -4,8 +4,8 @@ local restaurant = osm2pgsql.define_table({
     ids = { type = 'any', type_column = 'osm_type', id_column = 'id' },
     columns = {
        -- Auto-incrementing ID  { column = 'id', sql_type = 'serial', not_null = true, primary_key = true }, -- Auto-incrementing ID
-       { column = 'location_id' , type = 'BIGINT'}, 
-       { column = 'name' , type = 'text'},
+        { column = 'location_id' , type = 'BIGINT'}, 
+        { column = 'name' , type = 'text'},
         { column = 'type', type = 'text' },
         { column = 'cuisine', type = 'text' },
         { column = 'phone', type = 'text' },
@@ -25,13 +25,14 @@ local restaurant = osm2pgsql.define_table({
         { column = 'visa', type = 'boolean' },
         { column = 'mastercard', type = 'boolean' },
         { column = 'vegetarian', type = 'boolean' },
- 	{ column = 'smoking', type = 'boolean' },
- 	{ column = 'toilets', type = 'boolean' },
-	{ column = 'breakfast', type = 'boolean' },
-	{ column = 'lunch', type = 'boolean' },
-	{ column = 'dinner', type = 'boolean' },
-  	{ column = 'image', type = 'text' },
-	{ column = 'menu', type = 'text' },
+        { column = 'smoking', type = 'boolean' },
+        { column = 'toilets', type = 'boolean' },
+        { column = 'breakfast', type = 'boolean' },
+        { column = 'lunch', type = 'boolean' },
+        { column = 'dinner', type = 'boolean' },
+        { column = 'image', type = 'text' },
+        { column = 'facebook', type = 'text' },
+        { column = 'indoor_seating', type = 'boolean' },
         { column = 'tags', type = 'jsonb' }
     },
         if_exists = 'append',
@@ -102,7 +103,7 @@ function process_poi(object, geom)
             cuisine = object.tags.cuisine,
             phone = object.tags.phone or object.tags["contact:phone"],
             opening_hours = object.tags.opening_hours,
-            website = object.tags.website or object.tags["contact:website"],
+            website = object.tags.website or object.tags["contact:website"] or object.tags["website:menu"],
             wikipedia = object.tags["brand:wikipedia"],
 
             takeaway = set_boolean_field(object.tags.takeaway),
@@ -116,13 +117,17 @@ function process_poi(object, geom)
             visa = set_boolean_field(object.tags["payment:visa"]),
             mastercard = set_boolean_field(object.tags["payment:mastercard"]),
             vegetarian = set_boolean_field(object.tags["diet:vegan"] or object.tags["diet:vegetarian"]),
-	    smoking = set_boolean_field(object.tags.smoking),
-	    toilets = set_boolean_field(object.tags.toilets or object.tags["toilets:access"]),
-	    breakfast = set_boolean_field(object.tags.breakfast),
-	    lunch = set_boolean_field(object.tags.lunch),
-	    dinner = set_boolean_field(object.tags.dinner),
-	    image = object.tags.image or object.tags.wikimedia_commons,
-	    menu = object.tags["website:menu"],
+            smoking = set_boolean_field(object.tags.smoking),
+            toilets = set_boolean_field(object.tags.toilets or object.tags["toilets:access"]),
+            breakfast = set_boolean_field(object.tags.breakfast),
+            lunch = set_boolean_field(object.tags.lunch),
+            dinner = set_boolean_field(object.tags.dinner),
+            image = object.tags.image or object.tags.wikimedia_commons,
+            facebook = object.tags["contact:facebook"],
+            if ~string.find(facebook, "facebook") then
+                facebook = "https://facebook.com/" .. facebook;
+            end    
+            indoor_seating = set_boolean_field(object.tags.indoor_seating),
             tags = object.tags
         }
 

@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS sessions;
 DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS popular;
+DROP TABLE IF EXISTS friends;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS restaurant_cats;
 DROP TABLE IF EXISTS menuItems;
@@ -60,6 +61,13 @@ cash BOOLEAN,
 visa BOOLEAN,
 mastercard BOOLEAN,
 vegetarian BOOLEAN,
+smoking BOOLEAN,
+toilets BOOLEAN,
+breakfast BOOLEAN,
+lunch BOOLEAN,
+dinner BOOLEAN,
+facebook TEXT,
+indoor_seating BOOLEAN,
 updated TIMESTAMP
 );
 
@@ -105,6 +113,15 @@ subscription_plan TEXT,
 subscription_ends TIMESTAMP,
 created TIMESTAMP DEFAULT NOW(),
 updated TIMESTAMP
+);
+
+CREATE INDEX idx_users_username ON users(username);
+
+CREATE TABLE friends(  
+user_id integer REFERENCES users(id),
+friend_id integer REFERENCES users(id),
+PRIMARY KEY(user_id, friend_id),
+created TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE notifications(

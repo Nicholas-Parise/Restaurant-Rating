@@ -11,17 +11,24 @@
       <div class="grid-item">
         <p>{{ restaurantEntry?.description }}</p>
         <p><strong>Type:</strong> {{ restaurantEntry?.type }}</p>
-        <p><strong>Cuisine:</strong> {{ restaurantEntry?.cuisine }}</p>
-        <p><strong>Opening Hours:</strong> {{ restaurantEntry?.opening_hours }}</p>
-        <p><strong>Phone:</strong> {{ restaurantEntry?.phone }}</p>
-        <p><strong>Website:</strong> <a [href]="restaurantEntry?.website" target="_blank">{{ restaurantEntry?.website
-            }}</a></p>
-        <p><strong>Wikipedia:</strong> <a [href]="restaurantEntry?.wikipedia" target="_blank">{{
+        <p *ngIf="restaurantEntry?.cuisine"><strong>Cuisine:</strong> {{ restaurantEntry?.cuisine }}</p>
+        <p *ngIf="restaurantEntry?.opening_hours"><strong>Opening Hours:</strong> {{ restaurantEntry?.opening_hours }}</p>
+        <p *ngIf="restaurantEntry?.phone"><strong>Phone:</strong> {{ restaurantEntry?.phone }}</p>
+        <p *ngIf="restaurantEntry?.website"><strong>Website:</strong> <a [href]="restaurantEntry?.website" target="_blank">{{ restaurantEntry?.website}}</a></p>
+        <p *ngIf="restaurantEntry?.wikipedia"><strong>Wikipedia:</strong> <a [href]="'http://wikipedia.org/wiki/' + restaurantEntry.wikipedia" target="_blank" >{{
             restaurantEntry?.wikipedia }}</a></p>
         <br>
+
+         <a *ngIf="restaurantEntry?.facebook" target="_blank "[href]="restaurantEntry?.facebook">
+       <i [ngClass]="restaurantEntry?.facebook ? 'fa-brands fa-facebook text-blue pointer': ''"
+            title="facebook">
+         
+          </i>
+        </a>
+
         <p>address:
           <span *ngIf="restaurantEntry?.housenumber">{{ restaurantEntry.housenumber }} </span>
-          <span *ngIf="restaurantEntry?.street">{{ restaurantEntry.street }} </span>
+          <span *ngIf="restaurantEntry?.addr">{{ restaurantEntry.addr }} </span>
           <span *ngIf="restaurantEntry?.city">
             {{ restaurantEntry.city }}<span *ngIf="restaurantEntry.province || restaurantEntry.country">,</span>
           </span>
@@ -97,6 +104,41 @@
           <i [ngClass]="restaurantEntry?.drive_through ? 'fas fa-car text-white' : 'fas fa-car text-grey strikethrough'"
             title="Drive Through"></i>
         </li>
+
+        <li>
+          <i [ngClass]="restaurantEntry?.smoking ? 'fas fa-smoking text-white' : 'fas fa-smoking text-grey strikethrough'"
+            title="Smoking"></i>
+        </li>
+
+        <li>
+          <i [ngClass]="restaurantEntry?.toilets ? 'fas fa-toilet text-white' : 'fas fa-toilet text-grey strikethrough'"
+            title="Toilets"></i>
+        </li>
+
+        <li>
+          <i [ngClass]="restaurantEntry?.breakfast ? 'fas fa-toilet text-white' : 'fas fa-toilet text-grey strikethrough'"
+            title="Breakfast"></i>
+        </li>
+
+        <li>
+          <i [ngClass]="restaurantEntry?.lunch ? 'fas fa-toilet text-white' : 'fas fa-toilet text-grey strikethrough'"
+            title="lunch"></i>
+        </li>
+
+        <li>
+          <i [ngClass]="restaurantEntry?.dinner ? 'fasfa-toilet text-white' : 'fas fa-toilet text-grey strikethrough'"
+            title="dinner"></i>
+        </li>
+
+
+          <li>
+          <i [ngClass]="restaurantEntry?.indoor_seating ? 'fas fa-toilet text-white' : 'fas fa-toilet text-grey strikethrough'"
+            title="indoor_seating"></i>
+        </li>
+
+
+        public facebook : string,
+
       </ul>
     </div>
 
@@ -133,7 +175,7 @@
 
       <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
       <p>{{this.currentPage}}</p>
-      <button (click)="onNextPage()" [disabled]="maxPages >= currentPage">Next</button>
+      <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
 
 
       <!-- ngfor to place all the reviews (page by page) -->

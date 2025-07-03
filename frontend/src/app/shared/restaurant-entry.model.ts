@@ -28,7 +28,16 @@ export class RestaurantEntry{
         public visa : boolean,
         public mastercard : boolean,
         public vegetarian : boolean,
+        
+        public smoking : boolean,
+        public toilets : boolean,
+        public breakfast : boolean,
+        public lunch : boolean,
+        public dinner : boolean,
+        public facebook : string,
+        public indoor_seating : boolean,
         public updated : string,
+
         public housenumber: string,
         public addr : string,
         public city : string,
