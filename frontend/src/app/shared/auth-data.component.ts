@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { throwError, Observable } from 'rxjs';
-import { catchError,tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,21 +13,23 @@ export class AuthDataService {
 
   private baseUrl = 'http://localhost:3000/';
 
-  PostRegister(username:String, password:String, email:String): Observable<any> {
+  loggedin: boolean | null = null;
 
-    var sendData = {"username":username, "password":password, "email":email};
+  PostRegister(username: String, password: String, email: String): Observable<any> {
 
-    return this.http.post<any>(`${this.baseUrl}auth/register`,sendData).pipe(
+    var sendData = { "username": username, "password": password, "email": email };
+
+    return this.http.post<any>(`${this.baseUrl}auth/register`, sendData).pipe(
       catchError((error) => {
         return throwError(() => error);
       })
     );
   }
 
-  PostLogin(password:String, email:String): Observable<any> {
-    const sendData = {"password":password, "email":email};
+  PostLogin(password: String, email: String): Observable<any> {
+    const sendData = { "password": password, "email": email };
 
-    return this.http.post<any>(`${this.baseUrl}auth/login`,sendData).pipe(
+    return this.http.post<any>(`${this.baseUrl}auth/login`, sendData).pipe(
       tap(response => {
         const token = response.token;
         if (token) {
@@ -39,10 +41,37 @@ export class AuthDataService {
       })
     );
   }
-  
-  static getToken(): string|null{
+
+  verifyToken(){
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.get<HttpResponse<any>>(`${this.baseUrl}auth/me`, { headers, observe: 'response' }).subscribe((response: HttpResponse<any>) => {
+      console.log(response.status) // log status code
+
+      if (response.status == 200) {
+        this.loggedin = true;
+      } else {
+        this.loggedin = false;
+      }
+
+    }, (e: HttpErrorResponse) => console.log(e.status))
+
+  }
+
+  getIsLoggedIn(): boolean|null{
+
+    if(this.loggedin == null){
+      this.verifyToken();
+    }
+    return this.loggedin;
+  }
+
+
+  static getToken(): string | null {
     return localStorage.getItem('authToken');
   }
+
 
 
 

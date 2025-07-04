@@ -10,6 +10,7 @@ import { ReviewCardComponent } from "../review-card/review-card.component";
 import { ReviewEntry } from '../shared/review-entry.model';
 import { ReviewDataService } from '../shared/review-data.component';
 import { ReviewFormComponent } from '../review-form/review-form.component';
+import { AuthDataService } from '../shared/auth-data.component';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -42,7 +43,8 @@ export class RestaurantComponent implements OnInit{
     private restaurantDataService: RestaurantDataService,
     private tagDataService: TagDataService, 
     private reviewDataService: ReviewDataService,
-    private route: ActivatedRoute ){} 
+    private route: ActivatedRoute,
+    private authDataService: AuthDataService ){} 
 
 
   ngOnDestroy() : void{
@@ -55,6 +57,9 @@ export class RestaurantComponent implements OnInit{
     
 //    this.reviewDataService.getRestauranReviews(this.restaurantId, this.currentPage, this.pageSize);
     //this.reviewDataService.GetReviews();
+    
+    this.authDataService.getIsLoggedIn();
+    
     this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry =>{
       this.reviewEntry = reviewEntry;
       this.maxPages = this.reviewDataService.totalPages;

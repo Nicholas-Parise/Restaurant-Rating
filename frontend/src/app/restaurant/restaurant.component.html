@@ -49,7 +49,6 @@
             </li>
             <li>Rate</li>
             <li><button (click)="showReviewForm()">add a review</button></li>
-            <li>Log visit</li>
             <li><button (click)="addToFavourites()">add to favourites</button></li>
           </ul>
         </div>
@@ -135,9 +134,6 @@
           <i [ngClass]="restaurantEntry?.indoor_seating ? 'fas fa-toilet text-white' : 'fas fa-toilet text-grey strikethrough'"
             title="indoor_seating"></i>
         </li>
-
-
-        public facebook : string,
 
       </ul>
     </div>
