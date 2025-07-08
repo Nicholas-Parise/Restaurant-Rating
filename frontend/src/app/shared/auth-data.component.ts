@@ -14,6 +14,7 @@ export class AuthDataService {
   private baseUrl = 'http://localhost:3000/';
 
   loggedin: boolean | null = null;
+  username: string;
 
   PostRegister(username: String, password: String, email: String): Observable<any> {
 
@@ -42,31 +43,32 @@ export class AuthDataService {
     );
   }
 
-  verifyToken(){
 
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.get<HttpResponse<any>>(`${this.baseUrl}auth/me`, { headers, observe: 'response' }).subscribe((response: HttpResponse<any>) => {
-      console.log(response.status) // log status code
-
-      if (response.status == 200) {
-        this.loggedin = true;
-      } else {
-        this.loggedin = false;
-      }
-
-    }, (e: HttpErrorResponse) => console.log(e.status))
-
-  }
-
-  getIsLoggedIn(): boolean|null{
-
-    if(this.loggedin == null){
-      this.verifyToken();
-    }
+  
+  async getIsLoggedIn(): Promise<boolean> {
+  if (this.loggedin !== null) {
     return this.loggedin;
   }
 
+  try {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+    const response = await this.http.get<any>(`${this.baseUrl}auth/me`, { headers }).toPromise();
+
+    this.loggedin = true;
+    this.username = response.username;
+    return true;
+
+  } catch (error) {
+    this.loggedin = false;
+    return false;
+  }
+}
+
+
+
+  getUsername():string{
+    return this.username;
+  }
 
   static getToken(): string | null {
     return localStorage.getItem('authToken');

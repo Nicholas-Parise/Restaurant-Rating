@@ -44,13 +44,12 @@ router.get('/:username', async (req, res, next) => {
 
   const username = req.params.username;
 
+  const restaurantId = parseInt(req.query.restaurant) || null;
   const page = parseInt(req.query.page) || 1;
   const pageSize = parseInt(req.query.pageSize) || 10;
   const offset = (page - 1) * pageSize;
 
   try {
-
-    console.log(username);
 
     const userResult = await db.query(`
       SELECT id 
@@ -63,7 +62,26 @@ router.get('/:username', async (req, res, next) => {
 
     const userId = userResult.rows[0].id;
 
-    const result = await db.query(`
+    let result;
+    let countResult;
+
+    if (restaurantId) {
+
+      result = await db.query(`
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username 
+      FROM reviews r 
+      LEFT JOIN users u ON r.user_id = u.id
+      WHERE r.user_id = $1 AND r.restaurant_id = $2
+      ORDER BY r.created DESC
+      LIMIT $3 OFFSET $4;`, [userId, restaurantId, pageSize, offset]);
+
+      countResult = await db.query(`
+      SELECT COUNT(*) AS total 
+      FROM reviews 
+      WHERE user_id = $1 AND restaurant_id = $2;`, [userId,restaurantId]);
+
+    } else {
+      result = await db.query(`
       SELECT r.id, r.restaurant_id, r.liked, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username 
       FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
@@ -71,10 +89,11 @@ router.get('/:username', async (req, res, next) => {
       ORDER BY r.created DESC
       LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
 
-    const countResult = await db.query(`
+      countResult = await db.query(`
       SELECT COUNT(*) AS total 
       FROM reviews 
       WHERE user_id = $1;`, [userId]);
+    }
 
     const totalReviews = parseInt(countResult.rows[0].total, 10);
 

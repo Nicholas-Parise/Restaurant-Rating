@@ -161,6 +161,10 @@ updated TIMESTAMP,
 created TIMESTAMP DEFAULT NOW()
 );
 
+CREATE INDEX idx_reviews_users ON reviews(user_id);
+CREATE INDEX idx_reviews_restaurant ON reviews(restaurant_id);
+
+
 CREATE TABLE favorite_restaurant(
 restaurant_id BIGINT REFERENCES restaurants(id),
 user_id BIGINT REFERENCES users(id),

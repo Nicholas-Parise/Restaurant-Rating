@@ -1,6 +1,5 @@
 <div class="container">
   <div *ngIf="restaurantEntry; else loading">
-    <app-review-form [restaurantEntry]="restaurantEntry"></app-review-form>
     <h2>{{restaurantEntry?.name}}</h2>
 
     <div class="grid-container">
@@ -12,17 +11,19 @@
         <p>{{ restaurantEntry?.description }}</p>
         <p><strong>Type:</strong> {{ restaurantEntry?.type }}</p>
         <p *ngIf="restaurantEntry?.cuisine"><strong>Cuisine:</strong> {{ restaurantEntry?.cuisine }}</p>
-        <p *ngIf="restaurantEntry?.opening_hours"><strong>Opening Hours:</strong> {{ restaurantEntry?.opening_hours }}</p>
+        <p *ngIf="restaurantEntry?.opening_hours"><strong>Opening Hours:</strong> {{ restaurantEntry?.opening_hours }}
+        </p>
         <p *ngIf="restaurantEntry?.phone"><strong>Phone:</strong> {{ restaurantEntry?.phone }}</p>
-        <p *ngIf="restaurantEntry?.website"><strong>Website:</strong> <a [href]="restaurantEntry?.website" target="_blank">{{ restaurantEntry?.website}}</a></p>
-        <p *ngIf="restaurantEntry?.wikipedia"><strong>Wikipedia:</strong> <a [href]="'http://wikipedia.org/wiki/' + restaurantEntry.wikipedia" target="_blank" >{{
+        <p *ngIf="restaurantEntry?.website"><strong>Website:</strong> <a [href]="restaurantEntry?.website"
+            target="_blank">{{ restaurantEntry?.website}}</a></p>
+        <p *ngIf="restaurantEntry?.wikipedia"><strong>Wikipedia:</strong> <a
+            [href]="'http://wikipedia.org/wiki/' + restaurantEntry.wikipedia" target="_blank">{{
             restaurantEntry?.wikipedia }}</a></p>
         <br>
 
-         <a *ngIf="restaurantEntry?.facebook" target="_blank "[href]="restaurantEntry?.facebook">
-       <i [ngClass]="restaurantEntry?.facebook ? 'fa-brands fa-facebook text-blue pointer': ''"
-            title="facebook">
-         
+        <a *ngIf="restaurantEntry?.facebook" target="_blank " [href]="restaurantEntry?.facebook">
+          <i [ngClass]="restaurantEntry?.facebook ? 'fa-brands fa-facebook text-blue pointer': ''" title="facebook">
+
           </i>
         </a>
 
@@ -40,19 +41,15 @@
       </div>
 
       <div class="grid-item">
+
         <div class="actionsPanel">
-          <ul>
-            <li>
-              <span class="icon">visited</span>
-              <span class="icon">favourite</span>
-              <span class="icon">Future Feasts</span>
-            </li>
-            <li>Rate</li>
-            <li><button (click)="showReviewForm()">add a review</button></li>
-            <li><button (click)="addToFavourites()">add to favourites</button></li>
-          </ul>
+          <ng-container *ngIf="userReviewEntry !== undefined">
+            <app-review-form [restaurantEntry]="restaurantEntry" [reviewEntry]="userReviewEntry.length > 0 ? userReviewEntry[0] : null"></app-review-form>
+          </ng-container>
+          <li><button (click)="addToFavourites()">add to favourites</button></li>
         </div>
       </div>
+      
     </div>
 
 
@@ -130,7 +127,7 @@
         </li>
 
 
-          <li>
+        <li>
           <i [ngClass]="restaurantEntry?.indoor_seating ? 'fas fa-toilet text-white' : 'fas fa-toilet text-grey strikethrough'"
             title="indoor_seating"></i>
         </li>

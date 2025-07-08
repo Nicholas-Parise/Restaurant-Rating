@@ -4,24 +4,24 @@ import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { ReviewEntry } from '../shared/review-entry.model';
 import { ReviewDataService } from '../shared/review-data.component';
 import { CommonModule } from '@angular/common';
+import { StarsComponent } from '../stars/stars.component';
 
 @Component({
   selector: 'app-review-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, StarsComponent],
   templateUrl: './review-form.component.html',
   styleUrl: './review-form.component.css'
 })
 export class ReviewFormComponent implements OnInit {
 
-  @Input() restaurantEntry: RestaurantEntry
-
+  @Input() restaurantEntry: RestaurantEntry;
+  @Input() reviewEntry: ReviewEntry|null;
 
   reviewForm: FormGroup;
   isFormVisible: boolean = false;
-  stars = [1, 2, 3, 4, 5];
+
   selectedRating = 0;
-  hoverRating = 0;
 
   constructor(private reviewDataService: ReviewDataService) { }
 
@@ -33,13 +33,28 @@ export class ReviewFormComponent implements OnInit {
       "visited": new FormControl(null),
       "desired": new FormControl(null)
     })
+
+     this.prepopulate();
+  }
+
+  prepopulate(){
+    if(this.reviewEntry){
+      this.selectedRating = this.reviewEntry.score; 
+      this.reviewForm.patchValue({ liked: this.reviewEntry.liked });
+      this.reviewForm.patchValue({ visited: this.reviewEntry.visited });
+    }
+  }
+
+
+  getDataFromStar(e:any){
+    console.log("test");
+    this.selectedRating = e;
   }
 
   onSubmit() {
-    console.log(this.reviewForm);
-    //    console.log(this.restaurantEntry.name);
-    console.log(this.restaurantEntry);
-    //constructor(public id:number, public review: string, public liked: boolean, public visited: boolean, public score: number, public username:string){}
+
+    this.reviewForm.patchValue({ score: this.selectedRating });
+
     const newEntry = new ReviewEntry(
       -1,
       this.restaurantEntry.id,
@@ -57,71 +72,14 @@ export class ReviewFormComponent implements OnInit {
     this.closeForm();
   }
 
-
-  closeForm() {
+  closeForm():void {
     console.log("close");
     this.isFormVisible = false;
   }
 
-  showForm() {
+  showForm():void {
     this.isFormVisible = true;
   }
-
-  selectRating(index: number): void {
-    this.selectedRating = (index + 1) * 2; // Full star (2, 4, 6, 8, 10)
-    this.reviewForm.patchValue({ score: this.selectedRating });
-  }
-
-  selectHalfRating(index: number): void {
-    this.selectedRating = (index * 2) + 1; // Half star (1, 3, 5, 7, 9)
-    this.reviewForm.patchValue({ score: this.selectedRating });
-  }
-
-  onStarHover(event: MouseEvent, star: number): void {
-
-    const onFirstHalf = this.onFirstHalf(event);
-
-    console.log(onFirstHalf);
-
-    if (onFirstHalf) {
-      this.hoverRating = (star + 1) * 2;
-    } else {
-      this.hoverRating = (star * 2) + 1;
-    }
-  }
-
-onStarClick(event: MouseEvent, star: number): void {
-
-    const onFirstHalf = this.onFirstHalf(event);
-
-    console.log(onFirstHalf);
-
-    this.hoverRating = -1;
-
-    if (onFirstHalf) {
-      this.selectedRating = (star + 1) * 2;
-    } else {
-      this.selectedRating = (star * 2) + 1;
-    }
-  }
-
-  removeHover(){
-    this.hoverRating = 0;
-    console.log("fella2");
-  }
-
-  removeRating(){
-    this.selectedRating = 0;
-    console.log("fella");
-  }
-
-
-  private onFirstHalf(event: MouseEvent): boolean {
-    const starIcon = event.target as HTMLElement;
-    return event.pageX > starIcon.getBoundingClientRect().right - starIcon.offsetWidth / 2;
-  }
-
-
 
   toggleFavorite(): void {
     const current = this.reviewForm.get('liked')?.value;
@@ -132,6 +90,10 @@ onStarClick(event: MouseEvent, star: number): void {
     const current = this.reviewForm.get('visited')?.value;
     this.reviewForm.patchValue({ visited: !current });
   }
+
+addToFavourites():void{
+  
+}
 
 
 

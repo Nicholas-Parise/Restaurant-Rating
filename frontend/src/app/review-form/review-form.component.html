@@ -1,44 +1,61 @@
 <div class="formContainer" [style.display]="isFormVisible ? 'block' : 'none'">
-   
+
     <button (click)="closeForm()" class="menuClose">X</button>
 
     <form (ngSubmit)="onSubmit()" [formGroup]="reviewForm" class="review-form">
         <div class="form-group">
             <label for="review">review</label>
-            <textarea  placeholder="Type your review..." type="text"  class="form-control" rows="3" formControlName="description"></textarea>
+            <textarea placeholder="Type your review..." type="text" class="form-control" rows="3"
+                formControlName="description"></textarea>
 
             <label>Your rating</label>
-            <div class="stars-input" (mouseleave)="removeHover()">
-
-                <span (click)="removeRating()" class="close fa-solid fa-circle-xmark"></span>
-                <span
-                *ngFor="let star of stars; let i = index"
-                class="star"
-                [class.on]="selectedRating >= (i + 1) * 2"
-                [class.half]="selectedRating === (i * 2) + 1"
-                [class.onHover]="hoverRating >= (i + 1) * 2"
-                [class.halfHover]="hoverRating === (i * 2) + 1"
-                (click)="onStarClick($event,i)"
-                (mousemove)="onStarHover($event, i)"
-                ></span>
-            </div>
+            <app-stars [inputRating]="selectedRating" (rating)="getDataFromStar($event)"></app-stars>
 
             <input type="hidden" formControlName="score" [value]="selectedRating" />
 
-        <div class="rating-extras">
-            <div class="icon-label" (click)="toggleFavorite()">
-            <span class="heart" [class.on]="reviewForm.get('liked')?.value"></span>
-        <div class="icon-text">Loved</div>
-        </div>
+            <div class="rating-extras">
 
-        <div class="icon-label" (click)="toggleVisited()">
-            <span class="visited" [class.on]="reviewForm.get('visited')?.value"></span>
-            <div class="icon-text">Visited</div>
-        </div>    
-    </div>
+                <div class="icon-label" (click)="toggleVisited()">
+                    <span class="visited" [class.on]="reviewForm.get('visited')?.value"></span>
+                    <div class="icon-text">Visited</div>
+                </div>
 
+                <div class="icon-label" (click)="toggleFavorite()">
+                    <span class="heart" [class.on]="reviewForm.get('liked')?.value"></span>
+                    <div class="icon-text">Loved</div>
+                </div>
 
+            </div>
         </div>
         <button class="btn btn-success">Submit</button>
     </form>
+</div>
+<div>
+    <ul class="actions-list">
+        <li class="icons-row">
+            <div class="rating-extras">
+
+                <div class="icon-label" (click)="toggleVisited()">
+                    <span class="visited" [class.on]="reviewForm.get('visited')?.value"></span>
+                    <div class="icon-text">Visited</div>
+                </div>
+
+                <div class="icon-label" (click)="toggleFavorite()">
+                    <span class="heart" [class.on]="reviewForm.get('liked')?.value"></span>
+                    <div class="icon-text">Loved</div>
+                </div>
+
+            </div>
+        </li>
+        <li class="star-row">
+            <label class="rating-label">Rate</label>
+            <app-stars [inputRating]="selectedRating" (rating)="getDataFromStar($event)"></app-stars>
+        </li>
+        <li class="action-buttons">
+            <button (click)="showForm()">Add a Review</button>
+        </li>
+        <li class="action-buttons">
+            <button (click)="addToFavourites()">Add to Favourites</button>
+        </li>
+    </ul>
 </div>

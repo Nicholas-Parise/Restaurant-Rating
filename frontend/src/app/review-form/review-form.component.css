@@ -51,14 +51,6 @@ textarea.form-control {
   overflow: auto;
 }
 
-
-.stars-input {
-  display: flex;
-  gap: 4px;
-   position: relative;
-  right: 20px;
-}
-
 .close{
     cursor: pointer;
     width: 20px;
@@ -70,50 +62,6 @@ textarea.form-control {
     left: 10px;
     opacity: 0;
   }
-
-.close:hover{
-  left: 5px;
-  opacity: 1;
-}
-
-
-.star {
-    cursor: pointer;
-    font-size: x-large;
-    width: 20px;
-    display: inline-block;
-    color: gray;
-}
-.star:last-child {
-    margin-right: 0;
-}
-.star:before {
-    content:'\2605';
-}
-.star.on {
-    color: gold;
-}
-.star.half:after {
-    content:'\2605';
-    color: gold;
-    position: absolute;
-    margin-left: -20px;
-    width: 10px;
-    overflow: hidden;
-}
-
-.star.onHover {
-    color: lightgoldenrodyellow;
-}
-.star.halfHover:after {
-    content:'\2605';
-    color: lightgoldenrodyellow;
-    position: absolute;
-    margin-left: -20px;
-    width: 10px;
-    overflow: hidden;
-}
-
 
 
 
@@ -198,4 +146,79 @@ form .btn:hover {
   font-size: 12px;
   color: gray;
   margin-top: 2px;
+}
+
+
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.action-buttons button {
+  background-color: darkgrey;
+  border: none;
+  color: white;
+  text-align: center;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.action-buttons button:hover {
+  background-color: lightgray;
+}
+
+
+.star-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* flex-start */
+  gap: 0.5rem;
+}
+
+.rating-label {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+
+}
+
+
+.icons-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.icon {
+  background-color: #eee;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #444;
+  cursor: default;
+}
+
+.actionsPanel {
+  padding: 1rem;
+  background-color: #fdfdfd;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.actions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.actions-list li {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #2c3440;
+  padding: 5px 0;
+  text-align: center;
 }
