@@ -14,7 +14,7 @@ router.get('/', authenticate, async (req, res, next) => {
 
   try {
     const result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username 
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username 
       FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
       WHERE r.user_id = $1
@@ -68,7 +68,7 @@ router.get('/:username', async (req, res, next) => {
     if (restaurantId) {
 
       result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username 
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username 
       FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
       WHERE r.user_id = $1 AND r.restaurant_id = $2
@@ -82,7 +82,7 @@ router.get('/:username', async (req, res, next) => {
 
     } else {
       result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username 
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username 
       FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
       WHERE r.user_id = $1 
@@ -117,7 +117,7 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
 
   try {
     const result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.desired, r.score, r.description, r.updated, r.created, u.name, u.username FROM reviews r 
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
       WHERE r.restaurant_id = $1 
       ORDER BY r.created DESC
@@ -143,7 +143,7 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
 
 router.post('/', authenticate, async (req, res) => {
 
-  const { restaurant_id, liked, visited, desired, score, description } = req.body;
+  const { restaurant_id, liked, visited, score, description } = req.body;
   const userId = req.user.userId; // Get user ID from authenticated token
 
   if (!restaurant_id) {
@@ -151,9 +151,9 @@ router.post('/', authenticate, async (req, res) => {
   }
   try {
     const result = await db.query(
-      `INSERT INTO reviews (restaurant_id, user_id, liked, visited, desired, score, description) 
+      `INSERT INTO reviews (restaurant_id, user_id, liked, visited, score, description) 
                 VALUES ($1, $2, COALESCE($3, false), COALESCE($4, false), COALESCE($5, false), COALESCE($6, 0), $7) RETURNING *`,
-      [restaurant_id, userId, liked, visited, desired, score, description]
+      [restaurant_id, userId, liked, visited, score, description]
     );
 
     return res.status(200).json(result.rows);

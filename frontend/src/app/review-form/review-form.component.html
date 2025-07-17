@@ -16,13 +16,13 @@
             <div class="rating-extras">
 
                 <div class="icon-label" (click)="toggleVisited()">
-                    <span class="visited" [class.on]="reviewForm.get('visited')?.value"></span>
-                    <div class="icon-text">Visited</div>
+                    <span class="fa-solid fa-utensils visited" [class.on]="reviewForm.get('visited')?.value"></span>
+                    <div class="icon-text">Visit<span *ngIf="reviewForm.get('visited')?.value">ed</span></div>
                 </div>
 
                 <div class="icon-label" (click)="toggleFavorite()">
-                    <span class="heart" [class.on]="reviewForm.get('liked')?.value"></span>
-                    <div class="icon-text">Loved</div>
+                    <span class="fa-solid fa-heart heart" [class.on]="reviewForm.get('liked')?.value"></span>
+                    <div class="icon-text">Love<span *ngIf="reviewForm.get('liked')?.value">d</span></div>
                 </div>
 
             </div>
@@ -36,13 +36,18 @@
             <div class="rating-extras">
 
                 <div class="icon-label" (click)="toggleVisited()">
-                    <span class="visited" [class.on]="reviewForm.get('visited')?.value"></span>
-                    <div class="icon-text">Visited</div>
+                    <span class="fa-solid fa-utensils visited" [class.on]="reviewForm.get('visited')?.value"></span>
+                    <div class="icon-text">Visit<span *ngIf="reviewForm.get('visited')?.value">ed</span></div>
                 </div>
 
                 <div class="icon-label" (click)="toggleFavorite()">
-                    <span class="heart" [class.on]="reviewForm.get('liked')?.value"></span>
-                    <div class="icon-text">Loved</div>
+                    <span class="fa-solid fa-heart heart" [class.on]="reviewForm.get('liked')?.value"></span>
+                    <div class="icon-text">Love<span *ngIf="reviewForm.get('liked')?.value">d</span></div>
+                </div>
+
+                <div class="icon-label" (click)="toggleBookmark()">
+                    <span class="fa-solid fa-clock bookmark" [class.on]="bookmark"></span>
+                    <div class="icon-text">Bookmark<span *ngIf="bookmark">ed</span></div>
                 </div>
 
             </div>

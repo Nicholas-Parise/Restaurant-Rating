@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS bookmarked_restaurant
 DROP TABLE IF EXISTS favorite_restaurant;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS sessions;
@@ -154,7 +155,6 @@ restaurant_id BIGINT REFERENCES restaurants(id),
 user_id BIGINT REFERENCES users(id),
 liked BOOLEAN,
 visited BOOLEAN,
-desired BOOLEAN,
 score INT,
 description TEXT,
 updated TIMESTAMP,
@@ -172,4 +172,9 @@ created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, user_id)
 );
 
-
+CREATE TABLE bookmarked_restaurant(
+restaurant_id BIGINT REFERENCES restaurants(id),
+user_id BIGINT REFERENCES users(id),
+created TIMESTAMP DEFAULT NOW(),
+PRIMARY KEY(restaurant_id, user_id)
+);

@@ -74,11 +74,10 @@ textarea.form-control {
 }
 
 
-.heart, .visited {
+.heart, .visited, .bookmark {
   font-size: 28px;
   color: gray;
-   line-height: 1;
-   font-family: Arial, sans-serif;
+  line-height: 1;
   display: inline-block;
   width: 24px;
   text-align: center;
@@ -87,23 +86,17 @@ textarea.form-control {
   transition: color 0.2s, transform 0.2s;
 }
 
-
-.heart:before {
-    content:'\2665';
-}
 .heart.on {
     color: darkorange;
-    display: inline;
 }
 
-
-.visited:before {
-  content: '\2713';
-}
 .visited.on {
   color: green;
 }
 
+.bookmark.on {
+  color: lightblue;
+}
 
 form .form-group {
   display: flex;

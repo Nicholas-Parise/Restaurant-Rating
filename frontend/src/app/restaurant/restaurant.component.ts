@@ -28,16 +28,18 @@ export class RestaurantComponent implements OnInit {
   restaurantEntry: any;
   restaurantSubscription = new Subscription();
 
+  bookmarkEntry: RestaurantEntry[];
+  bookmarkSubscription = new Subscription();
+  bookmarked:boolean = false;
+
   tagEntry: TagEntry[]
   tagSubscription = new Subscription();
 
   reviewEntry: ReviewEntry[]
   reviewSubscription = new Subscription();
 
-
   userReviewEntry: ReviewEntry[]
   userReviewSubscription = new Subscription();
-
 
   restaurantId: number;
   currentPage: number = 1;
@@ -57,6 +59,7 @@ export class RestaurantComponent implements OnInit {
     this.tagSubscription.unsubscribe();
     this.restaurantSubscription.unsubscribe();
     this.userReviewSubscription.unsubscribe();
+    this.bookmarkSubscription.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -86,6 +89,13 @@ export class RestaurantComponent implements OnInit {
       console.log(restaurantEntry)
       this.restaurantEntry = restaurantEntry;
     });
+  
+    this.bookmarkSubscription = this.restaurantDataService.bookmarkSubject.subscribe(bookmarkEntry =>{
+      this.bookmarkEntry = bookmarkEntry;
+      if(this.restaurantDataService.totalBookmarks > 0){
+        this.bookmarked = true;
+      }
+    })
 
     this.route.params.subscribe(params => {
 
@@ -100,9 +110,6 @@ export class RestaurantComponent implements OnInit {
         try {
           this.restaurantDataService.GetResturauntsById(this.restaurantId);
           this.loadReviews();
-
-
-
 
         } catch (e) {
           this.router.navigate(['/']);
@@ -128,22 +135,19 @@ export class RestaurantComponent implements OnInit {
     this.authDataService.getIsLoggedIn().then(isLoggedIn => {
       if (isLoggedIn) {
         this.reviewDataService.getRestaurantUserReviews(this.restaurantId, this.authDataService.getUsername(), this.currentPage, this.pageSize);
+        this.restaurantDataService.GetBookmarkResturaunts(this.restaurantId);
       }
     });
-
   }
 
 
   getSingleReview(): ReviewEntry|null{
     if(this.userReviewEntry){
-      return this.userReviewEntry[0];
+      if(this.userReviewEntry.length > 0){
+        return this.userReviewEntry[0];
+      }
     }
       return null;
-  }
-
-
-  addToFavourites(): void {
-    this.restaurantDataService.addFavourite(this.restaurantId);
   }
 
 

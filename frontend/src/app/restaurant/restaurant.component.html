@@ -43,10 +43,8 @@
       <div class="grid-item">
 
         <div class="actionsPanel">
-          <ng-container *ngIf="userReviewEntry !== undefined">
-            <app-review-form [restaurantEntry]="restaurantEntry" [reviewEntry]="userReviewEntry.length > 0 ? userReviewEntry[0] : null"></app-review-form>
-          </ng-container>
-          <li><button (click)="addToFavourites()">add to favourites</button></li>
+            <app-review-form [bookmarked]="bookmarked" [restaurantEntry]="restaurantEntry" [reviewEntry]="userReviewEntry ? userReviewEntry[0] : null"></app-review-form>
+         
         </div>
       </div>
       

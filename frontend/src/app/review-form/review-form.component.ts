@@ -1,10 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { ReviewEntry } from '../shared/review-entry.model';
 import { ReviewDataService } from '../shared/review-data.component';
 import { CommonModule } from '@angular/common';
 import { StarsComponent } from '../stars/stars.component';
+import { RestaurantDataService } from '../shared/restaurant-data.component';
 
 @Component({
   selector: 'app-review-form',
@@ -16,37 +17,59 @@ import { StarsComponent } from '../stars/stars.component';
 export class ReviewFormComponent implements OnInit {
 
   @Input() restaurantEntry: RestaurantEntry;
-  @Input() reviewEntry: ReviewEntry|null;
+  @Input() reviewEntry: ReviewEntry | null;
+  @Input() bookmarked: boolean | null;
 
   reviewForm: FormGroup;
   isFormVisible: boolean = false;
-
   selectedRating = 0;
+  bookmark: boolean = false;
 
-  constructor(private reviewDataService: ReviewDataService) { }
+  constructor(private reviewDataService: ReviewDataService, private restaurantDataService:RestaurantDataService) { }
 
   ngOnInit() {
     this.reviewForm = new FormGroup({
       "description": new FormControl(null),
       "score": new FormControl(null),
       "liked": new FormControl(null),
-      "visited": new FormControl(null),
-      "desired": new FormControl(null)
+      "visited": new FormControl(null)
     })
 
-     this.prepopulate();
+    this.prepopulate();
   }
 
-  prepopulate(){
-    if(this.reviewEntry){
-      this.selectedRating = this.reviewEntry.score; 
+
+ ngOnChanges(changes: SimpleChanges): void {
+   
+    if (changes['bookmarked']){ //&& !changes['bookmarked'].firstChange) {
+      this.bookmark = changes['bookmarked'].currentValue;
+    }
+
+     if (changes['reviewEntry']){ //&& !changes['reviewEntry'].firstChange) {
+      this.reviewEntry = changes['reviewEntry'].currentValue;
+      if(this.reviewForm){
+        this.prepopulate();
+      }
+    }
+     
+  }
+
+
+
+  prepopulate() {
+    if (this.reviewEntry) {
+      this.selectedRating = this.reviewEntry.score;
       this.reviewForm.patchValue({ liked: this.reviewEntry.liked });
       this.reviewForm.patchValue({ visited: this.reviewEntry.visited });
+    }
+
+    if(this.bookmarked){
+      this.bookmark = true;
     }
   }
 
 
-  getDataFromStar(e:any){
+  getDataFromStar(e: any) {
     console.log("test");
     this.selectedRating = e;
   }
@@ -54,14 +77,12 @@ export class ReviewFormComponent implements OnInit {
   onSubmit() {
 
     this.reviewForm.patchValue({ score: this.selectedRating });
-
     const newEntry = new ReviewEntry(
       -1,
       this.restaurantEntry.id,
       this.reviewForm.value.description,
       this.reviewForm.value.liked,
       this.reviewForm.value.visited,
-      this.reviewForm.value.desired,
       this.reviewForm.value.score,
       "null",
       "null",
@@ -72,12 +93,12 @@ export class ReviewFormComponent implements OnInit {
     this.closeForm();
   }
 
-  closeForm():void {
+  closeForm(): void {
     console.log("close");
     this.isFormVisible = false;
   }
 
-  showForm():void {
+  showForm(): void {
     this.isFormVisible = true;
   }
 
@@ -91,9 +112,20 @@ export class ReviewFormComponent implements OnInit {
     this.reviewForm.patchValue({ visited: !current });
   }
 
-addToFavourites():void{
-  
-}
+
+  toggleBookmark(): void {
+    this.bookmark = !this.bookmark;
+    if(this.bookmark){
+      this.restaurantDataService.addBookmark(this.restaurantEntry.id);
+    }else{
+      this.restaurantDataService.removeBookmark(this.restaurantEntry.id);
+    }
+  }
+
+
+  addToFavourites(): void {
+    this.restaurantDataService.addFavourite(this.restaurantEntry.id);
+  }
 
 
 

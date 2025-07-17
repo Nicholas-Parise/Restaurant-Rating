@@ -5,7 +5,6 @@ export class ReviewEntry{
         public description: string, 
         public liked: boolean, 
         public visited: boolean, 
-        public desired: boolean,
         public score: number, 
         public username:string,
         public name:string,
