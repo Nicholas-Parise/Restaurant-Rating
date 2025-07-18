@@ -1,0 +1,54 @@
+<div class="formContainer" [style.display]="isFormVisible ? 'block' : 'none'">
+
+    <button (click)="closeForm()" class="menuClose">X</button>
+
+    <form (ngSubmit)="onSubmit()" [formGroup]="userForm" enctype="multipart/form-data" class="user-form">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" formControlName="name" />
+
+            <label for="bio">Bio</label>
+            <textarea formControlName="bio" rows="3"></textarea>
+
+            <label for="notifications">
+                <input type="checkbox" formControlName="notifications" />
+                Email Notifications
+            </label>
+
+            <label for="picture">Upload Profile Picture</label>
+            <div class="photoArea">
+                <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+                <button *ngIf="previewUrl" type="button" (click)="removeImage()"
+                    style="background: none; border: none; margin-left: 8px; cursor: pointer;">
+                    <i class="fas fa-trash" style="color: #d00;"></i>
+                </button>
+                <img *ngIf="previewUrl" [src]="previewUrl" style="max-width: 300px; max-height: 300px;" />
+            </div>
+        </div>
+
+
+        <div class="toggle-container">
+            <label class="toggle-label">Show Advanced Settings</label>
+            <label class="switch">
+                <input type="checkbox" [(ngModel)]="showAdvanced" [ngModelOptions]="{standalone: true}"
+                    name="advancedToggle" />
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <div *ngIf="showAdvanced" class="advanced-settings">
+            <label for="email">Email</label>
+            <input type="email" formControlName="email" />
+
+            <label for="password">Current Password</label>
+            <input type="password" formControlName="password" />
+
+            <label for="newPassword">New Password</label>
+            <input type="password" formControlName="newPassword" />
+        </div>
+        <button type="submit">Save Changes</button>
+    </form>
+</div>
+<div>
+    <button (click)="showForm()">Edit profile</button>
+</div>

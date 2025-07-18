@@ -1,52 +1,61 @@
 <div class="container">
     <div *ngIf="userEntry; else loading"></div>
-<div class="grid-container">
-
-    <div class="grid-item">
-        <img class = "image" [src]="userEntry?.pictures || 'assets/placeholder-avatar.png'" alt="">
-    </div>
-
-    <div class="grid-item">
-        <h2>{{userEntry?.name || userEntry?.username}}</h2>
-        <p>{{userEntry?.description}}</p>
-    </div>
-</div>
+    <div class="grid-container">
 
 
-<h2 class="section-header">Favourite Restaurants</h2>
-<div class="spacer grid-container">
-    <div class="center grid-item" *ngFor="let favRestaurantEntry of favRestaurantEntry">
-        <app-restaurant-card [restaurantEntry]="favRestaurantEntry"></app-restaurant-card>
-    </div>
-</div>
 
-
-<h2 class="section-header">Recent Activity</h2>
-<div class="spacer grid-container">
-
-    <div class="center grid-item" *ngFor="let recentRestaurantEntry of recentRestaurantEntry">
-        <app-restaurant-card [restaurantEntry]="recentRestaurantEntry"></app-restaurant-card>
-    </div>
-</div>
-
-
-<h2 class="section-header">Recent reviews</h2>
-<ul class="all-reviews">
-    <li> 
-        <div class="" *ngFor="let reviewEntry of reviewEntry">
-            <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
+        <div class="grid-item">
+            <img class="image" [src]="userEntry?.pictures || 'assets/placeholder-avatar.png'" alt="">
         </div>
-    </li>
-</ul>
 
-<button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
-<p>{{this.currentPage}}</p>
-<button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+        <div class="grid-item">
+            <h2>{{userEntry?.name || userEntry?.username}}</h2>
+            <p>{{userEntry?.bio}}</p>
+            <div *ngIf="showEdit">
+                <app-user-form></app-user-form>
+            </div>
+        </div>
+    </div>
+
+
+    <h2 class="section-header">Favourite Restaurants</h2>
+    <div class="spacer grid-container">
+        <div class="center grid-item" *ngFor="let favRestaurantEntry of favRestaurantEntry">
+            <app-restaurant-card [restaurantEntry]="favRestaurantEntry"></app-restaurant-card>
+        </div>
+    </div>
+
+
+    <h2 class="section-header">Recent Activity</h2>
+
+    <div class="recent-activity-wrapper">
+        <div class="recent-activity-scroll">
+
+                <div class="center grid-item" *ngFor="let recentRestaurantEntry of recentRestaurantEntry">
+                    <app-restaurant-card [restaurantEntry]="recentRestaurantEntry"></app-restaurant-card>
+           
+            </div>
+        </div>
+    </div>
+
+
+    <h2 class="section-header">Recent reviews</h2>
+    <ul class="all-reviews">
+        <li>
+            <div class="" *ngFor="let reviewEntry of reviewEntry">
+                <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
+            </div>
+        </li>
+    </ul>
+
+    <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+    <p>{{this.currentPage}}</p>
+    <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
 
 
 
-<ng-template #loading>
-    <p>Loading...</p>
-  </ng-template>
+    <ng-template #loading>
+        <p>Loading...</p>
+    </ng-template>
 
 </div>

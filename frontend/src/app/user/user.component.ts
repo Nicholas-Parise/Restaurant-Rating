@@ -10,11 +10,13 @@ import { ReviewEntry } from '../shared/review-entry.model';
 import { ReviewDataService } from '../shared/review-data.component';
 import { ReviewCardComponent } from '../review-card/review-card.component';
 import { Subscription } from 'rxjs';
+import { AuthDataService } from '../shared/auth-data.component';
+import { UserFormComponent } from '../user-form/user-form.component';
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule, RestaurantCardComponent, ReviewCardComponent],
+  imports: [CommonModule, RestaurantCardComponent, ReviewCardComponent, UserFormComponent],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
 })
@@ -37,10 +39,13 @@ export class UserComponent {
   pageSize: number = 10;
   maxPages: number = 0;
 
+  showEdit: boolean = false;
+
   constructor(
     private userDataService: UserDataService,
     private restaurantDataService: RestaurantDataService,
     private reviewDataService: ReviewDataService,
+    private authDataService: AuthDataService,
     private route: ActivatedRoute) { }
 
 
@@ -54,6 +59,7 @@ export class UserComponent {
     this.userSubscription = this.userDataService.userSubject.subscribe(userEntry => {
       console.log(userEntry);
       this.userEntry = userEntry;
+       this.showEditLogic();
     });
 
     this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry => {
@@ -69,7 +75,7 @@ export class UserComponent {
     });
 
     // fetch data
-    
+
     this.route.paramMap.subscribe(params => {
 
       this.username = params.get('username');
@@ -80,14 +86,14 @@ export class UserComponent {
         this.reviewDataService.getUserReviews(this.username, 0, 10);
 
       } else {
-        console.log('empty');
         this.userDataService.GetUser();
         this.reviewDataService.GetReviews(0, 10);
         this.restaurantDataService.GetRecentResturaunts();
         this.restaurantDataService.GetFavouriteResturaunts();
       }
-
     })
+
+   
 
   }
 
@@ -99,6 +105,15 @@ export class UserComponent {
     } else {
       this.reviewDataService.GetReviews(this.currentPage, this.pageSize);
     }
+  }
+
+
+  showEditLogic(): void {
+    this.authDataService.getIsLoggedIn().then(isLoggedIn => {
+      if (isLoggedIn && this.userEntry.username == this.authDataService.getUsername()) {
+        this.showEdit = true;
+      }
+    });
   }
 
 

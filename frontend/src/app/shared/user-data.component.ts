@@ -41,5 +41,29 @@ export class UserDataService {
   }
 
 
+  editUser(singleUserEntry: any) {
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.put<{ user: UserEntry[], message: string }>(`${this.baseUrl}users`, singleUserEntry, { headers }).subscribe((jsonData) => {
+      this.userEntry = jsonData.user;
+      this.userSubject.next(this.userEntry);
+    })
+
+    //this.userEntry.push(singleUserEntry);
+    //this.userSubject.next(this.userEntry);
+  }
+
+
+  uploadProfilePicture(data: FormData){
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+     this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/upload`, data, { headers }).subscribe((jsonData) => {
+      console.log(jsonData);
+    })
+  }
+
+
+
 
 }

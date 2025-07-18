@@ -3,7 +3,7 @@ export class UserEntry{
         public name: string | null, 
         public username: string, 
         public picture: string, 
-        public description: string, 
+        public bio: string, 
         public isOwner: boolean, 
         public isCritic: boolean){}
 }

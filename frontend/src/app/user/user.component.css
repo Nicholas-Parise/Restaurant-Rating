@@ -26,3 +26,23 @@
   ul {
     list-style: none;
 }
+
+.recent-activity-wrapper {
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.recent-activity-scroll {
+  /*scroll-snap-align: start;*/
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem; /* space between cards */
+  padding: 0 1rem;
+}
+
+.recent-activity-scroll .grid-item {
+  flex: 0 0 auto;
+  min-width: 300px;           /* optional: enforce minimum size */
+}
