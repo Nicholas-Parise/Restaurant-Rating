@@ -1,16 +1,26 @@
-<nav>
-    <ul>
-        <li>
-            <a routerLink="home" routerLinkActive="selected">Home</a>
-        </li>
-        <li>
-            <a routerLink="Diary" routerLinkActive="selected">Diary</a>
-        </li>
-        <li>
-            <a routerLink="Explore" routerLinkActive="selected">Explore</a>
-        </li>
-        <li>
-            <a routerLink="user" routerLinkActive="selected">user</a>
-        </li>
+<nav class="navbar">
+    <ul class="nav-links">
+        <li><a routerLink="home" routerLinkActive="selected">Home</a></li>
+        <li><a routerLink="Diary" routerLinkActive="selected">Diary</a></li>
+        <li><a routerLink="Explore" routerLinkActive="selected">Explore</a></li>
     </ul>
+
+    <div class="nav-right">
+        <!-- Show login if not logged in -->
+        <a *ngIf="!loggedIn" routerLink="login" class="login-link">Login</a>
+
+        <!-- Show profile menu if logged in -->
+        <div *ngIf="loggedIn" class="profile-container" (click)="toggleDropdown()" tabindex="0"
+            (blur)="closeDropdown()">
+            <img [src]="picture" class="profile-pic" alt="Profile Picture" />
+            <div class="dropdown-menu" *ngIf="dropdownOpen">
+                <a routerLink="user">Profile</a>
+                <a routerLink="friends">Friends</a>
+                <a (click)="signOut()">Sign Out</a>
+            </div>
+        </div>
+    </div>
+
+
+
 </nav>

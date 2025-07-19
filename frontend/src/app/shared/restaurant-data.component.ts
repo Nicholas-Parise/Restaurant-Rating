@@ -70,28 +70,26 @@ export class RestaurantDataService {
     })
   }
 
-  GetRecentResturaunts() {
-    const headers = new HttpHeaders({
+  GetRecentResturaunts(username:string) {
+    /*const headers = new HttpHeaders({
       'Authorization': `Bearer ${AuthDataService.getToken()}`
     });
-
-    console.log('Token:', AuthDataService.getToken());
-
-    this.http.get<{ recents: RestaurantEntry[], totalRecents: number }>(`${this.baseUrl}users/recent`, { headers }).subscribe((jsonData) => {
+*/
+    this.http.get<{ recents: RestaurantEntry[], totalRecents: number }>(`${this.baseUrl}users/recent?username=${username}`).subscribe((jsonData) => {
       this.recentEntry = jsonData.recents;
       this.recentSubject.next(this.recentEntry);
     })
   }
 
 
-  GetFavouriteResturaunts() {
+  GetFavouriteResturaunts(username:string) {
+/*
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${AuthDataService.getToken()}`
     });
+*/
 
-    console.log('Token:', AuthDataService.getToken());
-
-    this.http.get<{ favourites: RestaurantEntry[], totalFavourites: number }>(`${this.baseUrl}users/favourites`, { headers }).subscribe((jsonData) => {
+    this.http.get<{ favourites: RestaurantEntry[], totalFavourites: number }>(`${this.baseUrl}users/favourites?username=${username}`).subscribe((jsonData) => {
       this.favouriteEntry = jsonData.favourites;
       this.favouriteSubject.next(this.favouriteEntry);
     })

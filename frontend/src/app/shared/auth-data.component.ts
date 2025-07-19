@@ -15,6 +15,7 @@ export class AuthDataService {
 
   loggedin: boolean | null = null;
   username: string;
+  picture: string;
 
   PostRegister(username: String, password: String, email: String): Observable<any> {
 
@@ -44,30 +45,43 @@ export class AuthDataService {
   }
 
 
-  
-  async getIsLoggedIn(): Promise<boolean> {
-  if (this.loggedin !== null) {
-    return this.loggedin;
-  }
-
-  try {
+  signOut(): void {    
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-    const response = await this.http.get<any>(`${this.baseUrl}auth/me`, { headers }).toPromise();
 
-    this.loggedin = true;
-    this.username = response.username;
-    return true;
-
-  } catch (error) {
-    this.loggedin = false;
-    return false;
+    this.http.post<{ message: string }>(`${this.baseUrl}auth/logout`, {}, { headers }).subscribe((jsonData) => {
+      console.log(jsonData);
+    })
   }
-}
+
+
+  async getIsLoggedIn(): Promise<boolean> {
+    if (this.loggedin !== null) {
+      return this.loggedin;
+    }
+
+    try {
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+      const response = await this.http.get<any>(`${this.baseUrl}auth/me`, { headers }).toPromise();
+
+      this.loggedin = true;
+      this.username = response.username;
+      this.picture = response.picture;
+      return true;
+
+    } catch (error) {
+      this.loggedin = false;
+      return false;
+    }
+  }
 
 
 
-  getUsername():string{
+  getUsername(): string {
     return this.username;
+  }
+
+  getPicture(): string {
+    return this.picture;
   }
 
   static getToken(): string | null {

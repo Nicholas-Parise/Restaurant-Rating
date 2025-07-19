@@ -50,6 +50,12 @@ export class UserFormComponent implements OnInit {
   }
 
   prepopulate() {
+    if (this.userEntry) {
+      this.userForm.patchValue({ name: this.userEntry.name });
+      this.userForm.patchValue({ email: this.userEntry.email });
+      this.userForm.patchValue({ bio: this.userEntry.bio });
+      this.userForm.patchValue({ notifications: this.userEntry.notifications });
+    }
   }
 
   onFileSelected(event: Event) {
@@ -80,6 +86,7 @@ export class UserFormComponent implements OnInit {
 
   showForm(): void {
     console.log("open");
+    this.prepopulate();
     this.isFormVisible = true;
   }
 

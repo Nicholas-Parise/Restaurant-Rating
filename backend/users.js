@@ -44,6 +44,7 @@ router.put('/', authenticate, async (req, res) => {
     const userId = req.user.userId; // Get user ID from authenticated token
     const { email, name, password, newPassword, bio, notifications, setup } = req.body;
     let newHashedPassword;
+    let newEmail;
 
     // Type checking
     if (email !== undefined && typeof email !== "string") {
@@ -96,6 +97,9 @@ router.put('/', authenticate, async (req, res) => {
       if (newPassword) {
         newHashedPassword = await bcrypt.hash(newPassword, 10); // make new password
       }
+      if(email){
+        newEmail = email;
+      }
     }
 
     const result = await db.query(`
@@ -109,7 +113,7 @@ router.put('/', authenticate, async (req, res) => {
               setup = COALESCE($6, setup),
               updated = NOW()
           WHERE id = $7
-          RETURNING id, email, name, bio, notifications, setup, created, updated;`, [name, newHashedPassword, email, bio, notifications, setup, userId]);
+          RETURNING id, email, name, bio, notifications, setup, created, updated;`, [name, newHashedPassword, newEmail, bio, notifications, setup, userId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
@@ -196,15 +200,33 @@ router.delete('/', authenticate, async (req, res) => {
 
 // localhost:3000/users
 // get logged in users
-router.get('/recent', authenticate, async (req, res, next) => {
+router.get('/recent', async (req, res, next) => {
   try {
-    const userId = req.user.userId; // Get user ID from authenticated token
+    const username = req.query.username;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const offset = (page - 1) * pageSize;
+
+
+    if(!username){
+       return res.status(400).json({ message: 'username required field' });
+    }
+
+    const tempUserId = await db.query(
+        `SELECT id FROM users Where username = $1`, [username]);
+
+    if (tempUserId.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    const userId = tempUserId.rows[0].id;
 
     const result = await db.query(
       `SELECT r.id, r.name, r.pictures FROM reviews rev
         JOIN restaurants r ON rev.restaurant_id = r.id
         WHERE rev.user_id = $1
-        ORDER BY rev.created DESC;`, [userId]);
+        ORDER BY rev.created DESC
+        LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
 
     if (result.rows.length === 0) {
       return res.status(200).json({ message: 'No recents' });
@@ -220,11 +242,24 @@ router.get('/recent', authenticate, async (req, res, next) => {
 
 
 // localhost:3000/users
-// get logged in users
-router.get('/favourites', authenticate, async (req, res, next) => {
+// get users favourites
+router.get('/favourites', async (req, res, next) => {
   try {
-    const userId = req.user.userId; // Get user ID from authenticated token
     const restaurant = parseInt(req.query.restaurant);
+    const username = req.query.username;
+
+    if(!username){
+       return res.status(400).json({ message: 'username required field' });
+    }
+
+    const tempUserId = await db.query(
+        `SELECT id FROM users Where username = $1`, [username]);
+
+    if (tempUserId.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+ 
+    const userId = tempUserId.rows[0].id;
 
     let result;
 

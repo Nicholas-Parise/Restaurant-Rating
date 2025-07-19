@@ -41,6 +41,8 @@ export class UserComponent {
 
   showEdit: boolean = false;
 
+  LoggedIn: boolean = true;
+
   constructor(
     private userDataService: UserDataService,
     private restaurantDataService: RestaurantDataService,
@@ -59,7 +61,7 @@ export class UserComponent {
     this.userSubscription = this.userDataService.userSubject.subscribe(userEntry => {
       console.log(userEntry);
       this.userEntry = userEntry;
-       this.showEditLogic();
+      this.showEditLogic();
     });
 
     this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry => {
@@ -84,16 +86,26 @@ export class UserComponent {
 
         this.userDataService.GetUserById(this.username);
         this.reviewDataService.getUserReviews(this.username, 0, 10);
+        this.restaurantDataService.GetRecentResturaunts(this.username);
+        this.restaurantDataService.GetFavouriteResturaunts(this.username);
 
       } else {
-        this.userDataService.GetUser();
-        this.reviewDataService.GetReviews(0, 10);
-        this.restaurantDataService.GetRecentResturaunts();
-        this.restaurantDataService.GetFavouriteResturaunts();
+        this.authDataService.getIsLoggedIn().then(isLoggedIn => {
+          if (isLoggedIn) {
+            this.userDataService.GetUser();
+            this.reviewDataService.GetReviews(0, 10);
+            this.restaurantDataService.GetRecentResturaunts(this.authDataService.getUsername());
+            this.restaurantDataService.GetFavouriteResturaunts(this.authDataService.getUsername());
+            this.LoggedIn = true;
+          }else{
+            this.LoggedIn = false;
+          }
+        });
+
       }
     })
 
-   
+
 
   }
 

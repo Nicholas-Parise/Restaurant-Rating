@@ -1,13 +1,15 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthDataService } from '../shared/auth-data.component';
+import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -17,9 +19,12 @@ export class LoginComponent {
   passwordMismatch = false;
   errorMessage: string | null = null;
 
-ngOnInit(): void {}
+  ngOnInit(): void { }
 
-  constructor(private fb: FormBuilder, private auth: AuthDataService) {
+  constructor(private fb: FormBuilder,
+    private auth: AuthDataService,
+    private router: Router) {
+
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
@@ -30,7 +35,7 @@ ngOnInit(): void {}
     return this.loginForm.controls;
   }
 
-onSubmit(): void {
+  onSubmit(): void {
     const userData = {
       email: this.f['email'].value,
       password: this.f['password'].value
@@ -41,6 +46,7 @@ onSubmit(): void {
     this.auth.PostLogin(userData.password, userData.email).subscribe({
       next: (response) => {
         console.log('Login success:', response);
+        this.router.navigate(['/user']);
         // Navigate or show success
       },
       error: (error) => {
