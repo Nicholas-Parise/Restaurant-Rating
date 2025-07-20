@@ -72,6 +72,9 @@ indoor_seating BOOLEAN,
 updated TIMESTAMP
 );
 
+CREATE INDEX restaurants_name_trgm_idx ON restaurants USING GIN (name gin_trgm_ops);
+
+
 CREATE TABLE menuItems(
 id SERIAL PRIMARY KEY, 
 restaurant_id BIGINT REFERENCES restaurants (id),
@@ -117,13 +120,20 @@ updated TIMESTAMP
 );
 
 CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX users_name_trgm_idx ON users USING GIN (name gin_trgm_ops);
+CREATE INDEX users_username_trgm_idx ON users USING GIN (username gin_trgm_ops);
 
 CREATE TABLE friends(  
 user_id integer REFERENCES users(id),
 friend_id integer REFERENCES users(id),
+status TEXT CHECK (status IN ('pending', 'accepted', 'declined', 'blocked')) DEFAULT 'pending',
 PRIMARY KEY(user_id, friend_id),
 created TIMESTAMP DEFAULT NOW()
 );
+
+CREATE INDEX idx_friends_status_requester ON friends(status, user_id);
+CREATE INDEX idx_friends_status_addressee ON friends(status, friend_id);
+
 
 CREATE TABLE notifications(
 id SERIAL PRIMARY KEY,   

@@ -11,8 +11,10 @@ import { AuthDataService } from './auth-data.component';
 export class UserDataService {
 
   userEntry: UserEntry[] = [];
-  
   userSubject = new Subject<UserEntry[]>();
+
+  totalusers:number = 0;
+  totalPages:number = 0;
 
   constructor(private http: HttpClient) { }
 
@@ -63,6 +65,19 @@ export class UserDataService {
     })
   }
 
+
+  GetSearch(searchQuery: string, page: Number | null) {
+
+    let args = `?q=${searchQuery}&page=${page}`;
+
+    this.http.get<{ users: UserEntry[], totalusers: number, pageSize: number }>(`${this.baseUrl}users/search${args}`).subscribe((jsonData) => {
+      this.userEntry = jsonData.users;
+      this.totalusers = jsonData.totalusers;
+      this.totalPages = Math.ceil(this.totalusers / jsonData.pageSize);
+      console.log(this.totalusers, this.totalPages);
+      this.userSubject.next(this.userEntry);
+    })
+  }
 
 
 

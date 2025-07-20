@@ -1,0 +1,23 @@
+<div class="cardBody user-card">
+  <a [routerLink]="['/user', userEntry.username]" class="user-info">
+    <img
+      [src]="userEntry?.picture || 'assets/placeholder-avatar.png'"
+      class="profile-pic"
+      alt="Profile Picture"
+      (error)="onImageError($event)"
+    />
+
+    <span class="name">
+      {{ userEntry.name ? userEntry.name + ' (@' + userEntry.username + ')' : userEntry.username }}
+    </span>
+  </a>
+
+  <div class="menu-wrapper" *ngIf="menu">
+    <button class="menu-button" (click)="toggleMenu()">⋯</button>
+    <ul class="menu-options" *ngIf="menuOpen">
+      <li (click)="addFriend()">Add Friend</li>
+      <li (click)="blockUser()">Block</li>
+      <li (click)="reportUser()">Report</li>
+    </ul>
+  </div>
+</div>

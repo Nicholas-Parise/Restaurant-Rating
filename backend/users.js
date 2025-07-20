@@ -97,7 +97,7 @@ router.put('/', authenticate, async (req, res) => {
       if (newPassword) {
         newHashedPassword = await bcrypt.hash(newPassword, 10); // make new password
       }
-      if(email){
+      if (email) {
         newEmail = email;
       }
     }
@@ -208,17 +208,17 @@ router.get('/recent', async (req, res, next) => {
     const offset = (page - 1) * pageSize;
 
 
-    if(!username){
-       return res.status(400).json({ message: 'username required field' });
+    if (!username) {
+      return res.status(400).json({ message: 'username required field' });
     }
 
     const tempUserId = await db.query(
-        `SELECT id FROM users Where username = $1`, [username]);
+      `SELECT id FROM users Where username = $1`, [username]);
 
     if (tempUserId.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
+
     const userId = tempUserId.rows[0].id;
 
     const result = await db.query(
@@ -248,17 +248,17 @@ router.get('/favourites', async (req, res, next) => {
     const restaurant = parseInt(req.query.restaurant);
     const username = req.query.username;
 
-    if(!username){
-       return res.status(400).json({ message: 'username required field' });
+    if (!username) {
+      return res.status(400).json({ message: 'username required field' });
     }
 
     const tempUserId = await db.query(
-        `SELECT id FROM users Where username = $1`, [username]);
+      `SELECT id FROM users Where username = $1`, [username]);
 
     if (tempUserId.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
- 
+
     const userId = tempUserId.rows[0].id;
 
     let result;
@@ -436,6 +436,160 @@ router.delete('/bookmarks/:restaurant_id', authenticate, async (req, res, next) 
 });
 
 
+
+// localhost:3000/users/friends/nick
+// get all friends of specific user by username
+router.get('/friends/:username', async (req, res) => {
+
+  try {
+    const username = req.params.username;
+
+    if (!username) {
+      return res.status(400).json({ message: "username is required to get friends" });
+    }
+
+    const userIDCheck = await db.query(
+      `SELECT id 
+        FROM users 
+        WHERE username = $1`, [username]);
+
+    if (userIDCheck.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userId = userIDCheck.rows[0].id;
+
+    const result = await db.query(
+      `SELECT u.id, u.username, u.name, u.picture, f.created 
+      FROM friends f
+      JOIN users u ON u.id =  
+      CASE 
+        WHEN f.user_id = $1 THEN f.friend_id
+        ELSE f.user_id
+      END
+      WHERE f.user_id = $1 OR f.friend_id = $1`, [userId]);
+
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.status(200).json({ user: result.rows[0], categories: result2.rows });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return res.status(500).json({ message: 'Error retrieving user data' });
+  }
+});
+
+
+
+// Add a friendship request from logged in user to provided user
+router.post('/friends/:username', authenticate, async (req, res, next) => {
+
+  const userId = req.user.userId; // Get user ID from authenticated token
+  const username = req.params.username;
+  try {
+
+    if (!username) {
+      return res.status(400).json({ message: "username is required to add friend" });
+    }
+
+    const friendUserIDCheck = await db.query(
+      `SELECT id 
+        FROM users 
+        WHERE username = $1`, [username]);
+
+    if (friendUserIDCheck.rows.length === 0) {
+      return res.status(404).json({ message: `User: ${username} not found` });
+    }
+
+    const friendUserId = friendUserIDCheck.rows[0].id;
+
+    // existing entry check:
+
+    const existCheck = await db.query(
+      `SELECT status FROM friends
+      WHERE (user_id = $1 AND friend_id = $2) OR (friend_id = $1 AND user_id = $2)`, [userId, friendUserId]);
+
+    if (existCheck.rows.length > 0) {   
+      return res.status(400).json({ message: `friendship already exists, and you are ${existCheck.rows[0].status}` });
+    }
+
+
+    const result = await db.query(`
+        INSERT INTO friends 
+        (user_id, friend_id)
+        VALUES ($1, $2) RETURNING status;`, [userId, friendUserId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "user not found." });
+    }
+
+    res.status(200).json("success");
+
+  } catch (error) {
+    // Handle duplicate restaurantId error
+    if (error.code === "23505") {
+      return res.status(409).json({ message: "Restaurant is already added" });
+    }
+
+    console.error("Error adding restaurant:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
+
+router.get('/search', async (req, res, next) => {
+
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+  const searchTerm = req.query.q;
+  const offset = (page - 1) * pageSize;
+  var result;
+
+  if (pageSize && pageSize > 100) {
+    pageSize = 100;
+  }
+
+  try {
+    if (!searchTerm) {
+    return res.status(400).json({ message: "search is required" });
+    }
+      console.log(searchTerm);
+
+        result = await db.query(
+          `SELECT *, COUNT(*) OVER() AS total_count 
+          FROM (
+          SELECT id, username, name, picture, GREATEST(similarity(username, $1), similarity(name, $1)) AS sim
+          FROM users
+          WHERE username % $1 OR name % $1
+          ) sub
+          ORDER BY sim DESC
+          LIMIT $2 OFFSET $3;`, [searchTerm, pageSize, offset]);
+    
+    const users = result.rows;
+    
+    const total = users[0]?.total_count ?? 0;
+
+    res.json({
+      page,
+      pageSize,
+      totalUsers: total,
+      users: users,
+    });
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
 // localhost:3000/users/0
 // get specific user by username
 router.get('/:userId', async (req, res) => {
@@ -465,252 +619,11 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
-/*
-// Assign a category from logged in user: post /categories/1234
-// Assign multiple categories from logged in user: post /categories
-router.post('/categories/:categoryId', authenticate, async (req, res, next) => {
-
-  const userId = req.user.userId; // Get user ID from authenticated token
-
-  // MULTIPLE INSERT
-  if (Array.isArray(req.body.categories)) {
-    const categories = req.body.categories;
-    try {
-      await db.query("BEGIN"); // Start transaction
-
-      const errors = [];
-
-      for (const category of categories) {
-        const { id, love } = category;
-
-        if (!id || love === null || love === undefined) {
-          errors.push({ id, message: "id and love are required fields" });
-          continue;
-        }
-
-        if (love !== undefined && typeof love !== "boolean") {
-          errors.push({ id, message: "love must be a boolean (true or false)" });
-          continue;
-        }
-
-        try {
-          await db.query(
-            `INSERT INTO user_categories 
-            (user_id, category_id, love, created)
-            VALUES ($1, $2, COALESCE($3, false), NOW());`,
-            [userId, id, love]
-          );
-        } catch (error) {
-          if (error.code === "23505") {
-            errors.push({ id, message: "Category is already added" });
-          } else {
-            errors.push({ id, message: "Database error" });
-          }
-        }
-      }
-
-      if (errors.length > 0) {
-        await db.query("ROLLBACK");
-        return res.status(400).json({ message: "Some categories could not be added", errors });
-      }
-
-      await db.query("COMMIT");
-      return res.status(200).json({ message: "Categories assigned successfully" });
-
-    } catch (error) {
-      await db.query("ROLLBACK");
-      console.error("Error adding categories:", error);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
-
-  }
-
-  /// SINGLE INSERT
-  try {
-    const categoryId = parseInt(req.params.categoryId);
-    const { love } = req.body;
-
-    // Ensure love is not null
-    if (love === null || love === undefined) {
-      return res.status(400).json({ message: "love is a required field" });
-    }
-
-    const result = await db.query(`
-        INSERT INTO user_categories 
-        (user_id, category_id, love, created)
-        VALUES ($1, $2, COALESCE($3, false), NOW()) RETURNING id;`, [userId, categoryId, love]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "categories not found." });
-    }
-
-    res.status(200).json("success");
-
-  } catch (error) {
-    // Handle duplicate category error
-    if (error.code === "23505") {
-      return res.status(409).json({ message: "Category is already added" });
-    }
-
-    console.error("Error adding category:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
 
 
 
-// remove a category from logged in user: delete /categories/1234
-// remove multiple categories from logged in user: delete /categories
-router.delete('/categories/:categoryId', authenticate, async (req, res, next) => {
-
-  const userId = req.user.userId; // Get user ID from authenticated token
-
-  // MULTIPLE DELETE
-  if (Array.isArray(req.body.categories)) {
-    const categories = req.body.categories;
-    try {
-      await db.query("BEGIN"); // Start transaction
-
-      const errors = [];
-
-      for (const category of categories) {
-        const { id } = category;
-
-        if (!id) {
-          errors.push({ id, message: "id are required fields" });
-          continue;
-        }
-
-        try {
-
-          await db.query(`
-            DELETE FROM user_categories 
-            WHERE user_id = $1 AND category_id = $2;`, [userId, id]);
-
-        } catch (error) {
-          errors.push({ id, message: "Database error" });
-        }
-      }
-
-      if (errors.length > 0) {
-        await db.query("ROLLBACK");
-        return res.status(400).json({ message: "Some categories could not be removed", errors });
-      }
-
-      await db.query("COMMIT");
-      return res.status(200).json({ message: "Categories removed successfully" });
-
-    } catch (error) {
-      await db.query("ROLLBACK");
-      console.error("Error removing categories:", error);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
-
-  }
-
-  /// SINGLE DELETE
-  try {
-    const categoryId = parseInt(req.params.categoryId);
-    // remove the category
-    const result = await db.query(`
-        DELETE FROM user_categories 
-        WHERE user_id = $1 AND category_id = $2;`, [userId, categoryId]);
-
-    res.status(200).json({ message: "category removed successfully." });
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
 
 
-// update a category from logged in user: PUT /categories/1234
-// update multiple categories from logged in user: PUT /categories
-router.put('/categories/:categoryId', authenticate, async (req, res, next) => {
-
-  const userId = req.user.userId; // Get user ID from authenticated token
-
-  // MULTIPLE EDIT
-  if (Array.isArray(req.body.categories)) {
-    const categories = req.body.categories;
-    try {
-      await db.query("BEGIN"); // Start transaction
-
-      const errors = [];
-
-      for (const category of categories) {
-        const { id, love } = category;
-
-        if (!id || love === null || love === undefined) {
-          errors.push({ id, message: "id and love are required fields" });
-          continue;
-        }
-
-        if (love !== undefined && typeof love !== "boolean") {
-          errors.push({ id, message: "love must be a boolean (true or false)" });
-          continue;
-        }
-
-        try {
-          await db.query(`
-            UPDATE user_categories
-            SET 
-                love = COALESCE($1, love)
-            WHERE user_id = $2 AND category_id = $3;
-          `, [love, userId, id]);
-
-        } catch (error) {
-          errors.push({ id, message: "Database error" });
-        }
-      }
-
-      if (errors.length > 0) {
-        await db.query("ROLLBACK");
-        return res.status(400).json({ message: "Some categories could not be edited", errors });
-      }
-
-      await db.query("COMMIT");
-      return res.status(200).json({ message: "Categories editing successfully" });
-
-    } catch (error) {
-      await db.query("ROLLBACK");
-      console.error("Error editing categories:", error);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
-
-  }
-
-  /// SINGLE EDIT
-  try {
-    const categoryId = parseInt(req.params.categoryId);
-    const { love } = req.body;
-
-    // Ensure love is not null
-    if (love === null || love === undefined) {
-      return res.status(400).json({ message: "love is a required field" });
-    }
-
-    const result = await db.query(`
-        UPDATE user_categories
-        SET 
-            love = COALESCE($1, love)
-        WHERE user_id = $2 AND category_id = $3
-        RETURNING *;
-      `, [love, userId, categoryId]);
-
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "categories not found." });
-    }
-
-    res.status(200).json("success");
-
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-*/
 
 
 

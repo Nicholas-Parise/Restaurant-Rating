@@ -5,48 +5,44 @@
         <input type="text" [(ngModel)]="searchQuery" (input)="onSearchChange()" placeholder="Search by name"
             class="search-input" />
 
+        <select [(ngModel)]="searchMode" (change)="onSearchChange()">
+            <option value="restaurants">Restaurants</option>
+            <option value="users">Users</option>
+        </select>
 
-        <label class="switch-label">
-            <input 
-            type="checkbox" 
-            [(ngModel)]="nearbyEnabled" 
-            (change)="onToggleNearby()" />
-            <span class="slider"></span>
-            <span class="switch-text">Near Me</span>
-        </label>
+        <div *ngIf="searchMode === 'restaurants'">
+            <label class="switch-label">
+                <input type="checkbox" [(ngModel)]="nearbyEnabled" (change)="onToggleNearby()" />
+                <span class="slider"></span>
+                <span class="switch-text">Near Me</span>
+            </label>
 
-        <div *ngIf="nearbyEnabled" class="radius-control">
-            <label for="radius">Radius: {{ searchRadius }} km</label>
-            <input
-            type="range"
-            id="radius"
-            min="1"
-            max="50"
-            step="1"
-            [(ngModel)]="searchRadius"
-            (change)="onRadiusChange()"
-            (input)="onToggleNearby()"
-            />
+            <div *ngIf="nearbyEnabled" class="radius-control">
+                <label for="radius">Radius: {{ searchRadius }} km</label>
+                <input type="range" id="radius" min="1" max="50" step="1" [(ngModel)]="searchRadius"
+                    (change)="onRadiusChange()" (input)="onToggleNearby()" />
+            </div>
         </div>
 
     </div>
 
-    <div class="spacer grid-container">
+    <div class="spacer grid-container" *ngIf="searchMode === 'restaurants'">
         <div class="center grid-item" *ngFor="let restaurantEntry of restaurantEntry">
             <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
         </div>
     </div>
-<!--
-    <ul class="restaurant-list" *ngIf="restaurantEntry && restaurantEntry.length > 0">
-        <li class="restaurant-item" *ngFor="let restaurant of restaurantEntry">
-            {{ restaurant.name }} - {{ restaurant.city }}
-        </li>
-    </ul>
-    -->
+
+    <div class="spacer grid-container" *ngIf="searchMode === 'users'">
+        <div class="center grid-item" *ngFor="let userEntry of userEntry">
+            <app-user-card [userEntry]="userEntry"></app-user-card>
+        </div>
+    </div>
+
+
     <p *ngIf="restaurantEntry && restaurantEntry.length === 0">No results found.</p>
 
- <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
-      <p>{{this.currentPage}}</p>
-      <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+    <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+    <p>{{this.currentPage}}</p>
+    <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
 
 </div>

@@ -29,6 +29,12 @@ export class NavbarComponent implements OnInit {
     });
   }
 
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = 'assets/placeholder-avatar.png';
+  }
+
+
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
   }

@@ -7,6 +7,7 @@ import { RestaurantComponent } from './restaurant/restaurant.component';
 import { TagComponent } from './tag/tag.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { FriendsComponent } from './friends/friends.component';
 
 export const routes: Routes = [
     {path: 'home', component: HomeComponent},
@@ -14,6 +15,8 @@ export const routes: Routes = [
     {path: 'Explore', component: ExploreComponent},
     {path: 'restaurant/:id', component: RestaurantComponent},
     {path: 'restaurant', component: RestaurantComponent},
+    {path: 'user/friends', component: FriendsComponent},
+    {path: 'user/:username/friends', component: FriendsComponent},
     {path: 'user/:username', component: UserComponent},
     {path: 'user', component: UserComponent},
     {path: 'tag/:id', component: TagComponent},

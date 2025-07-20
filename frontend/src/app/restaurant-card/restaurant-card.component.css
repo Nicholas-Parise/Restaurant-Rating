@@ -1,16 +1,16 @@
-.cardBody{
+.cardBody {
     min-width: 300px;
     max-width: 300px;
 }
 
-.image{
-    max-width:250px;
-    max-height:250px;
-/*    min-width: 100px;
+.image {
+    max-width: 250px;
+    max-height: 250px;
+    /*    min-width: 100px;
     min-height: 100px;*/
 }
 
-a{
+a {
     text-decoration: none;
     color: white;
-    }
+}

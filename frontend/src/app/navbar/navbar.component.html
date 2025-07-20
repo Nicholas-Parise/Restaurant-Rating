@@ -12,10 +12,10 @@
         <!-- Show profile menu if logged in -->
         <div *ngIf="loggedIn" class="profile-container" (click)="toggleDropdown()" tabindex="0"
             (blur)="closeDropdown()">
-            <img [src]="picture" class="profile-pic" alt="Profile Picture" />
+            <img [src]="picture || 'assets/placeholder-avatar.png'" (error)="onImageError($event)" class="profile-pic" alt="Profile Picture" />
             <div class="dropdown-menu" *ngIf="dropdownOpen">
                 <a routerLink="user">Profile</a>
-                <a routerLink="friends">Friends</a>
+                <a routerLink="user/friends">Friends</a>
                 <a (click)="signOut()">Sign Out</a>
             </div>
         </div>

@@ -2,27 +2,36 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RestaurantEntry } from '../shared/restaurant-entry.model';
-import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { Subscription, Subject, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { RestaurantEntry } from '../shared/restaurant-entry.model';
+import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { RestaurantCardComponent } from "../restaurant-card/restaurant-card.component";
+import { UserEntry } from '../shared/user-entry.model';
+import { UserDataService } from '../shared/user-data.component';
+import { UserCardComponent } from '../user-card/user-card.component';
 
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [RestaurantCardComponent, CommonModule, FormsModule],
+  imports: [RestaurantCardComponent, UserCardComponent, CommonModule, FormsModule],
   templateUrl: './explore.component.html',
   styleUrl: './explore.component.css'
 })
-export class ExploreComponent {
+export class ExploreComponent implements OnInit{
 
   constructor(
-    private restaurantDataService: RestaurantDataService
+    private restaurantDataService: RestaurantDataService,
+    private userDataService:UserDataService
   ) { }
 
-  restaurantEntry: any;
+  searchMode: 'restaurants' | 'users' = 'restaurants';
+  
+  restaurantEntry: any[] = [];
   restaurantSubscription = new Subscription();
+
+  userEntry: UserEntry[] = [];
+  userSubscription = new Subscription();
 
   private searchQuerySubject = new Subject<string>();
   private searchRadiusSubject = new Subject<number>();
@@ -37,7 +46,6 @@ export class ExploreComponent {
   lat: Number | null = null;
   lng: Number | null = null;
   searchRadius = 10;
-  searchResults: RestaurantEntry[] = [];
 
   ngOnInit(): void {
 
@@ -47,6 +55,16 @@ export class ExploreComponent {
       this.maxPages = this.restaurantDataService.totalPages;
       console.log(this.maxPages);
     });
+
+
+       this.userSubscription = this.userDataService.userSubject.subscribe(userEntry => {
+      //console.log(restaurantEntry)
+      this.userEntry = userEntry;
+      this.maxPages = this.userDataService.totalPages;
+      console.log(this.maxPages);
+    });
+
+
 
     this.combinedSearchSub = combineLatest([
       this.searchQuerySubject.pipe(
@@ -63,6 +81,7 @@ export class ExploreComponent {
       )
     ]).subscribe(([query, radius, page]) => {
       this.restaurantDataService.GetSearchResturaunts(query, this.lat, this.lng, radius, page);
+      this.userDataService.GetSearch(query,page);
     });
 
     this.onSearchChange();

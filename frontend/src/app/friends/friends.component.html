@@ -1,0 +1,10 @@
+<div class="container">
+    <h2>Friends</h2>
+
+    <div class="spacer grid-container">
+        <div class="center grid-item" *ngFor="let userEntry of userEntry">
+            <app-user-card [userEntry]="userEntry"></app-user-card>
+        </div>
+    </div>
+
+</div>
