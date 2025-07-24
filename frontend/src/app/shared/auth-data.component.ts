@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { throwError, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { UserEntry } from './user-entry.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class AuthDataService {
   loggedin: boolean | null = null;
   username: string;
   picture: string;
+  userEntry: UserEntry;
 
   PostRegister(username: String, password: String, email: String): Observable<any> {
 
@@ -51,21 +53,26 @@ export class AuthDataService {
     this.http.post<{ message: string }>(`${this.baseUrl}auth/logout`, {}, { headers }).subscribe((jsonData) => {
       console.log(jsonData);
     })
+    localStorage.removeItem("authToken");
   }
 
 
   async getIsLoggedIn(): Promise<boolean> {
+    console.log(this.loggedin);
     if (this.loggedin !== null) {
       return this.loggedin;
     }
 
     try {
+       console.log("contacting server");
       const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
       const response = await this.http.get<any>(`${this.baseUrl}auth/me`, { headers }).toPromise();
 
       this.loggedin = true;
       this.username = response.username;
       this.picture = response.picture;
+      this.userEntry = response;
+      console.log(this.userEntry);
       return true;
 
     } catch (error) {
@@ -82,6 +89,10 @@ export class AuthDataService {
 
   getPicture(): string {
     return this.picture;
+  }
+
+  getUserEntry():UserEntry{
+    return this.userEntry;
   }
 
   static getToken(): string | null {

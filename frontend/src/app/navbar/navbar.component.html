@@ -1,8 +1,10 @@
-<nav class="navbar">
+<nav class="navbar"
+(mouseleave)="closeDropdown()">
     <ul class="nav-links">
         <li><a routerLink="home" routerLinkActive="selected">Home</a></li>
         <li><a routerLink="Diary" routerLinkActive="selected">Diary</a></li>
         <li><a routerLink="Explore" routerLinkActive="selected">Explore</a></li>
+        <li><a routerLink="List" routerLinkActive="selected">Lists</a></li>
     </ul>
 
     <div class="nav-right">
@@ -10,7 +12,9 @@
         <a *ngIf="!loggedIn" routerLink="login" class="login-link">Login</a>
 
         <!-- Show profile menu if logged in -->
-        <div *ngIf="loggedIn" class="profile-container" (click)="toggleDropdown()" tabindex="0"
+        <div *ngIf="loggedIn" class="profile-container" tabindex="0"
+       
+            (click)="toggleNotifications.emit()"
             (blur)="closeDropdown()">
             <img [src]="picture || 'assets/placeholder-avatar.png'" (error)="onImageError($event)" class="profile-pic" alt="Profile Picture" />
             <div class="dropdown-menu" *ngIf="dropdownOpen">
@@ -20,7 +24,4 @@
             </div>
         </div>
     </div>
-
-
-
 </nav>

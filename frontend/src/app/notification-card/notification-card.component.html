@@ -1,0 +1,24 @@
+<div class="cardBody notification-card" [class.unread]="!notificationEntry.is_read">
+
+    <div class="notification-header">
+        <span class="notification-title">
+            {{ notificationEntry.title || 'Notification' }}
+        </span>
+        <span class="notification-time">
+            {{ notificationEntry.created | date:'short' }}
+        </span>
+    </div>
+
+    <div class="notification-body" 
+    (click)="markAsRead()" 
+    [routerLink]="[notificationEntry.url]">
+        {{ notificationEntry.body }}
+    </div>
+
+    <div class="notification-actions">
+        <button class="read-btn">Mark as Read</button>
+        <button class="delete-btn" (click)="deleteNotification()" title="Delete"><i
+                class="fas fa-trash-alt"></i></button>
+    </div>
+
+</div>

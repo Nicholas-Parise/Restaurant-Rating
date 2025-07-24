@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthDataService } from '../shared/auth-data.component';
 import { CommonModule } from '@angular/common';
@@ -11,9 +11,12 @@ import { Router } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
-export class NavbarComponent implements OnInit {
-
-  constructor(private authDataService: AuthDataService, private router: Router) { }
+export class NavbarComponent implements OnInit { 
+  
+  @Output() toggleNotifications = new EventEmitter<void>();
+  
+  constructor(private authDataService: AuthDataService, 
+    private router: Router) { }
 
   dropdownOpen: boolean = false;
   loggedIn: boolean = false;
@@ -48,6 +51,7 @@ export class NavbarComponent implements OnInit {
     this.authDataService.signOut(); // You should define this in your auth service
     this.router.navigate(['/login']);
   }
+
 
 
 }

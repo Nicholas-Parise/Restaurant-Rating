@@ -1,0 +1,14 @@
+<div class="container">
+
+    <h2>Bookmarked Restaurants</h2>
+
+    <div class="spacer grid-container">
+        <div class="center grid-item" *ngFor="let restaurantEntry of restaurantEntry">
+            <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
+        </div>
+    </div>
+
+    <p *ngIf="!restaurantEntry || restaurantEntry.length === 0">No results found.</p>
+
+
+</div>

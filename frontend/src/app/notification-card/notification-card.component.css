@@ -1,0 +1,42 @@
+.notification-card {
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.notification-card:hover {
+  background-color: #f1f1f1;
+}
+
+.notification-card.unread {
+  background-color: #e9f5ff;
+  border-left: 4px solid #2196f3;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.notification-title {
+  font-size: 1rem;
+  color: #333;
+}
+
+.notification-time {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.notification-body {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.4;
+}

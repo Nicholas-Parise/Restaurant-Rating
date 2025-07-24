@@ -13,30 +13,34 @@ export class UserDataService {
   userEntry: UserEntry[] = [];
   userSubject = new Subject<UserEntry[]>();
 
-  totalusers:number = 0;
-  totalPages:number = 0;
+  totalusers: number = 0;
+  totalPages: number = 0;
+
+
+  friendEntry: UserEntry[] = [];
+  friendSubject = new Subject<UserEntry[]>();
 
   constructor(private http: HttpClient) { }
 
   private baseUrl = 'http://localhost:3000/';
 
 
-  GetUsers(){
+  GetUsers() {
     //return this.userEntry;
   }
 
-  GetUserById(username:string){
-    this.http.get<{user: UserEntry[], totalReviews: Number}>(`${this.baseUrl}users/${username}`).subscribe((jsonData) =>{
+  GetUserById(username: string) {
+    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}users/${username}`).subscribe((jsonData) => {
       this.userEntry = jsonData.user;
       this.userSubject.next(this.userEntry);
     })
   }
 
-  GetUser(){
+  GetUser() {
 
-    const headers = new HttpHeaders().set('Authorization',  `Bearer ${AuthDataService.getToken()}`);
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.get<{user: UserEntry[], totalReviews: Number}>(`${this.baseUrl}users`, { headers }).subscribe((jsonData) =>{
+    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}users`, { headers }).subscribe((jsonData) => {
       this.userEntry = jsonData.user;
       this.userSubject.next(this.userEntry);
     })
@@ -57,10 +61,64 @@ export class UserDataService {
   }
 
 
-  uploadProfilePicture(data: FormData){
+  friendUser(username: string): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-     this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/upload`, data, { headers }).subscribe((jsonData) => {
+    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/friends/${username}`, {}, { headers }).subscribe((jsonData) => {
+      // this.userEntry = jsonData.user;
+      // this.userSubject.next(this.userEntry);
+      console.log("friend request sent");
+    })
+  }
+
+  acceptFriendUser(username: string): void {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/friends/${username}/accept`, {}, { headers }).subscribe((jsonData) => {
+      console.log("Accepted friend request");
+    })
+  }
+
+  denyFriendUser(username: string): void {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/friends/${username}/deny`, {}, { headers }).subscribe((jsonData) => {
+      console.log("denied friend request");
+    })
+  }
+
+  removeFriendUser(username: string): void {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.delete<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/friends/${username}`, { headers }).subscribe((jsonData) => {
+      console.log("removed friend");
+    })
+  }
+
+
+  GetFriends() {
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}users/friends`, { headers }).subscribe((jsonData) => {
+      this.friendEntry = jsonData.user;
+      this.friendSubject.next(this.friendEntry);
+    })
+  }
+
+  GetFriendsById(username: string) {
+    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}users/friends/${username}`).subscribe((jsonData) => {
+      this.friendEntry = jsonData.user;
+      this.friendSubject.next(this.friendEntry);
+    })
+  }
+
+
+
+  uploadProfilePicture(data: FormData) {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/upload`, data, { headers }).subscribe((jsonData) => {
       console.log(jsonData);
     })
   }

@@ -10,6 +10,7 @@ import { RestaurantCardComponent } from "../restaurant-card/restaurant-card.comp
 import { UserEntry } from '../shared/user-entry.model';
 import { UserDataService } from '../shared/user-data.component';
 import { UserCardComponent } from '../user-card/user-card.component';
+import { AuthDataService } from '../shared/auth-data.component';
 
 @Component({
   selector: 'app-explore',
@@ -18,15 +19,16 @@ import { UserCardComponent } from '../user-card/user-card.component';
   templateUrl: './explore.component.html',
   styleUrl: './explore.component.css'
 })
-export class ExploreComponent implements OnInit{
+export class ExploreComponent implements OnInit {
 
   constructor(
     private restaurantDataService: RestaurantDataService,
-    private userDataService:UserDataService
+    private userDataService: UserDataService,
+    private authDataService: AuthDataService
   ) { }
 
   searchMode: 'restaurants' | 'users' = 'restaurants';
-  
+
   restaurantEntry: any[] = [];
   restaurantSubscription = new Subscription();
 
@@ -47,6 +49,8 @@ export class ExploreComponent implements OnInit{
   lng: Number | null = null;
   searchRadius = 10;
 
+  LoggedIn:boolean;
+
   ngOnInit(): void {
 
     this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
@@ -57,14 +61,20 @@ export class ExploreComponent implements OnInit{
     });
 
 
-       this.userSubscription = this.userDataService.userSubject.subscribe(userEntry => {
+    this.userSubscription = this.userDataService.userSubject.subscribe(userEntry => {
       //console.log(restaurantEntry)
       this.userEntry = userEntry;
       this.maxPages = this.userDataService.totalPages;
       console.log(this.maxPages);
     });
 
-
+    this.authDataService.getIsLoggedIn().then(isLoggedIn => {
+      if (isLoggedIn) {
+        this.LoggedIn = true;
+      } else {
+        this.LoggedIn = false;
+      }
+    });
 
     this.combinedSearchSub = combineLatest([
       this.searchQuerySubject.pipe(
@@ -73,15 +83,15 @@ export class ExploreComponent implements OnInit{
       ),
       this.searchRadiusSubject.pipe(
         debounceTime(300)
-       // ,distinctUntilChanged()
+        // ,distinctUntilChanged()
       ),
       this.searchPageSubject.pipe(
         debounceTime(300)
-       // ,distinctUntilChanged()
+        // ,distinctUntilChanged()
       )
     ]).subscribe(([query, radius, page]) => {
       this.restaurantDataService.GetSearchResturaunts(query, this.lat, this.lng, radius, page);
-      this.userDataService.GetSearch(query,page);
+      this.userDataService.GetSearch(query, page);
     });
 
     this.onSearchChange();
@@ -107,7 +117,7 @@ export class ExploreComponent implements OnInit{
     this.currentPage = 1;
   }
 
-   onPageChange(): void {
+  onPageChange(): void {
     this.searchPageSubject.next(this.currentPage);
   }
 

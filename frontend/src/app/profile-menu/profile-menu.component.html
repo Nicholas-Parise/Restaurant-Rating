@@ -1,0 +1,48 @@
+<div class="profile-menu" [class.open]="isOpen">
+  <!-- Close Button -->
+  <div class="menu-header">
+    <button class="close-btn" (click)="closePanel()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Profile Button -->
+  <button class="profile-btn" 
+  *ngIf="userEntry"
+  routerLink='/user'
+  (click)="closePanel()">
+    <img [src]="userEntry.picture" 
+    (error)="onImageError($event)" alt="Profile" class="profile-img" />
+    <div class="user-info">
+      <div class="name">{{ userEntry.name ? userEntry.name + ' (@' + userEntry.username + ')' : userEntry.username }}</div>
+      <div class="email">{{ userEntry.email }}</div>
+    </div>
+  </button>
+
+  <!-- Visit Later / Diary -->
+  <div class="button-row thirds">
+    <button routerLink='/user/bookmarked' (click)="closePanel()">Bookmarked</button>
+    <button routerLink='/Diary' (click)="closePanel()">Diary</button>
+    <button routerLink='/user/friends' (click)="closePanel()">Friends</button>
+  </div>
+
+  <!-- Notifications Section -->
+  <div class="notifications-section">
+    <h4>Notifications</h4>
+    <div class="notification-list">
+    <div class="center grid-item" *ngFor="let notificationEntry of notificationEntry">
+        <app-notification-card [notificationEntry] = "notificationEntry"></app-notification-card>
+</div>
+    </div>
+  </div>
+
+  <!-- ToS / Privacy / About -->
+  <div class="button-row thirds">
+    <button routerLink='/privacy-policy' (click)="closePanel()">Privacy</button>
+    <button routerLink='/terms-of-service' (click)="closePanel()">ToS</button>
+    <button routerLink='/about' (click)="closePanel()">About</button>
+  </div>
+
+  <!-- Logout -->
+  <button class="logout-btn" (click)="logout()">Logout</button>
+</div>

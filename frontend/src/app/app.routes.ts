@@ -8,6 +8,7 @@ import { TagComponent } from './tag/tag.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { FriendsComponent } from './friends/friends.component';
+import { BookmarkedComponent } from './bookmarked/bookmarked.component';
 
 export const routes: Routes = [
     {path: 'home', component: HomeComponent},
@@ -17,6 +18,8 @@ export const routes: Routes = [
     {path: 'restaurant', component: RestaurantComponent},
     {path: 'user/friends', component: FriendsComponent},
     {path: 'user/:username/friends', component: FriendsComponent},
+    {path: 'user/bookmarked', component: BookmarkedComponent},
+    {path: 'user/:username/bookmarked', component: BookmarkedComponent},
     {path: 'user/:username', component: UserComponent},
     {path: 'user', component: UserComponent},
     {path: 'tag/:id', component: TagComponent},

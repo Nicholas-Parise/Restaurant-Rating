@@ -136,6 +136,21 @@ export class RestaurantDataService {
   }
 
 
+    GetBookmark(username: string, page: Number) {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${AuthDataService.getToken()}`
+    });
+
+    //console.log('Token:', AuthDataService.getToken());
+
+    this.http.get<{ bookmarked: RestaurantEntry[], totalBookmarked: number }>(`${this.baseUrl}users/${username}/bookmarks?page=${page}`, { headers }).subscribe((jsonData) => {
+      this.bookmarkEntry = jsonData.bookmarked;
+      this.totalBookmarks = jsonData.totalBookmarked;
+      this.bookmarkSubject.next(this.bookmarkEntry);
+    })
+  }
+
+
   addBookmark(restaurantId: number) {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${AuthDataService.getToken()}`

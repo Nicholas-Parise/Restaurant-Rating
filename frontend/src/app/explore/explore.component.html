@@ -34,7 +34,7 @@
 
     <div class="spacer grid-container" *ngIf="searchMode === 'users'">
         <div class="center grid-item" *ngFor="let userEntry of userEntry">
-            <app-user-card [userEntry]="userEntry"></app-user-card>
+            <app-user-card [userEntry]="userEntry" [menu]="LoggedIn"></app-user-card>
         </div>
     </div>
 

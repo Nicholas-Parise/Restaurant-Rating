@@ -1,3 +1,8 @@
 <app-header></app-header>
-<app-navbar></app-navbar>
+<app-navbar (toggleNotifications)="toggleNotificationPanel()"></app-navbar>
+
+<app-profile-menu
+[isOpen]="isNotificationPanelOpen"
+  (close)="isNotificationPanelOpen = false"></app-profile-menu>
+
 <router-outlet></router-outlet>

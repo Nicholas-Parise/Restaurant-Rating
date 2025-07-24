@@ -7,7 +7,9 @@ export class UserEntry{
         public bio: string,
         public notifications: boolean, 
         public isOwner: boolean, 
-        public isCritic: boolean
+        public isCritic: boolean,
+        public status:string,
+        public direction:string
         ){}
 }
     

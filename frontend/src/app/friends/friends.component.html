@@ -2,9 +2,50 @@
     <h2>Friends</h2>
 
     <div class="spacer grid-container">
-        <div class="center grid-item" *ngFor="let userEntry of userEntry">
-            <app-user-card [userEntry]="userEntry"></app-user-card>
+        <div class="center grid-item" *ngFor="let userEntry of acceptedUsers">
+            <app-user-card [userEntry]="userEntry" [menu]="LoggedIn"></app-user-card>
         </div>
     </div>
 
+    <div *ngIf="LoggedIn">
+        <h3>Pending Users</h3>
+        <h4>Sent</h4>
+        <div class="spacer grid-container">
+
+            <ng-container *ngFor="let userEntry of pendingUsers">
+                <div class="center grid-item" *ngIf="userEntry.direction === 'sent'">
+                    <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
+                </div>
+            </ng-container>
+        </div>
+        <h4>Recieved</h4>
+        <div class="spacer grid-container">
+            <ng-container *ngFor="let userEntry of pendingUsers">
+                <div class="center grid-item" *ngIf="userEntry.direction === 'received'">
+                    <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
+                </div>
+            </ng-container>
+
+        </div>
+
+        <h3>Declined Users</h3>
+        <div class="spacer grid-container">
+            <h4>Sent</h4>
+
+            <ng-container *ngFor="let userEntry of declinedUsers">
+                <div class="center grid-item" *ngIf="userEntry.direction === 'sent'">
+                    <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
+                </div>
+            </ng-container>
+        </div>
+        <h4>Recieved</h4>
+        <div class="spacer grid-container">
+            <ng-container *ngFor="let userEntry of declinedUsers">
+                <div class="center grid-item" *ngIf="userEntry.direction === 'received'">
+                    <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
+                </div>
+            </ng-container>
+
+        </div>
+    </div>
 </div>
