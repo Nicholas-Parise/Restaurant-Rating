@@ -126,9 +126,10 @@ CREATE INDEX users_username_trgm_idx ON users USING GIN (username gin_trgm_ops);
 CREATE TABLE friends(  
 user_id integer REFERENCES users(id),
 friend_id integer REFERENCES users(id),
-status TEXT CHECK (status IN ('pending', 'accepted', 'declined', 'blocked')) DEFAULT 'pending',
-PRIMARY KEY(user_id, friend_id),
-created TIMESTAMP DEFAULT NOW()
+status TEXT CHECK (status IN ('pending', 'accepted', 'declined')) DEFAULT 'pending',
+created TIMESTAMP DEFAULT NOW(),
+updated TIMESTAMP,
+PRIMARY KEY(user_id, friend_id)
 );
 
 CREATE INDEX idx_friends_status_requester ON friends(status, user_id);

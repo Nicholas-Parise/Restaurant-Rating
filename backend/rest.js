@@ -5,6 +5,7 @@ const reviewRoutes = require('./reviews');
 const restaurantRoutes = require('./restaurant');
 const authRoutes = require('./auth');
 const userRoutes = require('./users');
+const notificationRoutes = require('./notifications');
 const cors = require('cors');
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/reviews', reviewRoutes);
 app.use('/restaurants', restaurantRoutes);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
+app.use('/notifications',notificationRoutes);
 
 
 module.exports = app;

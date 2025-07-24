@@ -152,7 +152,7 @@ router.post('/', authenticate, async (req, res) => {
   try {
     const result = await db.query(
       `INSERT INTO reviews (restaurant_id, user_id, liked, visited, score, description) 
-                VALUES ($1, $2, COALESCE($3, false), COALESCE($4, false), COALESCE($5, false), COALESCE($6, 0), $7) RETURNING *`,
+                VALUES ($1, $2, COALESCE($3, false), COALESCE($4, false), COALESCE($5, 0), $6) RETURNING *`,
       [restaurant_id, userId, liked, visited, score, description]
     );
 

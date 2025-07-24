@@ -49,13 +49,12 @@ router.post('/register', async (req, res, next) => {
             [username, hashedPassword, email, picture, bio, notifications]
         );
 
-        // send notification if allowed 
-        // not enabled for now.
-        /* 
+        // send notification if allowed  
         if (result.rows[0].notifications) {
             await createNotification([result.rows[0].id], "Welcome to TBD!", "Hello from the TBD team! we are so excited to welcome you to this platform.", "/home");
-            await welcomeEmail(email, name);
-        }*/
+            // Emails are not needed right now. TODO 
+            //await welcomeEmail(email, name);
+        }
         
         res.status(201).json({ message: "User registered successfully", user: result.rows[0] });
     } catch (error) {
@@ -146,7 +145,7 @@ router.get('/me', async (req, res, next) => {
             return res.status(401).json({ message: "Invalid token" });
         }
 
-        const user = await db.query("SELECT id, username, email, picture, bio, setup, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1", [session.rows[0].user_id]);
+        const user = await db.query("SELECT id, name, username, email, picture, bio, setup, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1", [session.rows[0].user_id]);
 
         if (user.rows.length === 0) { // If a user gets removed but the token is still active 
             return res.status(404).json({ message: "User not found" });

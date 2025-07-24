@@ -386,6 +386,51 @@ router.get('/bookmarks', authenticate, async (req, res, next) => {
 });
 
 
+// localhost:3000/users
+// get logged in users bookmarked restaurant
+router.get('/:username/bookmarks', async (req, res, next) => {
+  try {
+
+    const username = req.params.username;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const offset = (page - 1) * pageSize;
+
+    if (!username) {
+      return res.status(400).json({ message: "username is required to get bookmarks" });
+    }
+
+    const userIDCheck = await db.query(
+      `SELECT id 
+        FROM users 
+        WHERE username = $1`, [username]);
+
+    if (userIDCheck.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userId = userIDCheck.rows[0].id;
+
+    const result = await db.query(
+      `SELECT r.id, r.name, r.pictures FROM bookmarked_restaurant br
+      JOIN restaurants r ON br.restaurant_id = r.id
+      WHERE br.user_id = $1
+      LIMIT $2 OFFSET $3;`, [userId,pageSize, offset]);
+
+
+    if (result.rows.length === 0) {
+      return res.status(200).json({ message: 'No bookmarked restaurants' });
+    }
+
+    res.status(200).json({ bookmarked: result.rows, totalBookmarked: result.rows.length });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: 'Error retrieving user data' });
+  }
+});
+
+
+
 // Add a bookmarked restaurant to logged in user
 router.post('/bookmarks/:restaurant_id', authenticate, async (req, res, next) => {
 
@@ -437,6 +482,48 @@ router.delete('/bookmarks/:restaurant_id', authenticate, async (req, res, next) 
 
 
 
+
+// localhost:3000/users/friends
+// get all friends of logged in user
+router.get('/friends', authenticate, async (req, res) => {
+
+  try {
+    const userId = req.user.userId; // Get user ID from authenticated token
+
+    const result = await db.query(
+      `SELECT u.id, 
+      u.username, 
+      u.name, 
+      u.picture, 
+      f.status, 
+      f.created,
+      CASE 
+          WHEN f.user_id = $1 THEN 'sent'
+          ELSE 'received'
+        END AS direction 
+      FROM friends f
+      JOIN users u ON u.id =  
+      CASE 
+        WHEN f.user_id = $1 THEN f.friend_id
+        ELSE f.user_id
+      END
+      WHERE f.user_id = $1 OR f.friend_id = $1;`, [userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'no friends found' });
+    }
+
+    return res.status(200).json({ user: result.rows });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return res.status(500).json({ message: 'Error retrieving user data' });
+  }
+});
+
+
+
+
+
 // localhost:3000/users/friends/nick
 // get all friends of specific user by username
 router.get('/friends/:username', async (req, res) => {
@@ -460,21 +547,31 @@ router.get('/friends/:username', async (req, res) => {
     const userId = userIDCheck.rows[0].id;
 
     const result = await db.query(
-      `SELECT u.id, u.username, u.name, u.picture, f.created 
+      `SELECT u.id, 
+      u.username, 
+      u.name, 
+      u.picture, 
+      f.status, 
+      f.created,
+      CASE 
+          WHEN f.user_id = $1 THEN 'sent'
+          ELSE 'received'
+        END AS direction 
       FROM friends f
       JOIN users u ON u.id =  
       CASE 
         WHEN f.user_id = $1 THEN f.friend_id
         ELSE f.user_id
       END
-      WHERE f.user_id = $1 OR f.friend_id = $1`, [userId]);
+      WHERE f.user_id = $1 OR f.friend_id = $1
+      AND status = 'accepted';`, [userId]);
 
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    return res.status(200).json({ user: result.rows[0], categories: result2.rows });
+    return res.status(200).json({ user: result.rows });
   } catch (error) {
     console.error("Error fetching user:", error);
     return res.status(500).json({ message: 'Error retrieving user data' });
@@ -511,7 +608,7 @@ router.post('/friends/:username', authenticate, async (req, res, next) => {
       `SELECT status FROM friends
       WHERE (user_id = $1 AND friend_id = $2) OR (friend_id = $1 AND user_id = $2)`, [userId, friendUserId]);
 
-    if (existCheck.rows.length > 0) {   
+    if (existCheck.rows.length > 0) {
       return res.status(400).json({ message: `friendship already exists, and you are ${existCheck.rows[0].status}` });
     }
 
@@ -539,6 +636,172 @@ router.post('/friends/:username', authenticate, async (req, res, next) => {
 });
 
 
+// Accept a friendship request from provided user
+router.post('/friends/:username/accept', authenticate, async (req, res, next) => {
+
+  const userId = req.user.userId; // Get user ID from authenticated token
+  const username = req.params.username;
+  try {
+
+    if (!username) {
+      return res.status(400).json({ message: "username is required to accept friend request" });
+    }
+
+    const requesterIDCheck = await db.query(
+      `SELECT id 
+        FROM users 
+        WHERE username = $1`, [username]);
+
+    if (requesterIDCheck.rows.length === 0) {
+      return res.status(404).json({ message: `User: ${username} not found` });
+    }
+
+    const requesterId = requesterIDCheck.rows[0].id;
+
+    // existing entry check:
+
+    const existCheck = await db.query(
+      `SELECT status FROM friends
+      WHERE (user_id = $1 AND friend_id = $2)`, [requesterId, userId]);
+
+    if (existCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'you cannot accept a friendship you started' });
+    }
+
+    if (existCheck.rows[0].status != 'pending') {
+      return res.status(400).json({ message: `friendship is not pending` });
+    }
+
+    const result = await db.query(`
+          UPDATE friends 
+          SET 
+              status = 'accepted',  
+              updated = NOW()
+          WHERE user_id = $1 AND friend_id = $2
+          Returning 1;`, [requesterId, userId]);
+
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Friendship entry does not exist, add user as friend first" });
+    }
+
+    res.status(200).json("success");
+
+  } catch (error) {
+    console.error("Error adding friend:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+// Deny a friendship request from provided user
+router.post('/friends/:username/deny', authenticate, async (req, res, next) => {
+
+  const userId = req.user.userId; // Get user ID from authenticated token
+  const username = req.params.username;
+  try {
+
+    if (!username) {
+      return res.status(400).json({ message: "username is required to deny friend request" });
+    }
+
+    const requesterIDCheck = await db.query(
+      `SELECT id 
+      FROM users 
+      WHERE username = $1`, [username]);
+
+    if (requesterIDCheck.rows.length === 0) {
+      return res.status(404).json({ message: `User: ${username} not found` });
+    }
+
+    const requesterId = requesterIDCheck.rows[0].id;
+
+    // existing entry check:
+
+    const existCheck = await db.query(
+      `SELECT status FROM friends
+      WHERE (user_id = $1 AND friend_id = $2)`, [requesterId, userId]);
+
+    if (existCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'Friendship entry does not exist, add user as friend first' });
+    }
+
+    if (existCheck.rows[0].status != 'pending') {
+      return res.status(400).json({ message: `friendship is not pending` });
+    }
+
+    const result = await db.query(`
+          UPDATE friends 
+          SET 
+              status = 'declined',  
+              updated = NOW()
+          WHERE user_id = $1 AND friend_id = $2
+          Returning 1;`, [requesterId, userId]);
+
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Friendship entry does not exist, add user as friend first" });
+    }
+
+    res.status(200).json("success");
+
+  } catch (error) {
+    console.error("Error denying friend:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+// Remove a friend (provided user)
+router.delete('/friends/:username', authenticate, async (req, res, next) => {
+
+  const userId = req.user.userId; // Get user ID from authenticated token
+  const username = req.params.username;
+  try {
+
+    if (!username) {
+      return res.status(400).json({ message: "username is required to deny friend request" });
+    }
+
+    const requesterIDCheck = await db.query(
+      `SELECT id 
+      FROM users 
+      WHERE username = $1`, [username]);
+
+    if (requesterIDCheck.rows.length === 0) {
+      return res.status(404).json({ message: `User: ${username} not found` });
+    }
+
+    const requesterId = requesterIDCheck.rows[0].id;
+
+    // existing entry check:
+    const existCheck = await db.query(
+      `SELECT status FROM friends
+      WHERE (user_id = $1 AND friend_id = $2) OR (friend_id = $1 AND user_id = $2)`, [userId, requesterId]);
+
+    if (existCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'Friendship entry does not exist, add user as friend first' });
+    }
+
+    const result = await db.query(`
+          DELETE FROM friends
+          WHERE (user_id = $1 AND friend_id = $2) 
+          OR (friend_id = $1 AND user_id = $2)
+          Returning 1;`, [requesterId, userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({ error: "Delete unsuccessful" });
+    }
+
+    res.status(200).json("success");
+
+  } catch (error) {
+    console.error("Error denying friend:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
 
 
 router.get('/search', async (req, res, next) => {
@@ -555,12 +818,12 @@ router.get('/search', async (req, res, next) => {
 
   try {
     if (!searchTerm) {
-    return res.status(400).json({ message: "search is required" });
+      return res.status(400).json({ message: "search is required" });
     }
-      console.log(searchTerm);
+    console.log(searchTerm);
 
-        result = await db.query(
-          `SELECT *, COUNT(*) OVER() AS total_count 
+    result = await db.query(
+      `SELECT *, COUNT(*) OVER() AS total_count 
           FROM (
           SELECT id, username, name, picture, GREATEST(similarity(username, $1), similarity(name, $1)) AS sim
           FROM users
@@ -568,9 +831,9 @@ router.get('/search', async (req, res, next) => {
           ) sub
           ORDER BY sim DESC
           LIMIT $2 OFFSET $3;`, [searchTerm, pageSize, offset]);
-    
+
     const users = result.rows;
-    
+
     const total = users[0]?.total_count ?? 0;
 
     res.json({
