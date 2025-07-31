@@ -9,6 +9,7 @@ require("dotenv").config();
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+const createNotification = require("./middleware/createNotification");
 const authenticate = require('./middleware/authenticate');
 const uploadPicture = require('./middleware/upload');
 
@@ -415,7 +416,7 @@ router.get('/:username/bookmarks', async (req, res, next) => {
       `SELECT r.id, r.name, r.pictures FROM bookmarked_restaurant br
       JOIN restaurants r ON br.restaurant_id = r.id
       WHERE br.user_id = $1
-      LIMIT $2 OFFSET $3;`, [userId,pageSize, offset]);
+      LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
 
 
     if (result.rows.length === 0) {
@@ -592,7 +593,7 @@ router.post('/friends/:username', authenticate, async (req, res, next) => {
     }
 
     const friendUserIDCheck = await db.query(
-      `SELECT id 
+      `SELECT id, name, username 
         FROM users 
         WHERE username = $1`, [username]);
 
@@ -621,6 +622,14 @@ router.post('/friends/:username', authenticate, async (req, res, next) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "user not found." });
     }
+
+
+    // send notification if allowed  
+    //if (result.rows[0].notifications) {
+    const fromName = friendUserIDCheck.rows[0].name ? friendUserIDCheck.rows[0].name + ' (@' + friendUserIDCheck.rows[0].username + ')' : friendUserIDCheck.rows[0].username;
+    await createNotification([friendUserId], `${fromName} Wants to be your friend`, `${fromName} has sent you a friend request, accept to become friends`, "/user/friends");
+    //}
+
 
     res.status(200).json("success");
 

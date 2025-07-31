@@ -18,7 +18,7 @@
         <h2 class="section-header">Favourite Restaurants</h2>
         <div class="spacer grid-container">
             <div class="center grid-item" *ngFor="let favRestaurantEntry of favRestaurantEntry">
-                <app-restaurant-card [restaurantEntry]="favRestaurantEntry"></app-restaurant-card>
+                <app-restaurant-card [restaurantEntry]="favRestaurantEntry" [menu]=true [favourite]=true></app-restaurant-card>
             </div>
         </div>
 

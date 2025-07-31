@@ -23,6 +23,7 @@ export class ProfileMenuComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
 
   userEntry: UserEntry;
+  authSubscription = new Subscription();
 
   notificationEntry: NotificationEntry[];
   notificationSubscription = new Subscription();
@@ -40,6 +41,11 @@ export class ProfileMenuComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.authSubscription = this.authDataService.authSubject.subscribe(userEntry => {
+      if (userEntry) {
+        this.userEntry = userEntry;
+      }
+    });
      this.notificationSubscription = this.notificationsDataService.NotificationSubject.subscribe(notificationEntry => {
       console.log(notificationEntry)
       this.notificationEntry = notificationEntry;

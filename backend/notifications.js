@@ -32,8 +32,12 @@ router.put('/:id', authenticate, async (req, res, next) => {
   const { is_read } = req.body;
   const userId = req.user.userId; // Get user ID from authenticated token
 
+ if (!is_read) {
+    return res.status(400).json({ error: "is_read is required" });
+  }
+
   // Type checking
-  if (is_read !== undefined && typeof is_read !== "boolean") {
+  if (is_read && typeof is_read !== "boolean") {
     return res.status(400).json({ error: "is_read must be a boolean (true or false)" });
   }
 
@@ -61,7 +65,7 @@ router.put('/:id', authenticate, async (req, res, next) => {
       return res.status(404).json({ error: "notification not found." });
     }
 
-    res.status(200).json({ message: "notification updated successfully."});
+    res.status(200).json({ message: "notification updated successfully.", notifications:result.rows});
 
 
   } catch (error) {

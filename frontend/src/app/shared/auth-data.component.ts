@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angul
 import { throwError, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserEntry } from './user-entry.model';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,8 @@ export class AuthDataService {
   username: string;
   picture: string;
   userEntry: UserEntry;
+
+  authSubject = new Subject<UserEntry|null>();
 
   PostRegister(username: String, password: String, email: String): Observable<any> {
 
@@ -35,9 +38,14 @@ export class AuthDataService {
 
     return this.http.post<any>(`${this.baseUrl}auth/login`, sendData).pipe(
       tap(response => {
-        const token = response.token;
-        if (token) {
+        if (response.token) {
+          const token = response.token;
           localStorage.setItem('authToken', token);
+          this.loggedin = true;
+          this.username = response.username;
+          this.picture = response.picture;
+          this.userEntry = response;
+          this.authSubject.next(this.userEntry);
         }
       }),
       catchError((error) => {
@@ -47,13 +55,14 @@ export class AuthDataService {
   }
 
 
-  signOut(): void {    
+  signOut(): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
     this.http.post<{ message: string }>(`${this.baseUrl}auth/logout`, {}, { headers }).subscribe((jsonData) => {
       console.log(jsonData);
     })
     localStorage.removeItem("authToken");
+     this.authSubject.next(null);
   }
 
 
@@ -64,7 +73,7 @@ export class AuthDataService {
     }
 
     try {
-       console.log("contacting server");
+      console.log("contacting server");
       const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
       const response = await this.http.get<any>(`${this.baseUrl}auth/me`, { headers }).toPromise();
 
@@ -72,6 +81,7 @@ export class AuthDataService {
       this.username = response.username;
       this.picture = response.picture;
       this.userEntry = response;
+      this.authSubject.next(this.userEntry);
       console.log(this.userEntry);
       return true;
 
@@ -91,7 +101,7 @@ export class AuthDataService {
     return this.picture;
   }
 
-  getUserEntry():UserEntry{
+  getUserEntry(): UserEntry {
     return this.userEntry;
   }
 

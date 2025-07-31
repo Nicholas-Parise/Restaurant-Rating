@@ -82,7 +82,7 @@ router.post('/login', async (req, res, next) => {
     }
 
     try {
-        const user = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+        const user = await db.query("SELECT id,password,username,name,email,picture FROM users WHERE email = $1", [email]);
 
         if (user.rows.length === 0) {
             return res.status(401).json({ message: "Email or password incorrect" });
@@ -100,7 +100,12 @@ router.post('/login', async (req, res, next) => {
 
         await db.query("INSERT INTO sessions (user_id, token) VALUES ($1, $2)", [user.rows[0].id, token]);
 
-        return res.status(200).json({ message: "Login successful", token });
+ 
+        const returnUser = user.rows[0];
+
+        delete returnUser[password];
+
+        return res.status(200).json({ message: "Login successful", token, ...returnUser });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Error logging in" });

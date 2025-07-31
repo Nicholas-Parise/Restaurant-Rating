@@ -1,9 +1,12 @@
-<a href="restaurant/{{restaurantEntry.id}}">
-<div class="cardBody">
-    <h2>{{restaurantEntry.name}}</h2>
-    <img class = "image" [src]="restaurantEntry.pictures?.[0] || 'assets/placeholder-restaurant.png'" alt="">
-    <p>{{restaurantEntry.updated}}</p>
+<div class="cardBody" (click)="navigateToRestaurant($event)" (mouseleave)="closeDropdown()">
+  <h2>{{restaurantEntry.name}}</h2>
+  <img class="image" [src]="restaurantEntry.pictures?.[0] || 'assets/placeholder-restaurant.png'" alt="">
+  <p>{{restaurantEntry.updated}}</p>
+
+  <div class="menu-wrapper" *ngIf="allowMenu" (click)="$event.stopPropagation()">
+    <button class="menu-button" (click)="toggleMenu()">⋯</button>
+    <ul class="menu-options" *ngIf="menuOpen">
+      <li *ngIf="favourite" (click)="removeFavourite()">remove favourite</li>
+    </ul>
+  </div>
 </div>
-</a>
-
-

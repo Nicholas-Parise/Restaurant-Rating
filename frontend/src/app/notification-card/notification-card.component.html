@@ -1,4 +1,7 @@
-<div class="cardBody notification-card" [class.unread]="!notificationEntry.is_read">
+<div class="cardBody notification-card" [class.unread]="!notificationEntry.is_read" 
+(click)="markAsRead() "
+
+    [routerLink]="[notificationEntry.url]">
 
     <div class="notification-header">
         <span class="notification-title">
@@ -9,14 +12,11 @@
         </span>
     </div>
 
-    <div class="notification-body" 
-    (click)="markAsRead()" 
-    [routerLink]="[notificationEntry.url]">
+    <div class="notification-body">
         {{ notificationEntry.body }}
     </div>
 
     <div class="notification-actions">
-        <button class="read-btn">Mark as Read</button>
         <button class="delete-btn" (click)="deleteNotification()" title="Delete"><i
                 class="fas fa-trash-alt"></i></button>
     </div>

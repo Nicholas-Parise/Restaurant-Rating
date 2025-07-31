@@ -32,7 +32,7 @@ export class NotificationsDataService {
 
     var sendData = { "is_read": true};
 
-    this.http.put<{ message: string }>(`${this.baseUrl}notifications/${id}`,{sendData} ,{ headers }).subscribe((jsonData) => {
+    this.http.put<{ message: string }>(`${this.baseUrl}notifications/${id}`, sendData ,{ headers }).subscribe((jsonData) => {
       console.log(jsonData.message);
     })
     this.NotificationEntry[id].is_read = true;

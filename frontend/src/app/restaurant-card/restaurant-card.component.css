@@ -1,6 +1,7 @@
 .cardBody {
     min-width: 300px;
     max-width: 300px;
+    cursor: pointer;
 }
 
 .image {
@@ -13,4 +14,52 @@
 a {
     text-decoration: none;
     color: white;
+}
+
+
+
+.menu-wrapper {
+    position: relative;
+}
+
+.menu-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+    color:white;
+}
+
+.menu-button:hover{
+   color:#89a;
+}
+
+
+.menu-options {
+    position: absolute;
+    top: 28px;
+    right: 68px;
+    background-color: #567;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 120px;
+    z-index: 100;
+}
+
+.menu-options li {
+    color: #333;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.menu-options li:hover {
+    background-color: #89a;
+    color: #d8e0e8
 }

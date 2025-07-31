@@ -9,11 +9,13 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { FriendsComponent } from './friends/friends.component';
 import { BookmarkedComponent } from './bookmarked/bookmarked.component';
+import { ListsComponent } from './lists/lists.component';
 
 export const routes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'Diary', component: DiaryComponent},
     {path: 'Explore', component: ExploreComponent},
+    {path: 'List', component: ListsComponent},
     {path: 'restaurant/:id', component: RestaurantComponent},
     {path: 'restaurant', component: RestaurantComponent},
     {path: 'user/friends', component: FriendsComponent},
