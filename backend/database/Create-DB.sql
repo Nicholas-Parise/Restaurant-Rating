@@ -69,11 +69,12 @@ lunch BOOLEAN,
 dinner BOOLEAN,
 facebook TEXT,
 indoor_seating BOOLEAN,
-updated TIMESTAMP
+updated TIMESTAMP,
+score_histogram JSONB DEFAULT '{}'::jsonb;
 );
 
 CREATE INDEX restaurants_name_trgm_idx ON restaurants USING GIN (name gin_trgm_ops);
-
+CREATE INDEX restaurants_location_users ON restaurants(location_id);
 
 CREATE TABLE menuItems(
 id SERIAL PRIMARY KEY, 
