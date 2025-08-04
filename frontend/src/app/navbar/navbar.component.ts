@@ -26,13 +26,15 @@ export class NavbarComponent implements OnInit {
 
   authSubscription = new Subscription();
 
+  navOpen = false;
+
   ngOnInit(): void {
 
     this.authSubscription = this.authDataService.authSubject.subscribe(userEntry => {
       if (userEntry) {
         this.picture = userEntry.picture;
         this.loggedIn = true;
-      }else{
+      } else {
         this.loggedIn = false;
       }
     });
@@ -49,6 +51,13 @@ export class NavbarComponent implements OnInit {
     const target = event.target as HTMLImageElement;
     target.src = 'assets/placeholder-avatar.png';
   }
+
+
+
+  toggleNav() {
+    this.navOpen = !this.navOpen;
+  }
+
 
 
   toggleDropdown() {

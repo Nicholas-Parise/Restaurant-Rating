@@ -4,18 +4,28 @@
     cursor: pointer;
 }
 
+@media (max-width: 500px) {
+    .cardBody {
+        min-width: 150px;
+        max-width: 150px;
+        cursor: pointer;
+    }
+
+}
+
+.name{
+    font-size: calc(100% + 2);
+}
+
 .image {
-    max-width: 250px;
-    max-height: 250px;
-    /*    min-width: 100px;
-    min-height: 100px;*/
+    max-width: calc(100% - 50px);
+    max-height: calc(100% - 50px);
 }
 
 a {
     text-decoration: none;
     color: white;
 }
-
 
 
 .menu-wrapper {
@@ -29,11 +39,11 @@ a {
     cursor: pointer;
     padding: 4px 8px;
     line-height: 1;
-    color:white;
+    color: white;
 }
 
-.menu-button:hover{
-   color:#89a;
+.menu-button:hover {
+    color: #89a;
 }
 
 

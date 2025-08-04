@@ -1,10 +1,12 @@
 <nav class="navbar"
 (mouseleave)="closeDropdown()">
-    <ul class="nav-links">
-        <li><a routerLink="home" routerLinkActive="selected">Home</a></li>
-        <li><a routerLink="Diary" routerLinkActive="selected">Diary</a></li>
-        <li><a routerLink="Explore" routerLinkActive="selected">Explore</a></li>
-        <li><a routerLink="List" routerLinkActive="selected">Lists</a></li>
+ <div class="hamburger" (click)="toggleNav()">&#9776;</div>
+
+    <ul class="nav-links" [class.open]="navOpen">
+        <li><a routerLink="home" routerLinkActive="selected" (click)="navOpen = false">Home</a></li>
+        <li><a routerLink="Diary" routerLinkActive="selected" (click)="navOpen = false">Diary</a></li>
+        <li><a routerLink="Explore" routerLinkActive="selected" (click)="navOpen = false">Explore</a></li>
+        <li><a routerLink="List" routerLinkActive="selected" (click)="navOpen = false">Lists</a></li>
     </ul>
 
     <div class="nav-right">

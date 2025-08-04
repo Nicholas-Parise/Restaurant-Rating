@@ -1,5 +1,5 @@
 <div class="cardBody" (click)="navigateToRestaurant($event)" (mouseleave)="closeDropdown()">
-  <h2>{{restaurantEntry.name}}</h2>
+  <h2 class="name">{{restaurantEntry.name}}</h2>
   <img class="image" [src]="restaurantEntry.pictures?.[0] || 'assets/placeholder-restaurant.png'" alt="">
   <p>{{restaurantEntry.updated}}</p>
 
@@ -7,6 +7,8 @@
     <button class="menu-button" (click)="toggleMenu()">⋯</button>
     <ul class="menu-options" *ngIf="menuOpen">
       <li *ngIf="favourite" (click)="removeFavourite()">remove favourite</li>
+      <li *ngIf="bookmark" (click)="removeBookmark()">remove bookmark</li>
+    
     </ul>
   </div>
 </div>

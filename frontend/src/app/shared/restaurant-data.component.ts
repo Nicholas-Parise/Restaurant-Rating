@@ -117,6 +117,9 @@ export class RestaurantDataService {
     //console.log('Token:', AuthDataService.getToken());
 
     this.http.delete<{ message: string }>(`${this.baseUrl}users/favourites/${restaurantId}`, { headers }).subscribe((jsonData) => {
+      console.log(this.favouriteEntry);
+      this.favouriteEntry = this.favouriteEntry.filter(res => res.id !== restaurantId);
+      this.favouriteSubject.next(this.favouriteEntry);
     })
   }
 
@@ -172,6 +175,8 @@ export class RestaurantDataService {
     console.log('Token:', AuthDataService.getToken());
 
     this.http.delete<{ message: string }>(`${this.baseUrl}users/bookmarks/${restaurantId}`, { headers }).subscribe((jsonData) => {
+     this.bookmarkEntry = this.bookmarkEntry.filter(res => res.id !== restaurantId);
+      this.bookmarkSubject.next(this.bookmarkEntry);
     })
   }
 

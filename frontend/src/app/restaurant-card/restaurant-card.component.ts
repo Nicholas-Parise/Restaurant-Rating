@@ -15,12 +15,13 @@ export class RestaurantCardComponent implements OnInit {
   @Input() restaurantEntry = {} as RestaurantEntry
   @Input() menu: boolean = false;
   @Input() favourite: boolean = false;
+  @Input() bookmark: boolean = false;
 
   allowMenu: boolean = false;
   menuOpen: boolean = false;
 
   constructor(private restaurantDataService: RestaurantDataService,
-    private router:Router
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -41,11 +42,16 @@ export class RestaurantCardComponent implements OnInit {
     this.router.navigate(['/restaurant', this.restaurantEntry.id]);
   }
 
-
   removeFavourite(): void {
     this.closeDropdown();
     this.restaurantDataService.removeFavourite(this.restaurantEntry.id);
   }
+
+  removeBookmark(): void {
+    this.closeDropdown();
+    this.restaurantDataService.removeBookmark(this.restaurantEntry.id);
+  }
+
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;

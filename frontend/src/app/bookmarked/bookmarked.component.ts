@@ -70,10 +70,8 @@ export class BookmarkedComponent implements OnInit {
 
 
   getBookmarks() {
-    console.log("la ala al a " + this.username);
     this.restaurantDataService.GetBookmark(this.username || "", this.currentPage);
   }
-
 
   onNextPage(): void {
     this.currentPage++;

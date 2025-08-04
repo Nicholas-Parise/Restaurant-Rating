@@ -28,6 +28,8 @@ export class ProfileMenuComponent implements OnInit {
   notificationEntry: NotificationEntry[];
   notificationSubscription = new Subscription();
 
+  userHover:boolean = false;
+
   constructor(private userDataService: UserDataService,
     private authDataService: AuthDataService,
     private notificationsDataService: NotificationsDataService,

@@ -10,12 +10,15 @@
   <button class="profile-btn" 
   *ngIf="userEntry"
   routerLink='/user'
-  (click)="closePanel()">
+  (click)="closePanel()"
+   (mouseenter)="userHover = true"
+   (mouseleave)="userHover = false" >
     <img [src]="userEntry.picture" 
     (error)="onImageError($event)" alt="Profile" class="profile-img" />
     <div class="user-info">
       <div class="name">{{ userEntry.name ? userEntry.name + ' (@' + userEntry.username + ')' : userEntry.username }}</div>
       <div class="email">{{ userEntry.email }}</div>
+      <div *ngIf="userHover">(navigate to profile)</div>
     </div>
   </button>
 

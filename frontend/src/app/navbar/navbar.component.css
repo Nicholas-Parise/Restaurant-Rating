@@ -1,4 +1,3 @@
-
 li a {
   display: block;
   color: white;
@@ -28,7 +27,8 @@ li a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--navbar);;
+  background-color: var(--navbar);
+  ;
   padding: 0.75rem 1.5rem;
   border-bottom: 1px solid var(--navbar);
   position: sticky;
@@ -99,5 +99,42 @@ li a:hover {
 
 .dropdown-menu a:hover {
   background-color: #89a;
-  color:#d8e0e8
+  color: #d8e0e8
+}
+
+
+
+.hamburger {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+}
+
+@media (max-width: 500px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    background-color: var(--navbar);
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    padding: 1rem 0;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links li {
+    text-align: center;
+    padding: 10px 0;
+  }
+
 }
