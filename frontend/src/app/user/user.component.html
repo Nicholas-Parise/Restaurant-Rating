@@ -2,7 +2,8 @@
     <div *ngIf="userEntry; else loading;">
         <div class="grid-container">
             <div class="grid-item">
-                <img class="image" [src]="userEntry?.pictures || 'assets/placeholder-avatar.png'" alt="">
+                <img class="image" [src]="userEntry.picture || 'assets/placeholder-avatar.png'" alt="Profile Picture"
+                (error)="onImageError($event)">
             </div>
 
             <div class="grid-item">

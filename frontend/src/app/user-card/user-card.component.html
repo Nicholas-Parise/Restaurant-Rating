@@ -1,6 +1,6 @@
 <div class="cardBody user-card" (mouseleave)="closeDropdown()">
     <a [routerLink]="['/user', userEntry.username]" class="user-info">
-        <img [src]="userEntry?.picture || 'assets/placeholder-avatar.png'" class="profile-pic" alt="Profile Picture"
+        <img [src]="userEntry.picture || 'assets/placeholder-avatar.png'" class="profile-pic" alt="Profile Picture"
             (error)="onImageError($event)" />
 
         <span class="name">

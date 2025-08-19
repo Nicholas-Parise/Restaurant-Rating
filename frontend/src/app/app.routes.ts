@@ -11,6 +11,10 @@ import { FriendsComponent } from './friends/friends.component';
 import { BookmarkedComponent } from './bookmarked/bookmarked.component';
 import { ListsComponent } from './lists/lists.component';
 
+import { AboutComponent } from './about/about.component';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
+import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
+
 export const routes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'Diary', component: DiaryComponent},
@@ -27,5 +31,8 @@ export const routes: Routes = [
     {path: 'tag/:id', component: TagComponent},
     {path: 'login', component: LoginComponent},
     {path: 'register', component: RegisterComponent},
+    {path: 'about', component: AboutComponent},
+    {path: 'privacy-policy', component: PrivacyPolicyComponent},
+    {path: 'terms-of-service', component: TermsOfServiceComponent},
     {path: '**', component: HomeComponent, pathMatch: 'full'}
 ];

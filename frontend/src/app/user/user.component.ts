@@ -129,6 +129,12 @@ export class UserComponent {
   }
 
 
+ onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = 'assets/placeholder-avatar.png';
+  }
+
+
   onNextPage(): void {
     this.currentPage++;
     this.loadReviews();

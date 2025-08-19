@@ -61,5 +61,9 @@ export class RestaurantCardComponent implements OnInit {
     this.menuOpen = false;
   }
 
+   onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = 'assets/placeholder-restaurant.png';
+  }
 
 }
