@@ -44,8 +44,13 @@
 
         <div class="actionsPanel">
             <app-review-form [bookmarked]="bookmarked" [restaurantEntry]="restaurantEntry" [reviewEntry]="userReviewEntry ? userReviewEntry[0] : null"></app-review-form>
-         
-        </div>
+
+            <div *ngIf="restaurantEntry">
+              <h3>Ratings</h3>
+              <app-rating-chart [histogram]="restaurantEntry.score_histogram"></app-rating-chart>
+            </div>
+
+          </div>
       </div>
       
     </div>
@@ -116,18 +121,18 @@
 
         <li>
           <i [ngClass]="restaurantEntry?.lunch ? 'fas fa-burger text-white' : 'fas fa-burger text-grey strikethrough'"
-            title="lunch"></i>
+            title="Lunch"></i>
         </li>
 
         <li>
           <i [ngClass]="restaurantEntry?.dinner ? 'fas fa-pizza-slice text-white' : 'fas fa-pizza-slice text-grey strikethrough'"
-            title="dinner"></i>
+            title="Dinner"></i>
         </li>
 
 
         <li>
           <i [ngClass]="restaurantEntry?.indoor_seating ? 'fas fa-couch text-white' : 'fas fa-couch text-grey strikethrough'"
-            title="indoor_seating"></i>
+            title="Indoor seating"></i>
         </li>
 
       </ul>

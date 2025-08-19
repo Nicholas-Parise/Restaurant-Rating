@@ -70,7 +70,8 @@ textarea.form-control {
   display: flex;
   justify-content: center;
   margin-top: 12px;
-  gap: 20px;
+  gap: 1rem;
+  align-items: center;
 }
 
 
@@ -185,6 +186,7 @@ form .btn:hover {
   display: flex;
   gap: 1rem;
   align-items: center;
+  justify-content: center;
 }
 
 .icon {

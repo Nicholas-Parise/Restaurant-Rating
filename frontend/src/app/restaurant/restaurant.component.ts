@@ -12,11 +12,12 @@ import { ReviewDataService } from '../shared/review-data.component';
 import { AuthDataService } from '../shared/auth-data.component';
 import { Subscription } from 'rxjs';
 import { ReviewFormComponent } from '../review-form/review-form.component';
+import { RatingChartComponent } from '../rating-chart/rating-chart.component';
 
 @Component({
   selector: 'app-restaurant',
   standalone: true,
-  imports: [TagCardComponent, CommonModule, ReviewCardComponent, ReviewFormComponent],
+  imports: [TagCardComponent, CommonModule, ReviewCardComponent, ReviewFormComponent, RatingChartComponent],
   templateUrl: './restaurant.component.html',
   styleUrl: './restaurant.component.css'
 })
@@ -88,6 +89,7 @@ export class RestaurantComponent implements OnInit {
     this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
       console.log(restaurantEntry)
       this.restaurantEntry = restaurantEntry;
+      console.log(this.restaurantEntry.score_histogram);
     });
   
     this.bookmarkSubscription = this.restaurantDataService.bookmarkSubject.subscribe(bookmarkEntry =>{

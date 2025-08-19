@@ -1,0 +1,15 @@
+canvas{
+    max-width:300px; 
+}
+
+.chart-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.average-label {
+  margin-left: 15px;
+  font-weight: bold;
+  font-size: 24px;
+}

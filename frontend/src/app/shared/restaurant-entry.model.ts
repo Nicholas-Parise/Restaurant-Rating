@@ -38,6 +38,8 @@ export class RestaurantEntry{
         public indoor_seating : boolean,
         public updated : string,
 
+        public score_histogram: string,
+
         public housenumber: string,
         public addr : string,
         public city : string,
