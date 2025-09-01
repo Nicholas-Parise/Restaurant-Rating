@@ -12,6 +12,8 @@ Make a service that is simple to use that has the features people actually want 
 ## Possible Names  
 A name has not been decided.  
 
+* I kinda like 'Amandined' it has the word 'dined' in it, and it is the technical term for garnishign with sliced almonds so it has the cooking angle too
+
 ## Tech Stack
 
 **Client:** Angular  
