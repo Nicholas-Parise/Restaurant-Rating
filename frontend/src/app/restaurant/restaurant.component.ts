@@ -87,9 +87,9 @@ export class RestaurantComponent implements OnInit {
 
 
     this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
-      console.log(restaurantEntry)
+      //console.log(restaurantEntry)
       this.restaurantEntry = restaurantEntry;
-      console.log(this.restaurantEntry.score_histogram);
+      //console.log(this.restaurantEntry.score_histogram);
     });
   
     this.bookmarkSubscription = this.restaurantDataService.bookmarkSubject.subscribe(bookmarkEntry =>{
@@ -101,12 +101,12 @@ export class RestaurantComponent implements OnInit {
 
     this.route.params.subscribe(params => {
 
-      console.log(this.route.snapshot.params)
+      //console.log(this.route.snapshot.params)
       this.restaurantId = params['id'];
-      console.log('test: ', this.restaurantId);
+      //console.log('test: ', this.restaurantId);
 
       if (this.restaurantId == null) {
-        console.log('empty');
+        //console.log('empty');
         this.router.navigate(['/']);
       } else {
         try {

@@ -46,10 +46,11 @@
             </li>
         </ul>
 
-        <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
-        <p>{{this.currentPage}}</p>
-        <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
-
+         <div class="Pagination">
+            <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+            <p>{{this.currentPage}}</p>
+            <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+        </div>
     </div>
 
     <ng-template #loading>

@@ -12,7 +12,7 @@
 
         <div *ngIf="searchMode === 'restaurants'">
             <label class="switch-label">
-                <input type="checkbox" [(ngModel)]="nearbyEnabled" (change)="onToggleNearby()" />
+                <input type="checkbox" [(ngModel)]="nearbyEnabled" (ngModelChange)="onToggleNearby($event)" />
                 <span class="slider"></span>
                 <span class="switch-text">Near Me</span>
             </label>
@@ -20,7 +20,7 @@
             <div *ngIf="nearbyEnabled" class="radius-control">
                 <label for="radius">Radius: {{ searchRadius }} km</label>
                 <input type="range" id="radius" min="1" max="50" step="1" [(ngModel)]="searchRadius"
-                    (change)="onRadiusChange()" (input)="onToggleNearby()" />
+                    (change)="onRadiusChange()" />
             </div>
         </div>
 
@@ -41,8 +41,10 @@
 
     <p *ngIf="restaurantEntry && restaurantEntry.length === 0">No results found.</p>
 
-    <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
-    <p>{{this.currentPage}}</p>
-    <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+    <div class="Pagination">
+        <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+        <p>{{this.currentPage}}</p>
+        <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+    </div>
 
 </div>

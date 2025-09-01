@@ -8,6 +8,8 @@ export class ReviewEntry{
         public score: number, 
         public username:string,
         public name:string,
-        public updated: string,
-        public created: string){}
+        public updated: Date,
+        public created: Date,
+        public pictures : string,
+        public restaurant_name: string){}
 }

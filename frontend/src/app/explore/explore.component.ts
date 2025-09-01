@@ -12,6 +12,8 @@ import { UserDataService } from '../shared/user-data.component';
 import { UserCardComponent } from '../user-card/user-card.component';
 import { AuthDataService } from '../shared/auth-data.component';
 
+import { ActivatedRoute, Router } from '@angular/router';
+
 @Component({
   selector: 'app-explore',
   standalone: true,
@@ -24,7 +26,9 @@ export class ExploreComponent implements OnInit {
   constructor(
     private restaurantDataService: RestaurantDataService,
     private userDataService: UserDataService,
-    private authDataService: AuthDataService
+    private authDataService: AuthDataService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   searchMode: 'restaurants' | 'users' = 'restaurants';
@@ -76,6 +80,7 @@ export class ExploreComponent implements OnInit {
       }
     });
 
+
     this.combinedSearchSub = combineLatest([
       this.searchQuerySubject.pipe(
         debounceTime(300)
@@ -90,13 +95,33 @@ export class ExploreComponent implements OnInit {
         // ,distinctUntilChanged()
       )
     ]).subscribe(([query, radius, page]) => {
-      this.restaurantDataService.GetSearchResturaunts(query, this.lat, this.lng, radius, page);
-      this.userDataService.GetSearch(query, page);
+      
+      if(this.searchMode == 'restaurants'){
+        this.restaurantDataService.GetSearchResturaunts(query, this.lat, this.lng, radius, page);
+      }else{
+        this.userDataService.GetSearch(query, page);
+      }
+      this.updateQueryParams();
     });
 
-    this.onSearchChange();
-    this.onRadiusChange();
-    this.onPageChange();
+    this.activatedRoute.queryParams.subscribe(params => {
+
+      this.searchQuery = params['search'] || '';
+      this.searchMode = params['mode'] || 'restaurants';
+      this.currentPage = +params['page'] || 1;
+      this.nearbyEnabled = params['nearby'] === 'true';
+      this.maxPages = this.currentPage +1;
+    })
+
+
+      this.onSearchChange(false);
+
+      if(this.nearbyEnabled){
+        this.onToggleNearby(true,false);
+      }
+
+      this.onRadiusChange(false);
+      this.onPageChange();
   }
 
   ngOnDestroy(): void {
@@ -106,15 +131,21 @@ export class ExploreComponent implements OnInit {
   }
 
 
-  onSearchChange() {
-    //if (this.searchQuery.length < 2) return; // avoid flooding server    
+  onSearchChange(resetPage: boolean = true) {
+    //if (this.searchQuery.length < 2) return;
     this.searchQuerySubject.next(this.searchQuery);
-    this.currentPage = 1;
+    if (resetPage) {
+      this.currentPage = 1;
+      this.onPageChange();
+    }
   }
 
-  onRadiusChange(): void {
+  onRadiusChange(resetPage: boolean = true): void {
     this.searchRadiusSubject.next(this.searchRadius);
-    this.currentPage = 1;
+    if (resetPage) {
+      this.currentPage = 1;
+      this.onPageChange();
+    }
   }
 
   onPageChange(): void {
@@ -122,7 +153,9 @@ export class ExploreComponent implements OnInit {
   }
 
 
-  onToggleNearby(): void {
+  onToggleNearby(enabled: boolean, resetPage: boolean = true): void {
+
+    this.nearbyEnabled = enabled;
 
     if (this.nearbyEnabled) {
       if (navigator.geolocation) {
@@ -136,8 +169,24 @@ export class ExploreComponent implements OnInit {
       this.lng = null
     }
 
-    this.currentPage = 1;
-    this.onRadiusChange();
+    if(resetPage){
+      this.currentPage = 1;
+      this.onRadiusChange();
+    }
+  }
+
+  updateQueryParams(): void{
+    this.router.navigate(
+        [], 
+        {
+          relativeTo: this.activatedRoute,
+          queryParams: { search: this.searchQuery, 
+            mode: this.searchMode,
+             page: this.currentPage,
+            nearby: this.nearbyEnabled }, 
+          queryParamsHandling: 'merge',
+        }
+      );
   }
 
 

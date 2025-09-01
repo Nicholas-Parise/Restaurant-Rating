@@ -31,10 +31,10 @@ export class ReviewDataService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
     this.http.get<{ reviews: ReviewEntry[], totalReviews: number }>(`${this.baseUrl}reviews/?page=${page}&pageSize=${pageSize}`, { headers }).subscribe((jsonData) => {
-      this.reviewEntry = jsonData.reviews;
-      this.totalReviews = jsonData.totalReviews;
-      this.totalPages = Math.ceil(this.totalReviews / pageSize);
-      this.reviewSubject.next(this.reviewEntry);
+      this.userReviewEntry = jsonData.reviews;
+      this.totalUserReviews = jsonData.totalReviews;
+      this.totalUserPages = Math.ceil(this.totalReviews / pageSize);
+      this.userReviewSubject.next(this.userReviewEntry);
     })
   }
 
@@ -66,10 +66,10 @@ export class ReviewDataService {
 
   getUserReviews(username: string, page: number, pageSize: number) {
     this.http.get<{ reviews: ReviewEntry[], totalReviews: number }>(`${this.baseUrl}reviews/${username}?page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
-      this.reviewEntry = jsonData.reviews;
-      this.totalReviews = jsonData.totalReviews;
-      this.totalPages = Math.ceil(this.totalReviews / pageSize);
-      this.reviewSubject.next(this.reviewEntry);
+      this.userReviewEntry = jsonData.reviews;
+      this.totalUserReviews = jsonData.totalReviews;
+      this.totalUserPages = Math.ceil(this.totalUserReviews / pageSize);
+      this.userReviewSubject.next(this.userReviewEntry);
     })
   }
 

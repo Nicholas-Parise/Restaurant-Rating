@@ -85,6 +85,8 @@ export class ReviewFormComponent implements OnInit {
       this.reviewForm.value.score,
       "null",
       "null",
+      new Date(),
+      new Date(),
       "null",
       "null");
 

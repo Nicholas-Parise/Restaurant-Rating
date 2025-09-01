@@ -1,0 +1,38 @@
+<td class="col-date">
+    {{review.created | date:'MMM d, y' }}
+</td>
+
+<td class="col-restaurant">
+    <div class="restaurant-cell">
+        <a [routerLink]="['/restaurant', review.restaurant_id]">
+            <img class="restaurant-image" [src]="review.pictures || 'assets/placeholder-restaurant.png'" alt=""
+                (error)="onImageError($event)">
+        </a>
+        <a [routerLink]="['/restaurant', review.restaurant_id]" class="restaurant-name">
+            {{ review.restaurant_name }}
+        </a>
+    </div>
+</td>
+<td class="col-rating">
+    <app-stars [inputRating]="review.score"></app-stars>
+</td>
+<td col class="col-liked">
+    <span class="heart" [class.on]="review.liked == true"></span>
+</td>
+<td class="col-review">
+    <div class="review-cell">
+        <ng-container *ngIf="review.description; else noReview">
+            <span class="review-text" [class.expanded]="expanded">
+                {{ review.description }}
+            </span>
+            <button *ngIf="review.description.length > 100" type="button" (click)="expanded = !expanded"
+                class="expand-btn">
+                {{ expanded ? 'See Less' : '…' }}
+            </button>
+        </ng-container>
+
+        <ng-template #noReview>
+            <span class="no-review">No review provided</span>
+        </ng-template>
+    </div>
+</td>

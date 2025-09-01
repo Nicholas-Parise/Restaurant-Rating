@@ -18,7 +18,7 @@ export class StarsComponent implements OnInit{
   rating: EventEmitter<number> = new EventEmitter();
 
   @Input() inputRating: number
-
+  @Input() static: boolean
 
 
   ngOnInit(): void {

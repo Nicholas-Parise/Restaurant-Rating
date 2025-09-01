@@ -12,8 +12,8 @@ import { UserDataService } from '../shared/user-data.component';
   styleUrl: './user-card.component.css'
 })
 export class UserCardComponent implements OnInit {
-  @Input() userEntry = {} as UserEntry
-  @Input() menu: boolean
+  @Input() userEntry = {} as UserEntry;
+  @Input() menu: boolean;
 
   menuOpen: boolean = false;
   allowMenu: boolean = false;

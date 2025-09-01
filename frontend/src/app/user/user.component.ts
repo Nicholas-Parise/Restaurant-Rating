@@ -64,7 +64,7 @@ export class UserComponent {
       this.showEditLogic();
     });
 
-    this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry => {
+    this.reviewSubscription = this.reviewDataService.userReviewSubject.subscribe(reviewEntry => {
       this.reviewEntry = reviewEntry;
       this.maxPages = this.reviewDataService.totalPages;
     });

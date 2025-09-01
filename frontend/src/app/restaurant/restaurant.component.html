@@ -170,17 +170,13 @@
         </li>
       </ul>
 
-      <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
-      <p>{{this.currentPage}}</p>
-      <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
-
-
-      <!-- ngfor to place all the reviews (page by page) -->
+      <div class="Pagination">
+        <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+        <p>{{this.currentPage}}</p>
+        <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+      </div>
     </div>
-
-
   </div>
-
 
   <ng-template #loading>
     <p>Loading...</p>

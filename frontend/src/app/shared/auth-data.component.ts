@@ -82,7 +82,7 @@ export class AuthDataService {
       this.picture = response.picture;
       this.userEntry = response;
       this.authSubject.next(this.userEntry);
-      console.log(this.userEntry);
+      //console.log(this.userEntry);
       return true;
 
     } catch (error) {
