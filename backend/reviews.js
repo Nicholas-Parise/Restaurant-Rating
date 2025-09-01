@@ -82,9 +82,10 @@ router.get('/:username', async (req, res, next) => {
 
     } else {
       result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username 
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, res.name AS restaurant_name, res.pictures
       FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
+      LEFT JOIN restaurants res ON r.restaurant_id = res.id 
       WHERE r.user_id = $1 
       ORDER BY r.created DESC
       LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
