@@ -97,10 +97,10 @@ created TIMESTAMP DEFAULT NOW()
 CREATE TABLE users(
 id SERIAL PRIMARY KEY,
 location_id INTEGER REFERENCES locations (id), 
-name TEXT,
-password TEXT NOT NULL,
 username TEXT UNIQUE NOT NULL,
 email TEXT UNIQUE NOT NULL,
+password TEXT NOT NULL,
+name TEXT,
 picture TEXT,
 bio TEXT,
 pro BOOLEAN,
