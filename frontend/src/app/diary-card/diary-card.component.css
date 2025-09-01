@@ -83,6 +83,7 @@
 
 .review-text {
     display: -webkit-box;
+    line-clamp: 1;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     white-space: nowrap;
@@ -93,6 +94,7 @@
 }
 
 .review-text.expanded {
+    line-clamp: unset;
     -webkit-line-clamp: unset;
     display: block;
     white-space: normal;
