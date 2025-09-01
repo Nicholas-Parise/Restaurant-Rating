@@ -6,6 +6,10 @@ const restaurantRoutes = require('./restaurant');
 const authRoutes = require('./auth');
 const userRoutes = require('./users');
 const notificationRoutes = require('./notifications');
+const friendRoutes = require('./friends');
+const bookmarkRoutes = require('./bookmarks');
+const favouriteRoutes = require('./favourites');
+
 const cors = require('cors');
 const app = express();
 
@@ -32,15 +36,14 @@ app.use(cors({
 }));
 
 
-
-
-
 // Routes
 app.use('/reviews', reviewRoutes);
 app.use('/restaurants', restaurantRoutes);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/notifications',notificationRoutes);
-
+app.use('/friends',friendRoutes);
+app.use('/bookmarks',bookmarkRoutes);
+app.use('/favourites',favouriteRoutes);
 
 module.exports = app;

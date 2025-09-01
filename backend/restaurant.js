@@ -168,10 +168,6 @@ router.get('/search', async (req, res, next) => {
 });
 
 
-
-
-
-
 // localhost:3000/restaurants?page=1&pageSize=10
 router.get('/:restaurantId', async (req, res, next) => {
 
@@ -200,11 +196,6 @@ router.get('/:restaurantId', async (req, res, next) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
-
-
-
-
 
 router.post('/', (req, res) => {
 
