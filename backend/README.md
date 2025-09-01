@@ -18,44 +18,18 @@ GET /auth/google/callback → finish oauth process**
 GET /categories/:id → Get category details  
 POST /categories → Create a new category**  
 
-## Contributions
-**GET /contributions → Get all contributions from logged in user  
-GET /contributions/wishlists/:id → Get all contributions from wishlist  
-GET /contributions/items/:id → Get contributions for an item  
-POST /contributions → Add a contribution (given item_id)  
-PUT /contributions/:id → Update a contribution (mark as purchased, etc.)  
-DELETE /contributions/:id → Remove a contribution**  
 
-##  Events
-**GET /events → Get all events (for member)   
-POST /events → Create a new event (makes you owner)  
-GET /events/:id → Get event details (membership and wishlists too)  
-PUT /events/:id → Update event  
-DELETE /events/:id → Delete event**
+## restaurant
+**GET /     → get a collection of restaurants  
+GET /search → search for restaurants given a query, and/or position data  
+GET /:id    → get restaurant by specific ID**
 
-**GET /events/:id/wishlists → Get wishlists for an event  
-GET /events/:id/members → Get all members in a specific event   
-POST /events/:id/members → Add a member to an event   
-DELETE /events/:id/members → Remove a member from event    
-PUT /events/:id/members → Update a members status (blind/owner)  
-POST /events/members → add membership with share_token  
-POST /events/share → share the event to email, if user exists membership added. Else send email**
 
-## ideas
-**GET / → Get all the ideas sorted by how much they relate to each person   
-GET /trending → Get the top 6 most used items    
-POST / → add a new idea (only for admins)    
-POST /:ideaId/categories → add categories to an idea (only for admins)   
-POST /upload/:itemId → upload new idea picture (only for admins)**  
-
-## Items
-**GET /items/:id → Get item details  
-PUT /items/:id → Update a single item  
-PUT /items → Update an array of items  
-DELETE /items/:id → Remove an item   
-POST /items -> create an item (given wishlists_id)  
-POST /items -> add an idea to a wishlist (given wishlists_id and idea_id)   
-POST /items/upload → upload a picture**
+## reviews
+**GET /         → get logged in users reviews  
+GET /:username  → get reviews from specific user  
+GET /restaurants/:restaurantId → get reviews from a restaurant  
+POST / → create a new review for a given restaurant**
 
 ## Notifications
 **GET /notifications → Get all notifications from logged in user  
@@ -74,38 +48,32 @@ POST /payments/webhook → Performs actions depending on what stripe sends
 ## Status
 GET /status → Get API status
 
-## Users
-**GET /users → Get logged in user profile and categories   
-PUT /users → Update logged in user profile  
-DELETE /users → Delete logged in user account  
-GET /users/:id → Get specific user profile  
-POST /users/upload → upload a profile picture**
+## users
+**GET / → Get logged in user profile and categories   
+PUT / → Update logged in user profile  
+DELETE / → Delete logged in user account  
+GET /:id → Get specific user profile  
+POST /upload → upload a profile picture  
+GET /search → search for users given a query**
 
-**POST /users/categories/:categoryId → Assign a category to logged in user  
-POST /users/categories → Assign an array of categories to logged in user  
-Put /users/categories/:categoryId → updates a users love or hate value  
-Put /users/categories → updates an array of categories to logged in user  
-DELETE /users/categories/:categoryId → Remove a category from logged in user  
-DELETE /users/categories → Remove an array of categories from logged in user**  
+## favourites
+**GET /favourites → get all favourited restaurants  
+GET /favourites/:restaurant_id' → Add a favourites restaurant to logged in user  
+DELETE /favourites/:restaurant_id → remove a favourites restaurant from logged in user**
 
+## bookmarks
+**GET / → get all bookmarked restaurants
+GET /:username → get all bookmarked restaurants from provided user   
+POST /:restaurant_id' → Add a bookmark restaurant to logged in user  
+DELETE /:restaurant_id → remove a bookmarked restaurant from logged in user**
 
-## Wishlists
-**POST /wishlists/ → Create a wishlist (also creates a membership)  
-GET /wishlists/ → Get list of wishlists (where user is a member)   
-GET /wishlists/:id → Get wishlist details (must be member)   
-PUT /wishlists/:id → Update wishlist (provide desired attributes to edit, must be the owner)  
-DELETE /wishlists/:id → Delete wishlist (must be the owner)**          
-
-**GET /wishlists/:id/members → Get all members in a specific wishlist   
-POST /wishlists/:id/members → Add a member to an wishlist    
-DELETE /wishlists/:id/members → Remove a member from wishlist  
-PUT /wishlists/:id/members → Update a members status (blind/owner)  
-POST /wishlists/members → make logged in user a member of the wishlist given the share_token**    
-
-**POST /wishlists/:id/duplicate → Duplicate the wishlist   
-GET /wishlists/:id/items → Get all items in a wishlist (and contributions)   
-GET /wishlists/share/:token → get the shared wishlist  
-POST /wishlists/share → share the wishlist to email, if user exists membership added. Else send email**
+## friends
+**GET / → get all friends of logged in user  
+GET /:username → get all friends of specific user by username  
+POST /:username → Add a friendship request from logged in user to provided user  
+POST /:username/accept → Accept a friendship request from provided user  
+POST /:username/deny → Deny a friendship request from provided user  
+DELETE /:username → Remove a friend (provided user)**
 
 # Server Architecture
 ![Screenshot of Server Architecture.](server-architecture.png)
