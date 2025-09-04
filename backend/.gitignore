@@ -34,3 +34,6 @@ osm2pgsql-bin/*
 # System files
 .DS_Store
 Thumbs.db
+
+# compiled files
+/dist/*

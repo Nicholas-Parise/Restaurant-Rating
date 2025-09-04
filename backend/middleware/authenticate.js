@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const db = require('../db');
+const db = require('../utils/db');
 require("dotenv").config(); // Load environment variables
 
 /**

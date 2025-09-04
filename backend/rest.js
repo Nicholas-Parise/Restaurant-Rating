@@ -1,14 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const reviewRoutes = require('./reviews');
-const restaurantRoutes = require('./restaurant');
-const authRoutes = require('./auth');
-const userRoutes = require('./users');
-const notificationRoutes = require('./notifications');
-const friendRoutes = require('./friends');
-const bookmarkRoutes = require('./bookmarks');
-const favouriteRoutes = require('./favourites');
+const reviewRoutes = require('./routes/reviews');
+const restaurantRoutes = require('./routes/restaurant');
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/users');
+const notificationRoutes = require('./routes/notifications');
+const friendRoutes = require('./routes/friends');
+const bookmarkRoutes = require('./routes/bookmarks');
+const favouriteRoutes = require('./routes/favourites');
+
+import listRoutes from './routes/lists';
 
 const cors = require('cors');
 const app = express();
@@ -45,5 +47,7 @@ app.use('/notifications',notificationRoutes);
 app.use('/friends',friendRoutes);
 app.use('/bookmarks',bookmarkRoutes);
 app.use('/favourites',favouriteRoutes);
+app.use('/lists',listRoutes);
+
 
 module.exports = app;

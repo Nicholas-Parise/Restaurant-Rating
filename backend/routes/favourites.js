@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
+const db = require('../utils/db');
 
-const createNotification = require("./middleware/createNotification");
-const authenticate = require('./middleware/authenticate');
+const createNotification = require("../middleware/createNotification");
+const authenticate = require('../middleware/authenticate');
 
 // localhost:3000/favourites
 // get users favourites

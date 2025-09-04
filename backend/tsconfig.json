@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "es2019",
+    "module": "commonjs",
+    "rootDir": ".",
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false
+  },
+  "include": [
+    "middleware/**/*",
+    "routes/**/*",
+    "util/**/*",
+    "*.ts",
+    "*.js"
+, "utils/db.js"  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

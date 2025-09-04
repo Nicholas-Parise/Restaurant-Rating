@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
+const db = require('../utils/db');
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require("bcryptjs");
@@ -9,9 +9,9 @@ require("dotenv").config();
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const createNotification = require("./middleware/createNotification");
-const authenticate = require('./middleware/authenticate');
-const uploadPicture = require('./middleware/upload');
+const createNotification = require("../middleware/createNotification");
+const authenticate = require('../middleware/authenticate');
+const uploadPicture = require('../middleware/upload');
 
 // localhost:3000/users
 // get logged in users

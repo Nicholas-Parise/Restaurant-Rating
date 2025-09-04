@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
+const db = require('../utils/db');
 
 require("dotenv").config();
 
-const createNotification = require("./middleware/createNotification");
-const authenticate = require('./middleware/authenticate');
+const createNotification = require("../middleware/createNotification");
+const authenticate = require('../middleware/authenticate');
 
 // localhost:3000/users
 // get logged in users bookmarked restaurant

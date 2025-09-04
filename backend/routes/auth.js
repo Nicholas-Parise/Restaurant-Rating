@@ -5,12 +5,12 @@ const crypto = require("crypto");
 const fs = require('fs/promises');
 const path = require('path');
 const router = express.Router();
-const db = require('./db');
+const db = require('../utils/db');
 const passport = require('passport');
 
-const createNotification = require("./middleware/createNotification");
-const sendEmail = require("./middleware/sendEmail");
-require('./middleware/oauth');
+const createNotification = require("../middleware/createNotification");
+const sendEmail = require("../middleware/sendEmail");
+require('../middleware/oauth');
 require("dotenv").config();
 
 // localhost:3000/auth/register

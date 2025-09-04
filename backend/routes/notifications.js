@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
-const authenticate = require('./middleware/authenticate');
+const db = require('../utils/db');
+const authenticate = require('../middleware/authenticate');
 
 
 // localhost:3000/notifications?page=1&pageSize=10

@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("../utils/db");
 
 // send a notification to users
 //async function createNotification(userIDs, title, body, url) {
