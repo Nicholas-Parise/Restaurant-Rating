@@ -1,3 +1,6 @@
+/*
+DROP TABLE IF EXISTS listed_restaurants
+DROP TABLE IF EXISTS lists
 DROP TABLE IF EXISTS bookmarked_restaurant
 DROP TABLE IF EXISTS favorite_restaurant;
 DROP TABLE IF EXISTS reviews;
@@ -11,7 +14,7 @@ DROP TABLE IF EXISTS menuItems;
 DROP TABLE IF EXISTS restaurants;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS locations;
-
+*/
 CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
@@ -190,3 +193,23 @@ user_id BIGINT REFERENCES users(id),
 created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, user_id)
 );
+
+
+CREATE TABLE lists(
+id SERIAL PRIMARY KEY,
+user_id BIGINT REFERENCES users(id), 
+name TEXT NOT NULL,
+description TEXT,
+updated TIMESTAMP,
+created TIMESTAMP DEFAULT NOW()
+);
+CREATE INDEX lists_name_trgm_idx ON users USING GIN (name gin_trgm_ops);
+
+CREATE TABLE listed_restaurants(
+restaurant_id BIGINT REFERENCES restaurants(id),
+list_id BIGINT REFERENCES lists(id),
+priority INT,
+created TIMESTAMP DEFAULT NOW(),
+PRIMARY KEY(restaurant_id, list_id)
+);
+
