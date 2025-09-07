@@ -1,1 +1,1 @@
-[friends,search,bookmarked,]
+[friends,search,bookmarked,recommended,]

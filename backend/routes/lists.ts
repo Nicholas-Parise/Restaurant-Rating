@@ -14,8 +14,10 @@ router.get('/', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
 
     const result = await db.query(
-      `SELECT li.id, li.name, li.description, li.created FROM lists li
-        WHERE li.user_id = $1;`, [userId]);
+      `SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username
+      FROM lists li 
+      JOIN users u ON u.id = li.user_id
+      WHERE li.user_id = $1;`, [userId]);
 
     if (result.rows.length === 0) {
       return res.status(200).json({ message: 'No lists' });
@@ -29,9 +31,33 @@ router.get('/', authenticate, async (req, res, next) => {
 });
 
 
-// localhost:3000/users
+// impliment later
+router.get('/recommended', async (req, res, next) => {
+  try {
+
+    const result = await db.query(
+      `SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username
+      FROM lists li 
+      JOIN users u ON u.id = li.user_id
+        LIMIT 10;`);
+
+    if (result.rows.length === 0) {
+      return res.status(200).json({ message: 'No lists' });
+    }
+
+    res.status(200).json({ lists: result.rows, totalLists: result.rows.length });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: 'Error retrieving user data' });
+  }
+});
+
+
+
+
+// localhost:3000/lists/user
 // get provided users lists
-router.get('/:username', async (req, res, next) => {
+router.get('/users/:username', async (req, res, next) => {
   try {
 
     const username: string = req.params.username;
@@ -44,8 +70,10 @@ router.get('/:username', async (req, res, next) => {
     if (!userId) return;
 
     const result = await db.query(
-      `SELECT li.id, li.name, li.description, li.created FROM lists li
-        WHERE li.user_id = $1;`, [userId]);
+      `SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username
+      FROM lists li 
+      JOIN users u ON u.id = li.user_id
+      WHERE li.user_id = $1;`, [userId]);
 
 
     if (result.rows.length === 0) {
@@ -58,6 +86,41 @@ router.get('/:username', async (req, res, next) => {
     res.status(500).json({ message: 'Error retrieving user data' });
   }
 });
+
+
+
+// localhost:3000/lists/user
+// get specific list entry 
+router.get('/:id', async (req, res, next) => {
+  try {
+
+    const list_id: number = req.params.id;
+
+    const result = await db.query(
+      `SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username
+      FROM lists li 
+      JOIN users u ON u.id = li.user_id
+      WHERE li.id = $1;`, [list_id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'List not found' });
+    }
+
+    const res_result = await db.query(
+      `SELECT r.id, r.name, r.pictures
+      FROM restaurants r
+      JOIN listed_restaurants lr ON lr.restaurant_id = r.id
+      WHERE lr.list_id = $1;`, [list_id]);
+
+    res.status(200).json({ lists: result.rows, restaurants: res_result.rows });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: 'Error retrieving user data' });
+  }
+});
+
+
+
 
 // create a list
 router.post('/', authenticate, async (req, res, next) => {
@@ -79,7 +142,7 @@ router.post('/', authenticate, async (req, res, next) => {
       return res.status(404).json({ error: "restaurant not found." });
     }
 
-    res.status(200).json({ lists: result.rows, message: "success" });
+    res.status(200).json({ list: result.rows[0], message: "success" });
 
   } catch (error: any) {
     console.error("Error adding restaurant:", error);
@@ -94,8 +157,8 @@ router.put('/:list_id', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
     const list_id = parseInt(req.params.list_id);
     const { name, description } = req.body;
-   
-    if(!await isOwner(userId, list_id)){
+
+    if (!await isOwner(userId, list_id)) {
       return res.status(403).json({ error: "must own list." });
     }
 
@@ -103,7 +166,7 @@ router.put('/:list_id', authenticate, async (req, res, next) => {
         UPDATE lists 
         SET
           name = COALESCE($1, name),
-          description = COALESCE($2, password),
+          description = COALESCE($2, description),
           updated = NOW()
         WHERE user_id = $3 AND id = $4 RETURNING *;`, [name, description, userId, list_id]);
 
@@ -111,7 +174,7 @@ router.put('/:list_id', authenticate, async (req, res, next) => {
       return res.status(404).json({ error: "restaurant not found." });
     }
 
-    res.status(200).json({ lists: result.rows, message: "success" });
+    res.status(200).json({ list: result.rows[0], message: "success" });
 
   } catch (error: any) {
     console.error("Error adding restaurant:", error);
@@ -130,7 +193,7 @@ router.post('/:list_id/:restaurant_id', authenticate, async (req, res, next) => 
     const restaurantId = parseInt(req.params.restaurant_id);
     const list_id = parseInt(req.params.list_id);
 
-    if(!await isOwner(userId, list_id)){
+    if (!await isOwner(userId, list_id)) {
       return res.status(403).json({ error: "must own list." });
     }
 
@@ -166,7 +229,7 @@ router.delete('/:list_id/:restaurant_id', authenticate, async (req, res, next) =
     const restaurant_id = parseInt(req.params.restaurant_id);
     const list_id = parseInt(req.params.list_id);
 
-    if(!await isOwner(userId, list_id)){
+    if (!await isOwner(userId, list_id)) {
       return res.status(403).json({ error: "must own list." });
     }
 
@@ -188,6 +251,12 @@ router.delete('/:list_id', authenticate, async (req, res, next) => {
 
   try {
     const list_id = parseInt(req.params.list_id);
+
+    if (!await isOwner(userId, list_id)) {
+      return res.status(403).json({ error: "must own list." });
+    }
+
+    await db.query("DELETE FROM listed_restaurants WHERE list_id = $1", [list_id]);
 
     await db.query("DELETE FROM lists WHERE user_id = $1 AND id = $2", [userId, list_id]);
 
