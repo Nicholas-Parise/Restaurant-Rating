@@ -70,8 +70,8 @@
 
 
 .col-review {
-    display: block;
     max-width: 320px;
+    min-height: 100%;
 }
 
 .review-cell {
@@ -82,7 +82,7 @@
 }
 
 .review-text {
-    display: -webkit-box;
+    display: inline-block;
     line-clamp: 1;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
@@ -91,6 +91,7 @@
     text-overflow: clip;
     min-width: 0;
     max-width: 100%;
+    align-items: center;
 }
 
 .review-text.expanded {

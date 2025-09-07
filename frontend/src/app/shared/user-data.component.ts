@@ -64,7 +64,7 @@ export class UserDataService {
   friendUser(username: string): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/friends/${username}`, {}, { headers }).subscribe((jsonData) => {
+    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}friends/${username}`, {}, { headers }).subscribe((jsonData) => {
       // this.userEntry = jsonData.user;
       // this.userSubject.next(this.userEntry);
       console.log("friend request sent");
@@ -74,7 +74,7 @@ export class UserDataService {
   acceptFriendUser(username: string): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/friends/${username}/accept`, {}, { headers }).subscribe((jsonData) => {
+    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}friends/${username}/accept`, {}, { headers }).subscribe((jsonData) => {
       console.log("Accepted friend request");
     })
   }
@@ -82,7 +82,7 @@ export class UserDataService {
   denyFriendUser(username: string): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/friends/${username}/deny`, {}, { headers }).subscribe((jsonData) => {
+    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}friends/${username}/deny`, {}, { headers }).subscribe((jsonData) => {
       console.log("denied friend request");
     })
   }
@@ -90,24 +90,23 @@ export class UserDataService {
   removeFriendUser(username: string): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.delete<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/friends/${username}`, { headers }).subscribe((jsonData) => {
+    this.http.delete<{ user: UserEntry[], message: string }>(`${this.baseUrl}friends/${username}`, { headers }).subscribe((jsonData) => {
       console.log("removed friend");
     })
   }
 
 
   GetFriends() {
-
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}users/friends`, { headers }).subscribe((jsonData) => {
+    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}friends`, { headers }).subscribe((jsonData) => {
       this.friendEntry = jsonData.user;
       this.friendSubject.next(this.friendEntry);
     })
   }
 
   GetFriendsById(username: string) {
-    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}users/friends/${username}`).subscribe((jsonData) => {
+    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}friends/${username}`).subscribe((jsonData) => {
       this.friendEntry = jsonData.user;
       this.friendSubject.next(this.friendEntry);
     })

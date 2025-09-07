@@ -62,5 +62,25 @@
         <li class="action-buttons">
             <button (click)="addToFavourites()">Add to Favourites</button>
         </li>
+         <li class="action-buttons">
+            <button (click)="showAddToListPopup()">Add to List</button>
+        </li>
     </ul>
+</div>
+
+<!-- Add to List Popup -->
+<div class="modal-overlay" *ngIf="addToListVisible">
+  <div class="modal">
+    <button class="menuClose" (click)="closeAddToListPopup()">X</button>
+    <h3>Select a List</h3>
+
+    <select [(ngModel)]="selectedListId">
+      <option *ngFor="let list of userList" [value]="list.id">{{ list.name }}</option>
+    </select>
+
+    <div class="popup-actions">
+      <button class="btn btn-primary" (click)="confirmAddToList()">Add</button>
+      <button class="btn btn-secondary" (click)="closeAddToListPopup()">Cancel</button>
+    </div>
+  </div>
 </div>

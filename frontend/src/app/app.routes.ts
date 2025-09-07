@@ -20,6 +20,7 @@ export const routes: Routes = [
     {path: 'Diary', component: DiaryComponent},
     {path: 'Explore', component: ExploreComponent},
     {path: 'List', component: ListsComponent},
+    {path: 'List/:id', component: ListsComponent},
     {path: 'restaurant/:id', component: RestaurantComponent},
     {path: 'restaurant', component: RestaurantComponent},
     {path: 'user/friends', component: FriendsComponent},

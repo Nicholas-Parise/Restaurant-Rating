@@ -3,6 +3,8 @@ import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { ListEntry } from '../shared/list-entry.model';
+import { ListDataService } from '../shared/list-data.component';
 
 @Component({
   selector: 'app-restaurant-card',
@@ -17,10 +19,13 @@ export class RestaurantCardComponent implements OnInit {
   @Input() favourite: boolean = false;
   @Input() bookmark: boolean = false;
 
+  @Input() list: ListEntry;
+
   allowMenu: boolean = false;
   menuOpen: boolean = false;
 
   constructor(private restaurantDataService: RestaurantDataService,
+    private listDataService:ListDataService,
     private router: Router
   ) { }
 
@@ -38,7 +43,6 @@ export class RestaurantCardComponent implements OnInit {
   }
 
   navigateToRestaurant(event: MouseEvent): void {
-    // You can use Angular router here
     this.router.navigate(['/restaurant', this.restaurantEntry.id]);
   }
 
@@ -50,6 +54,11 @@ export class RestaurantCardComponent implements OnInit {
   removeBookmark(): void {
     this.closeDropdown();
     this.restaurantDataService.removeBookmark(this.restaurantEntry.id);
+  }
+
+  removeList():void{
+    this.closeDropdown();
+    this.listDataService.removeFromList(this.restaurantEntry.id, this.list.id);
   }
 
 

@@ -6,11 +6,15 @@ import { ReviewDataService } from '../shared/review-data.component';
 import { CommonModule } from '@angular/common';
 import { StarsComponent } from '../stars/stars.component';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
+import { FormsModule } from '@angular/forms';
+
+import { ListEntry } from '../shared/list-entry.model';
+import { ListDataService } from '../shared/list-data.component';
 
 @Component({
   selector: 'app-review-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, StarsComponent],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, StarsComponent],
   templateUrl: './review-form.component.html',
   styleUrl: './review-form.component.css'
 })
@@ -19,13 +23,19 @@ export class ReviewFormComponent implements OnInit {
   @Input() restaurantEntry: RestaurantEntry;
   @Input() reviewEntry: ReviewEntry | null;
   @Input() bookmarked: boolean | null;
+  @Input() userList: ListEntry[];
 
   reviewForm: FormGroup;
   isFormVisible: boolean = false;
   selectedRating = 0;
   bookmark: boolean = false;
 
-  constructor(private reviewDataService: ReviewDataService, private restaurantDataService:RestaurantDataService) { }
+  addToListVisible: boolean = false;
+  selectedListId: number | null = null;
+
+  constructor(private reviewDataService: ReviewDataService,
+    private restaurantDataService: RestaurantDataService,
+    private listDataService: ListDataService) { }
 
   ngOnInit() {
     this.reviewForm = new FormGroup({
@@ -39,15 +49,15 @@ export class ReviewFormComponent implements OnInit {
   }
 
 
- ngOnChanges(changes: SimpleChanges): void {
-   
-    if (changes['bookmarked']){ //&& !changes['bookmarked'].firstChange) {
+  ngOnChanges(changes: SimpleChanges): void {
+
+    if (changes['bookmarked']) { //&& !changes['bookmarked'].firstChange) {
       this.bookmark = changes['bookmarked'].currentValue;
     }
 
-     if (changes['reviewEntry']){ //&& !changes['reviewEntry'].firstChange) {
+    if (changes['reviewEntry']) { //&& !changes['reviewEntry'].firstChange) {
       this.reviewEntry = changes['reviewEntry'].currentValue;
-      if(this.reviewForm){
+      if (this.reviewForm) {
         this.prepopulate();
       }
     }
@@ -62,7 +72,7 @@ export class ReviewFormComponent implements OnInit {
       this.reviewForm.patchValue({ visited: this.reviewEntry.visited });
     }
 
-    if(this.bookmarked){
+    if (this.bookmarked) {
       this.bookmark = true;
     }
   }
@@ -116,9 +126,9 @@ export class ReviewFormComponent implements OnInit {
 
   toggleBookmark(): void {
     this.bookmark = !this.bookmark;
-    if(this.bookmark){
+    if (this.bookmark) {
       this.restaurantDataService.addBookmark(this.restaurantEntry.id);
-    }else{
+    } else {
       this.restaurantDataService.removeBookmark(this.restaurantEntry.id);
     }
   }
@@ -126,6 +136,23 @@ export class ReviewFormComponent implements OnInit {
 
   addToFavourites(): void {
     this.restaurantDataService.addFavourite(this.restaurantEntry.id);
+  }
+
+
+  showAddToListPopup(): void {
+    this.addToListVisible = true;
+  }
+
+  closeAddToListPopup(): void {
+    this.addToListVisible = false;
+    this.selectedListId = null;
+  }
+
+  confirmAddToList(): void {
+    if (this.selectedListId !== null) {
+      this.listDataService.addToList(this.restaurantEntry.id, this.selectedListId);
+      this.closeAddToListPopup();
+    }
   }
 
 

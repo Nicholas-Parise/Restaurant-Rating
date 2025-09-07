@@ -1,1 +1,94 @@
-<p>lists works!</p>
+<div class="container">
+
+    <ng-container *ngIf="list_id; else landing">
+
+        <div *ngIf="listEntry" class="list-details">
+            <h1>{{ listEntry[0].name }}</h1>
+            
+            
+            <p class="owner">By: <a [routerLink]="['/user', listEntry[0].owner_username]">{{ listEntry[0].owner_name ? listEntry[0].owner_name + ' (@' +
+                listEntry[0].owner_username + ')' : listEntry[0].owner_username }}</a>
+                </p>
+            
+            <p class="description">{{ listEntry[0].description }}</p>
+            <p class="created">Created: {{ listEntry[0].created | date:'MMM d, y' }}</p>
+
+            <div *ngIf="LoggedIn && isOwner(listEntry[0])" class="actions">
+                <button (click)="openEditListModal(listEntry[0])">Edit List</button>
+                <button class="delete-btn" (click)="openDeleteConfirm(listEntry[0])">Delete List</button>
+            </div>
+        </div>
+
+        <div class="restaurant-grid">
+            <div class="grid-item" *ngFor="let restaurant of restaurantEntry">
+                <app-restaurant-card [restaurantEntry]="restaurant" [menu]="LoggedIn && isOwner(listEntry[0])" [list]="listEntry[0]"></app-restaurant-card>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #landing>
+
+        <div *ngIf="LoggedIn" class="user-lists">
+            <h1>Your Lists</h1>
+
+            <button (click)="openNewListModal()">+ New List</button>
+
+            <div class="grid">
+                <div class="grid-item" *ngFor="let list of userList">
+                    <app-list-card [listEntry]="list"></app-list-card>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommended-lists">
+            <h1>Recommended Lists</h1>
+
+            <div class="grid">
+                <div class="grid-item" *ngFor="let list of listEntry">
+                    <app-list-card [listEntry]="list"></app-list-card>
+                </div>
+            </div>
+        </div>
+
+    </ng-template>
+
+    <div class="modal-overlay" *ngIf="showNewListModal">
+        <div class="modal">
+            <h2>{{ isEditMode ? 'Edit List' : 'Create New List' }}</h2>
+            <form (ngSubmit)="submitList()">
+                <label>
+                    Name:
+                    <input type="text" [(ngModel)]="newListName" name="listName" required />
+                </label>
+
+                <label>
+                    Description:
+                    <textarea [(ngModel)]="newListDescription" name="listDescription"></textarea>
+                </label>
+
+                <div class="modal-actions">
+                    <button type="submit">{{ isEditMode ? 'Save Changes' : 'Create' }}</button>
+                    <button type="button" (click)="closeNewListModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal-overlay" *ngIf="showDeleteConfirm">
+        <div class="modal">
+            <h2>Delete List</h2>
+            <p>Are you sure you want to delete <strong>{{ selectedList?.name }}</strong>? This action cannot be undone.
+            </p>
+
+            <div class="modal-actions">
+                <button class="delete-btn" (click)="confirmDelete()">Delete</button>
+                <button (click)="closeDeleteConfirm()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>

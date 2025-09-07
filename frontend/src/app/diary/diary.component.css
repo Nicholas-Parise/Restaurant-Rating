@@ -5,6 +5,7 @@ table {
 
 tbody tr {
   border-bottom: 1px solid #ddd; /* Light gray line */
+  height: 100%;
 }
 
 tbody tr:last-child {

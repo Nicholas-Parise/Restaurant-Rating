@@ -44,7 +44,7 @@
       <div class="grid-item">
 
         <div class="actionsPanel">
-            <app-review-form [bookmarked]="bookmarked" [restaurantEntry]="restaurantEntry" [reviewEntry]="userReviewEntry ? userReviewEntry[0] : null"></app-review-form>
+            <app-review-form [bookmarked]="bookmarked" [restaurantEntry]="restaurantEntry" [reviewEntry]="userReviewEntry ? userReviewEntry[0] : null" [userList]="userList"></app-review-form>
 
             <div *ngIf="restaurantEntry">
               <h3>Ratings</h3>

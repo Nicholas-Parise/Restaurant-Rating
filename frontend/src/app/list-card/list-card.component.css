@@ -1,0 +1,66 @@
+.cardBody {
+    min-width: 300px;
+    max-width: 300px;
+    cursor: pointer;
+}
+
+.cardBody h2 {
+  font-size: 1.3rem;
+  color: #ffffff; /* brighter title */
+  margin-bottom: 0.5rem;
+}
+
+.cardBody .owner {
+  font-size: 0.9rem;
+  color: #bbbbbb; /* muted gray */
+  margin-bottom: 0.5rem;
+}
+
+.cardBody .description {
+  font-size: 1rem;
+  color: #d0d0d0; /* softer gray */
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* keep it tidy in preview */
+}
+
+.cardBody .created {
+  font-size: 0.8rem;
+  color: #888888; /* subtle date */
+  margin-bottom: 1rem;
+}
+
+.cardBody .actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cardBody .actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.cardBody .actions button:first-child {
+  background: #007bff;
+  color: white;
+}
+
+.cardBody .actions button:first-child:hover {
+  background: #0056b3;
+}
+
+.cardBody .actions button:last-child {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.cardBody .actions button:last-child:hover {
+  background: #e0e0e0;
+}

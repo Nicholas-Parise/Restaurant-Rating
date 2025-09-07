@@ -1,18 +1,26 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
+
+import { AuthDataService } from '../shared/auth-data.component';
+
 import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
+
 import { TagDataService } from '../shared/tag-data.component';
 import { TagEntry } from '../shared/tag-entry.model';
 import { TagCardComponent } from "../tag-card/tag-card.component";
-import { CommonModule } from '@angular/common';
-import { ReviewCardComponent } from "../review-card/review-card.component";
-import { ReviewEntry } from '../shared/review-entry.model';
+
 import { ReviewDataService } from '../shared/review-data.component';
-import { AuthDataService } from '../shared/auth-data.component';
-import { Subscription } from 'rxjs';
+import { ReviewEntry } from '../shared/review-entry.model';
+import { ReviewCardComponent } from "../review-card/review-card.component";
+
 import { ReviewFormComponent } from '../review-form/review-form.component';
 import { RatingChartComponent } from '../rating-chart/rating-chart.component';
+
+import { ListDataService } from '../shared/list-data.component';
+import { ListEntry } from '../shared/list-entry.model';
 
 @Component({
   selector: 'app-restaurant',
@@ -31,7 +39,7 @@ export class RestaurantComponent implements OnInit {
 
   bookmarkEntry: RestaurantEntry[];
   bookmarkSubscription = new Subscription();
-  bookmarked:boolean = false;
+  bookmarked: boolean = false;
 
   tagEntry: TagEntry[]
   tagSubscription = new Subscription();
@@ -41,6 +49,9 @@ export class RestaurantComponent implements OnInit {
 
   userReviewEntry: ReviewEntry[]
   userReviewSubscription = new Subscription();
+
+  userListSubscription = new Subscription();
+  userList: ListEntry[];
 
   restaurantId: number;
   currentPage: number = 1;
@@ -52,7 +63,8 @@ export class RestaurantComponent implements OnInit {
     private tagDataService: TagDataService,
     private reviewDataService: ReviewDataService,
     private route: ActivatedRoute,
-    private authDataService: AuthDataService) { }
+    private authDataService: AuthDataService,
+    private listDataService: ListDataService) { }
 
 
   ngOnDestroy(): void {
@@ -91,13 +103,18 @@ export class RestaurantComponent implements OnInit {
       this.restaurantEntry = restaurantEntry;
       //console.log(this.restaurantEntry.score_histogram);
     });
-  
-    this.bookmarkSubscription = this.restaurantDataService.bookmarkSubject.subscribe(bookmarkEntry =>{
+
+    this.bookmarkSubscription = this.restaurantDataService.bookmarkSubject.subscribe(bookmarkEntry => {
       this.bookmarkEntry = bookmarkEntry;
-      if(this.restaurantDataService.totalBookmarks > 0){
+      if (this.restaurantDataService.totalBookmarks > 0) {
         this.bookmarked = true;
       }
     })
+
+    this.userListSubscription = this.listDataService.userListSubject.subscribe(userList => {
+      this.userList = userList;
+    });
+
 
     this.route.params.subscribe(params => {
 
@@ -138,18 +155,19 @@ export class RestaurantComponent implements OnInit {
       if (isLoggedIn) {
         this.reviewDataService.getRestaurantUserReviews(this.restaurantId, this.authDataService.getUsername(), this.currentPage, this.pageSize);
         this.restaurantDataService.GetBookmarkResturaunts(this.restaurantId);
+        this.listDataService.getLists();
       }
     });
   }
 
-
-  getSingleReview(): ReviewEntry|null{
-    if(this.userReviewEntry){
-      if(this.userReviewEntry.length > 0){
+  
+  getSingleReview(): ReviewEntry | null {
+    if (this.userReviewEntry) {
+      if (this.userReviewEntry.length > 0) {
         return this.userReviewEntry[0];
       }
     }
-      return null;
+    return null;
   }
 
 
@@ -165,7 +183,7 @@ export class RestaurantComponent implements OnInit {
     }
   }
 
-   onImageError(event: Event): void {
+  onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
     target.src = 'assets/placeholder-restaurant.png';
   }

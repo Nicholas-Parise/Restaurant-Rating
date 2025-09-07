@@ -33,7 +33,7 @@ export class ReviewDataService {
     this.http.get<{ reviews: ReviewEntry[], totalReviews: number }>(`${this.baseUrl}reviews/?page=${page}&pageSize=${pageSize}`, { headers }).subscribe((jsonData) => {
       this.userReviewEntry = jsonData.reviews;
       this.totalUserReviews = jsonData.totalReviews;
-      this.totalUserPages = Math.ceil(this.totalReviews / pageSize);
+      this.totalUserPages = Math.ceil(this.totalUserReviews / pageSize);
       this.userReviewSubject.next(this.userReviewEntry);
     })
   }
