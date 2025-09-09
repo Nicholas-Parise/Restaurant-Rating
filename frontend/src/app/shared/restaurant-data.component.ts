@@ -39,7 +39,7 @@ export class RestaurantDataService {
   }
 
 
-  GetSearchResturaunts(searchQuery: string, lat: Number | null, lng: Number | null, radius: Number | null, page: Number | null) {
+  GetSearch(searchQuery: string, lat: Number | null, lng: Number | null, radius: Number | null, page: Number | null) {
 
     let args = `?q=${searchQuery}&page=${page}`;
     if (lat) {

@@ -8,6 +8,7 @@
         <select [(ngModel)]="searchMode" (change)="onSearchChange()">
             <option value="restaurants">Restaurants</option>
             <option value="users">Users</option>
+            <option value="lists">Lists</option>
         </select>
 
         <div *ngIf="searchMode === 'restaurants'">
@@ -35,6 +36,12 @@
     <div class="spacer grid-container" *ngIf="searchMode === 'users'">
         <div class="center grid-item" *ngFor="let userEntry of userEntry">
             <app-user-card [userEntry]="userEntry" [menu]="LoggedIn"></app-user-card>
+        </div>
+    </div>
+
+    <div class="spacer grid-container" *ngIf="searchMode === 'lists'">
+        <div class="center grid-item" *ngFor="let listEntry of listEntry">
+            <app-list-card [listEntry]="listEntry"></app-list-card>
         </div>
     </div>
 

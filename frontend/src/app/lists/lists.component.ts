@@ -14,6 +14,7 @@ import { ListCardComponent } from '../list-card/list-card.component';
 import { RestaurantCardComponent } from '../restaurant-card/restaurant-card.component';
 
 import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-lists',
@@ -26,7 +27,8 @@ export class ListsComponent implements OnInit {
 
   constructor(private authDataService: AuthDataService,
     private listDataService: ListDataService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private router: Router) { }
 
   userListSubscription = new Subscription();
   userList: ListEntry[];
@@ -138,6 +140,7 @@ export class ListsComponent implements OnInit {
     if (this.selectedList) {
       this.listDataService.deleteList(this.selectedList.id);
       this.closeDeleteConfirm();
+      this.router.navigate(['/List']);
     }
   }
 

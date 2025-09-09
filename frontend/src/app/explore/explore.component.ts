@@ -4,40 +4,50 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription, Subject, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { AuthDataService } from '../shared/auth-data.component';
+
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { RestaurantCardComponent } from "../restaurant-card/restaurant-card.component";
+
 import { UserEntry } from '../shared/user-entry.model';
 import { UserDataService } from '../shared/user-data.component';
 import { UserCardComponent } from '../user-card/user-card.component';
-import { AuthDataService } from '../shared/auth-data.component';
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { ListEntry } from '../shared/list-entry.model';
+import { ListDataService } from '../shared/list-data.component';
+import { ListCardComponent } from '../list-card/list-card.component';
 
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [RestaurantCardComponent, UserCardComponent, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent],
   templateUrl: './explore.component.html',
   styleUrl: './explore.component.css'
 })
 export class ExploreComponent implements OnInit {
 
   constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private authDataService: AuthDataService,
     private restaurantDataService: RestaurantDataService,
     private userDataService: UserDataService,
-    private authDataService: AuthDataService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute
+    private listDataService:ListDataService
   ) { }
 
-  searchMode: 'restaurants' | 'users' = 'restaurants';
+  searchMode: 'restaurants' | 'users' | 'lists' = 'restaurants';
 
-  restaurantEntry: any[] = [];
+  restaurantEntry: RestaurantEntry[] = [];
   restaurantSubscription = new Subscription();
 
   userEntry: UserEntry[] = [];
   userSubscription = new Subscription();
+
+  listEntry: ListEntry[] = [];
+  listSubscription = new Subscription();
 
   private searchQuerySubject = new Subject<string>();
   private searchRadiusSubject = new Subject<number>();
@@ -72,6 +82,12 @@ export class ExploreComponent implements OnInit {
       console.log(this.maxPages);
     });
 
+    this.listSubscription = this.listDataService.listSubject.subscribe(listEntry => {
+      this.listEntry = listEntry;
+      this.maxPages = this.listDataService.totalPages;
+    });
+
+
     this.authDataService.getIsLoggedIn().then(isLoggedIn => {
       if (isLoggedIn) {
         this.LoggedIn = true;
@@ -97,10 +113,13 @@ export class ExploreComponent implements OnInit {
     ]).subscribe(([query, radius, page]) => {
       
       if(this.searchMode == 'restaurants'){
-        this.restaurantDataService.GetSearchResturaunts(query, this.lat, this.lng, radius, page);
-      }else{
+        this.restaurantDataService.GetSearch(query, this.lat, this.lng, radius, page);
+      }else if(this.searchMode == 'users'){
         this.userDataService.GetSearch(query, page);
+      }else{
+        this.listDataService.GetSearch(query, page, 10);
       }
+
       this.updateQueryParams();
     });
 

@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <div class="restaurant-grid">
+        <div class="grid-container">
             <div class="grid-item" *ngFor="let restaurant of restaurantEntry">
                 <app-restaurant-card [restaurantEntry]="restaurant" [menu]="LoggedIn && isOwner(listEntry[0])" [list]="listEntry[0]"></app-restaurant-card>
             </div>

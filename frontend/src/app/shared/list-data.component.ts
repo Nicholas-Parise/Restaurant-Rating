@@ -15,17 +15,18 @@ export class ListDataService {
   listSubject = new Subject<ListEntry[]>();
   listEntry: ListEntry[] = [];
   restaurantEntry: RestaurantEntry[] = [];
-  totalLists = 0;
+  totalLists:number = 0;
+  totalPages:number = 0;
 
   userListSubject = new Subject<ListEntry[]>();
   userListEntry: ListEntry[] = [];
-  totalUserLists = 0;
+  totalUserLists:number = 0;
 
   constructor(private http: HttpClient) { }
 
   private baseUrl = 'http://localhost:3000/';
 
-  getListById(list_id: number|string){
+  getListById(list_id: number | string) {
 
     this.http.get<{ lists: ListEntry[], restaurants: RestaurantEntry[] }>(`${this.baseUrl}lists/${list_id}`).subscribe((jsonData) => {
       this.listEntry = jsonData.lists;
@@ -63,12 +64,23 @@ export class ListDataService {
   }
 
 
+  GetSearch(searchQuery: string, page: number | null, pageSize: number | null) {
+
+    this.http.get<{ lists: ListEntry[], totalLists: number, pageSize: number }>(`${this.baseUrl}lists/search?q=${searchQuery}&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
+      this.listEntry = jsonData.lists;
+      this.totalLists = jsonData.totalLists;
+      this.totalPages = Math.ceil(this.totalLists / jsonData.pageSize);
+      this.listSubject.next(this.listEntry);
+    });
+  }
+
+
   createList(singleListEntry: ListEntry) {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
     this.http.post<{ message: string, list: ListEntry }>(`${this.baseUrl}lists`, singleListEntry, { headers }).subscribe((jsonData) => {
-        this.userListEntry.push(jsonData.list);
-        this.userListSubject.next(this.userListEntry);
+      this.userListEntry.push(jsonData.list);
+      this.userListSubject.next(this.userListEntry);
     });
   }
 
@@ -76,8 +88,9 @@ export class ListDataService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
     this.http.put<{ message: string, list: ListEntry }>(`${this.baseUrl}lists/${list_id}`, singleListEntry, { headers }).subscribe((jsonData) => {
-        this.userListEntry[0] = jsonData.list;
-        this.userListSubject.next(this.userListEntry);
+      this.listEntry[0].name = jsonData.list.name;
+      this.listEntry[0].description = jsonData.list.description;
+      this.listSubject.next(this.listEntry);
     });
   }
 
