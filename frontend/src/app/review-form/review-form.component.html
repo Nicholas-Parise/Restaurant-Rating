@@ -1,9 +1,10 @@
-<div class="formContainer" [style.display]="isFormVisible ? 'block' : 'none'">
+<div class="modal-overlay" *ngIf="isFormVisible">
+    <div class="modal">
 
-    <button (click)="closeForm()" class="menuClose">X</button>
+        <h2>leave a review</h2>
 
-    <form (ngSubmit)="onSubmit()" [formGroup]="reviewForm" class="review-form">
-        <div class="form-group">
+        <form (ngSubmit)="onSubmit()" [formGroup]="reviewForm">
+
             <label for="review">review</label>
             <textarea placeholder="Type your review..." type="text" class="form-control" rows="3"
                 formControlName="description"></textarea>
@@ -26,10 +27,14 @@
                 </div>
 
             </div>
-        </div>
-        <button class="btn btn-success">Submit</button>
-    </form>
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-success">Submit</button>
+                <button type="button" class="btn btn-cancel" (click)="closeForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
 </div>
+
 <div>
     <ul class="actions-list">
         <li class="icons-row">
@@ -62,25 +67,24 @@
         <li class="action-buttons">
             <button (click)="addToFavourites()">Add to Favourites</button>
         </li>
-         <li class="action-buttons">
+        <li class="action-buttons">
             <button (click)="showAddToListPopup()">Add to List</button>
         </li>
     </ul>
 </div>
 
-<!-- Add to List Popup -->
+
 <div class="modal-overlay" *ngIf="addToListVisible">
-  <div class="modal">
-    <button class="menuClose" (click)="closeAddToListPopup()">X</button>
-    <h3>Select a List</h3>
+    <div class="modal">
+        <h2>Select a List</h2>
 
-    <select [(ngModel)]="selectedListId">
-      <option *ngFor="let list of userList" [value]="list.id">{{ list.name }}</option>
-    </select>
+        <select [(ngModel)]="selectedListId">
+            <option *ngFor="let list of userList" [value]="list.id">{{ list.name }}</option>
+        </select>
 
-    <div class="popup-actions">
-      <button class="btn btn-primary" (click)="confirmAddToList()">Add</button>
-      <button class="btn btn-secondary" (click)="closeAddToListPopup()">Cancel</button>
+        <div class="modal-actions">
+            <button class="btn btn-success" (click)="confirmAddToList()">Add</button>
+            <button class="btn btn-cancel" (click)="closeAddToListPopup()">Cancel</button>
+        </div>
     </div>
-  </div>
 </div>

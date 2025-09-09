@@ -18,6 +18,7 @@ import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.com
 export const routes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'Diary', component: DiaryComponent},
+    {path: 'user/:username/diary', component: DiaryComponent},
     {path: 'Explore', component: ExploreComponent},
     {path: 'List', component: ListsComponent},
     {path: 'List/:id', component: ListsComponent},

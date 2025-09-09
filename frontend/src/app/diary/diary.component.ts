@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthDataService } from '../shared/auth-data.component';
 import { ReviewEntry } from '../shared/review-entry.model';
 import { ReviewDataService } from '../shared/review-data.component';
 import { DiaryCardComponent } from '../diary-card/diary-card.component';
-import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-diary',
@@ -13,9 +15,10 @@ import { Subscription } from 'rxjs';
   templateUrl: './diary.component.html',
   styleUrl: './diary.component.css'
 })
-export class DiaryComponent implements OnInit{
+export class DiaryComponent implements OnInit {
 
-  constructor(private reviewDataService: ReviewDataService,
+  constructor(private route: ActivatedRoute,
+    private reviewDataService: ReviewDataService,
     private authDataService: AuthDataService) { }
 
   diaryEntries: ReviewEntry[];
@@ -25,13 +28,13 @@ export class DiaryComponent implements OnInit{
   currentPage: number = 1;
   pageSize: number = 10;
   maxPages: number = 0;
-  
-  username: string;
+
+  username: string | null;
   LoggedIn: boolean = true;
-  
+
 
   ngOnInit(): void {
-    
+
     this.diarySubscription = this.reviewDataService.userReviewSubject.subscribe(reviewEntry => {
       console.log(reviewEntry);
       this.diaryEntries = reviewEntry;
@@ -39,21 +42,28 @@ export class DiaryComponent implements OnInit{
     });
 
 
-  this.authDataService.getIsLoggedIn().then(isLoggedIn => {
-    if (isLoggedIn) {
-      this.LoggedIn = true;
-      this.username = this.authDataService.getUsername();
-      this.reviewDataService.getUserReviews(this.username, 0, 10);
-      
-      console.log("logged in getting reviews", this.username);
-    } else {
-      console.log("NOT logged NOT getting reviews");
-      this.LoggedIn = false;
-    }
-  });
+    this.route.paramMap.subscribe(params => {
+
+      this.username = params.get('username');
+
+      if (this.username) {
+        this.reviewDataService.getUserReviews(this.username, 0, 10);
+      } else {
+
+        this.authDataService.getIsLoggedIn().then(isLoggedIn => {
+          if (isLoggedIn) {
+            this.LoggedIn = true;
+            this.username = this.authDataService.getUsername();
+            this.reviewDataService.getUserReviews(this.username, 0, 10);
+          } else {
+            this.LoggedIn = false;
+          }
+        });
+      }
+    })
   }
-  
-  
+
+
   loadReviews(): void {
     this.authDataService.getIsLoggedIn().then(isLoggedIn => {
       if (isLoggedIn) {

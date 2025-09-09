@@ -79,6 +79,11 @@ export class ListsComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.userListSubscription.unsubscribe();
+    this.listSubscription.unsubscribe();
+  }
+
 
   openNewListModal() {
     this.showNewListModal = true;

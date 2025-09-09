@@ -24,29 +24,29 @@
                     (change)="onRadiusChange()" />
             </div>
         </div>
-
     </div>
 
     <div class="spacer grid-container" *ngIf="searchMode === 'restaurants'">
         <div class="center grid-item" *ngFor="let restaurantEntry of restaurantEntry">
             <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
         </div>
+        <p *ngIf="restaurantEntry && restaurantEntry.length === 0">No results found.</p>
     </div>
 
     <div class="spacer grid-container" *ngIf="searchMode === 'users'">
         <div class="center grid-item" *ngFor="let userEntry of userEntry">
             <app-user-card [userEntry]="userEntry" [menu]="LoggedIn"></app-user-card>
         </div>
+        <p *ngIf="userEntry && userEntry.length === 0">No results found.</p>
     </div>
 
     <div class="spacer grid-container" *ngIf="searchMode === 'lists'">
         <div class="center grid-item" *ngFor="let listEntry of listEntry">
             <app-list-card [listEntry]="listEntry"></app-list-card>
         </div>
+        <p *ngIf="listEntry && listEntry.length === 0">No results found.</p>
     </div>
 
-
-    <p *ngIf="restaurantEntry && restaurantEntry.length === 0">No results found.</p>
 
     <div class="Pagination">
         <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
