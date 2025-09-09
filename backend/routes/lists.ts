@@ -13,17 +13,28 @@ router.get('/', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
 
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const offset = (page - 1) * pageSize;
+
     const result = await db.query(
-      `SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username
-      FROM lists li 
-      JOIN users u ON u.id = li.user_id
-      WHERE li.user_id = $1;`, [userId]);
+      `SELECT *, COUNT(*) OVER() AS total_count 
+        FROM (
+          SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username
+          FROM lists li 
+          JOIN users u ON u.id = li.user_id
+          WHERE li.user_id = $1
+        ) sub
+          LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
 
     if (result.rows.length === 0) {
       return res.status(200).json({ message: 'No lists' });
     }
 
-    res.status(200).json({ lists: result.rows, totalLists: result.rows.length });
+    const lists = result.rows;
+    const totalLists = lists[0]?.total_count ?? 0;
+
+    res.status(200).json({ lists, totalLists, page, pageSize });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
@@ -35,17 +46,27 @@ router.get('/', authenticate, async (req, res, next) => {
 router.get('/recommended', async (req, res, next) => {
   try {
 
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const offset = (page - 1) * pageSize;
+
     const result = await db.query(
-      `SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username
-      FROM lists li 
-      JOIN users u ON u.id = li.user_id
-        LIMIT 10;`);
+      `SELECT *, COUNT(*) OVER() AS total_count 
+      FROM (
+        SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username
+        FROM lists li 
+        JOIN users u ON u.id = li.user_id
+      ) sub
+      LIMIT $1 OFFSET $2;`, [pageSize, offset]);
 
     if (result.rows.length === 0) {
       return res.status(200).json({ message: 'No lists' });
     }
 
-    res.status(200).json({ lists: result.rows, totalLists: result.rows.length });
+    const lists = result.rows;
+    const totalLists = lists[0]?.total_count ?? 0;
+
+    res.status(200).json({ lists, totalLists, page, pageSize});
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
@@ -62,6 +83,10 @@ router.get('/users/:username', async (req, res, next) => {
 
     const username: string = req.params.username;
 
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const offset = (page - 1) * pageSize;
+
     if (!username) {
       return res.status(400).json({ message: "username is required to get bookmarks" });
     }
@@ -70,17 +95,24 @@ router.get('/users/:username', async (req, res, next) => {
     if (!userId) return;
 
     const result = await db.query(
-      `SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username
-      FROM lists li 
-      JOIN users u ON u.id = li.user_id
-      WHERE li.user_id = $1;`, [userId]);
+      `SELECT *, COUNT(*) OVER() AS total_count 
+      FROM (
+        SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username
+        FROM lists li 
+        JOIN users u ON u.id = li.user_id
+        WHERE li.user_id = $1
+      ) sub
+      LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
 
 
     if (result.rows.length === 0) {
       return res.status(200).json({ message: 'No lists' });
     }
 
-    res.status(200).json({ lists: result.rows, totalLists: result.rows.length });
+    const lists = result.rows;
+    const totalLists = lists[0]?.total_count ?? 0;
+
+    res.status(200).json({ lists, totalLists, page, pageSize });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
