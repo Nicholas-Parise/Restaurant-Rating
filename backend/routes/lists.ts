@@ -66,7 +66,7 @@ router.get('/recommended', async (req, res, next) => {
     const lists = result.rows;
     const totalLists = lists[0]?.total_count ?? 0;
 
-    res.status(200).json({ lists, totalLists, page, pageSize});
+    res.status(200).json({ lists, totalLists, page, pageSize });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
@@ -118,6 +118,50 @@ router.get('/users/:username', async (req, res, next) => {
     res.status(500).json({ message: 'Error retrieving user data' });
   }
 });
+
+
+
+router.get('/search', async (req, res, next) => {
+
+  const page = parseInt(req.query.page) || 1;
+  let pageSize = parseInt(req.query.pageSize) || 10;
+  const searchTerm = req.query.q;
+  const offset = (page - 1) * pageSize;
+
+  if (pageSize && pageSize > 100) {
+    pageSize = 100;
+  }
+
+  try {
+    if (!searchTerm) {
+      return res.status(400).json({ message: "query is required" });
+    }
+    console.log(searchTerm);
+
+    const result = await db.query(
+      `SELECT *, COUNT(*) OVER() AS total_count 
+          FROM (
+            SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username, GREATEST(similarity(li.name, $1), similarity(li.description, $1)) AS sim
+            FROM lists li 
+            JOIN users u ON u.id = li.user_id
+            WHERE li.name % $1 OR li.description % $1
+          ) sub
+          ORDER BY sim DESC
+          LIMIT $2 OFFSET $3;`, [searchTerm, pageSize, offset]);
+
+    const lists = result.rows;
+    const totalLists = lists[0]?.total_count ?? 0;
+
+    res.json({
+      lists, totalLists, page, pageSize
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 
 
