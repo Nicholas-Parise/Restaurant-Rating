@@ -2,7 +2,6 @@
   <h2 class="name">{{restaurantEntry.name}}</h2>
   <img class="image" [src]="restaurantEntry.pictures || 'assets/placeholder-restaurant.png'" alt=""
   (error)="onImageError($event)">
-  <p>{{restaurantEntry.updated}}</p>
 
   <div class="menu-wrapper" *ngIf="allowMenu" (click)="$event.stopPropagation()">
     <button class="menu-button" (click)="toggleMenu()">⋯</button>

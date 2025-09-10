@@ -44,21 +44,6 @@
 }
 
 
-button {
-  background: #0077cc;
-  border: none;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: background 0.2s;
-}
-
-button:hover {
-  background: #005fa3;
-}
-
 button:disabled {
   background: #ccc;
   cursor: not-allowed;
@@ -68,15 +53,6 @@ button:disabled {
   display: flex;
   gap: 10px;
 }
-
-.delete-btn {
-  background: #d9534f;
-}
-
-.delete-btn:hover {
-  background: #c9302c;
-}
-
 
 
 @media (max-width: 600px) {

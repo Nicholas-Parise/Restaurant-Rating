@@ -207,3 +207,40 @@ html {
     width: 100%;
   }
 }
+
+
+/* Buttons */
+
+.btn {
+  background: #0077cc;
+  margin-top: 16px;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background: #005fa3;
+}
+
+
+.btn-success{
+ background: #28a745;
+}
+
+.btn-success:hover {
+  background: #218838;
+}
+
+.btn-cancel{
+  /*background:red;*/
+  background: #d9534f;
+}
+
+.btn-cancel:hover{
+  /*background:rgb(204, 32, 32);*/
+    background: #c9302c;
+}

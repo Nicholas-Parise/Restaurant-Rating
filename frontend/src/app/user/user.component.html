@@ -3,12 +3,20 @@
         <div class="grid-container">
             <div class="grid-item">
                 <img class="image" [src]="userEntry.picture || 'assets/placeholder-avatar.png'" alt="Profile Picture"
-                (error)="onImageError($event)">
+                    (error)="onImageError($event)">
             </div>
 
             <div class="grid-item">
                 <h2>{{userEntry?.name || userEntry?.username}}</h2>
                 <p>{{userEntry?.bio}}</p>
+
+
+                <div class="profile-nav">
+                    <button (click)="goToSection('diary')">Diary</button>
+                    <button (click)="goToSection('friends')">Friends</button>
+                    <button (click)="goToSection('bookmarked')">Bookmarked</button>
+                </div>
+
                 <div *ngIf="showEdit">
                     <app-user-form [userEntry]="userEntry"></app-user-form>
                 </div>
@@ -19,9 +27,11 @@
         <h2 class="section-header">Favourite Restaurants</h2>
         <div class="spacer grid-container">
             <div class="center grid-item" *ngFor="let favRestaurantEntry of favRestaurantEntry">
-            
-                <app-restaurant-card *ngIf="showEdit" [restaurantEntry]="favRestaurantEntry" [menu]=true [favourite]=true></app-restaurant-card>
-                <app-restaurant-card *ngIf="!showEdit" [restaurantEntry]="favRestaurantEntry" [menu]=false [favourite]=false></app-restaurant-card>
+
+                <app-restaurant-card *ngIf="showEdit" [restaurantEntry]="favRestaurantEntry" [menu]=true
+                    [favourite]=true></app-restaurant-card>
+                <app-restaurant-card *ngIf="!showEdit" [restaurantEntry]="favRestaurantEntry" [menu]=false
+                    [favourite]=false></app-restaurant-card>
 
             </div>
         </div>
@@ -49,7 +59,7 @@
             </li>
         </ul>
 
-         <div class="Pagination">
+        <div class="Pagination">
             <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
             <p>{{this.currentPage}}</p>
             <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
@@ -57,13 +67,6 @@
     </div>
 
     <ng-template #loading>
-        <div *ngIf="LoggedIn; else notLoggedIn">
         <p>Loading...</p>
-    </div>
     </ng-template>
-
-    <ng-template #notLoggedIn>
-        <p>not logged in...</p>
-    </ng-template>
-
 </div>

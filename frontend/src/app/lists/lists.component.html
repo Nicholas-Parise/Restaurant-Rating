@@ -14,8 +14,8 @@
             <p class="created">Created: {{ listEntry[0].created | date:'MMM d, y' }}</p>
 
             <div *ngIf="LoggedIn && isOwner(listEntry[0])" class="actions">
-                <button (click)="openEditListModal(listEntry[0])">Edit List</button>
-                <button class="delete-btn" (click)="openDeleteConfirm(listEntry[0])">Delete List</button>
+                <button class="btn" (click)="openEditListModal(listEntry[0])">Edit List</button>
+                <button class="btn btn-cancel" (click)="openDeleteConfirm(listEntry[0])">Delete List</button>
             </div>
         </div>
 
@@ -33,7 +33,7 @@
 
             <button (click)="openNewListModal()">+ New List</button>
 
-            <div class="grid">
+            <div class="grid-container">
                 <div class="grid-item" *ngFor="let list of userList">
                     <app-list-card [listEntry]="list"></app-list-card>
                 </div>
@@ -43,7 +43,7 @@
         <div class="recommended-lists">
             <h1>Recommended Lists</h1>
 
-            <div class="grid">
+            <div class="grid-container">
                 <div class="grid-item" *ngFor="let list of listEntry">
                     <app-list-card [listEntry]="list"></app-list-card>
                 </div>
@@ -67,8 +67,8 @@
                 </label>
 
                 <div class="modal-actions">
-                    <button type="submit">{{ isEditMode ? 'Save Changes' : 'Create' }}</button>
-                    <button type="button" (click)="closeNewListModal()">Cancel</button>
+                    <button class="btn btn-success" type="submit">{{ isEditMode ? 'Save Changes' : 'Create' }}</button>
+                    <button class="btn" type="button" (click)="closeNewListModal()">Cancel</button>
                 </div>
             </form>
         </div>
@@ -82,8 +82,8 @@
             </p>
 
             <div class="modal-actions">
-                <button class="delete-btn" (click)="confirmDelete()">Delete</button>
-                <button (click)="closeDeleteConfirm()">Cancel</button>
+                <button class="btn btn-cancel" (click)="confirmDelete()">Delete</button>
+                <button class="btn" (click)="closeDeleteConfirm()">Cancel</button>
             </div>
         </div>
     </div>

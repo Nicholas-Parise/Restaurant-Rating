@@ -53,33 +53,6 @@ form input[type="number"] {
   color: white;
 }
 
-.btn {
-  margin-top: 16px;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-
-.btn-success{
- background: #28a745;
-}
-
-.btn-success:hover {
-  background: #218838;
-}
-
-.btn-cancel{
-  background:red;
-}
-
-.btn-cancel:hover{
-  background:rgb(204, 32, 32);
-}
-
 
 .icon-label {
   display: inline-flex;

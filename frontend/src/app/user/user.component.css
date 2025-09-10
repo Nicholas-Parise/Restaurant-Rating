@@ -46,3 +46,24 @@
   flex: 0 0 auto;
   min-width: 300px;           /* optional: enforce minimum size */
 }
+
+.profile-nav {
+  margin: 1rem 0;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.profile-nav button {
+  background: #2c2c2c;
+  border: 1px solid #444;
+  color: #e0e0e0;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.profile-nav button:hover {
+  background: #444;
+  color: #fff;
+}

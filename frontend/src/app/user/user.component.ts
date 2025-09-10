@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { UserEntry } from '../shared/user-entry.model';
 import { UserDataService } from '../shared/user-data.component';
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
@@ -48,7 +49,8 @@ export class UserComponent {
     private restaurantDataService: RestaurantDataService,
     private reviewDataService: ReviewDataService,
     private authDataService: AuthDataService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private router: Router) { }
 
 
   ngOnDestroy(): void {
@@ -97,16 +99,22 @@ export class UserComponent {
             this.restaurantDataService.GetRecentResturaunts(this.authDataService.getUsername());
             this.restaurantDataService.GetFavouriteResturaunts(this.authDataService.getUsername());
             this.LoggedIn = true;
-          }else{
+          } else {
             this.LoggedIn = false;
           }
         });
 
       }
     })
+  }
 
 
-
+  goToSection(section: string) {
+    if (this.username && this.username != this.authDataService.getUsername()) {
+      this.router.navigate([`/user/${this.username}/${section}`]);
+    } else {
+      this.router.navigate([`/user/${section}`]);
+    }
   }
 
 
@@ -129,7 +137,7 @@ export class UserComponent {
   }
 
 
- onImageError(event: Event): void {
+  onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
     target.src = 'assets/placeholder-avatar.png';
   }
