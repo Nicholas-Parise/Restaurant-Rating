@@ -81,7 +81,7 @@ export class RestaurantDataService {
 
   GetFavouriteResturaunts(username:string) {
 
-    this.http.get<{ favourites: RestaurantEntry[], totalFavourites: number }>(`${this.baseUrl}favourites?username=${username}`).subscribe((jsonData) => {
+    this.http.get<{ favourites: RestaurantEntry[], totalFavourites: number }>(`${this.baseUrl}favourites/${username}`).subscribe((jsonData) => {
       this.favouriteEntry = jsonData.favourites;
       this.favouriteSubject.next(this.favouriteEntry);
     })

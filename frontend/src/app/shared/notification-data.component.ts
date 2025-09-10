@@ -30,12 +30,13 @@ export class NotificationsDataService {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    var sendData = { "is_read": true};
+    var sendData = { "is_read": true };
 
-    this.http.put<{ message: string }>(`${this.baseUrl}notifications/${id}`, sendData ,{ headers }).subscribe((jsonData) => {
+    this.http.put<{ message: string }>(`${this.baseUrl}notifications/${id}`, sendData, { headers }).subscribe((jsonData) => {
       console.log(jsonData.message);
     })
-    this.NotificationEntry[id].is_read = true;
+    let foundIndex = this.NotificationEntry.findIndex(not => not.id === id);
+    this.NotificationEntry[foundIndex].is_read = true;
     this.NotificationSubject.next(this.NotificationEntry);
   }
 
@@ -43,10 +44,10 @@ export class NotificationsDataService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
     this.http.delete<{ message: string }>(`${this.baseUrl}notifications/${id}`, { headers }).subscribe((jsonData) => {
-      console.log(jsonData.message);
+      this.NotificationEntry = this.NotificationEntry.filter(not => not.id !== id);
+      this.NotificationSubject.next(this.NotificationEntry);
     })
-    this.NotificationEntry.splice(id,1);
-    this.NotificationSubject.next(this.NotificationEntry);
+
   }
 
 }

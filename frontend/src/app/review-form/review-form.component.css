@@ -70,29 +70,6 @@ form input[type="number"] {
 
 
 
-.action-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-}
-
-.action-buttons button {
-  background-color: darkgrey;
-  border: none;
-  color: white;
-  text-align: center;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.1s ease;
-}
-
-.action-buttons button:hover {
-  background-color: lightgray;
-}
-
-
 .star-row {
   display: flex;
   flex-direction: column;
