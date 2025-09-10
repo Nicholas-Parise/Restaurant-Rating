@@ -2,11 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const reviewRoutes = require('./routes/reviews');
-const restaurantRoutes = require('./routes/restaurant');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const friendRoutes = require('./routes/friends');
 
+import restaurantRoutes from './routes/restaurant';
 import listRoutes from './routes/lists';
 import notificationRoutes from './routes/notifications';
 import bookmarkRoutes from './routes/bookmarks';
