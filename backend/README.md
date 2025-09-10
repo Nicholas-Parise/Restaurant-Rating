@@ -75,6 +75,18 @@ POST /:username/accept → Accept a friendship request from provided user
 POST /:username/deny → Deny a friendship request from provided user  
 DELETE /:username → Remove a friend (provided user)**
 
+## lists
+**GET / → get all lists of logged in user  
+GET /recommended → get recommended lists  
+GET /users/:username → get all lists of specific user by username  
+GET /search → search for lists given a query  
+GET /:id → Get specific lists information  
+POST / → create a list  
+PUT /:id → edit a list  
+POST /:id/:restaurant_id → add restaurant to a list   
+DELETE /:id/:restaurant_id → remove a restaurant from a list   
+DELETE /:id → delete a list**
+
 # Server Architecture
 ![Screenshot of Server Architecture.](server-architecture.png)
 
