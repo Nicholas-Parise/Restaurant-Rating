@@ -1,44 +1,76 @@
-const express = require('express');
-const router = express.Router();
-const db = require('../utils/db');
+import express from "express";
+import db from "../utils/db";
+import createNotification from "../middleware/createNotification";
+import authenticate from "../middleware/authenticate";
+import { getUserId } from "../utils/util";
 
-const createNotification = require("../middleware/createNotification");
-const authenticate = require('../middleware/authenticate');
+const router = express.Router();
+
+
+// get logged in users favourite restaurant
+router.get('/', authenticate, async (req, res, next) => {
+  try {
+    const userId = req.user.userId; // Get user ID from authenticated token
+  
+    const result = await db.query(
+        `SELECT r.id, r.name, r.pictures FROM favorite_restaurant fr
+        JOIN restaurants r ON fr.restaurant_id = r.id
+        WHERE fr.user_id = $1`, [userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(200).json({ message: 'No favourited restaurants' });
+    }
+
+    res.status(200).json({ favourites: result.rows, totalFavourites: result.rows.length });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: 'Error retrieving user data' });
+  }
+});
+
+
+// get logged in users favourite restaurant
+router.get('/restaurants/:restaurant_id', authenticate, async (req, res, next) => {
+  try {
+    const userId = req.user.userId; // Get user ID from authenticated token
+    const restaurant_id = req.params.restaurant_id;
+
+    const result = await db.query(
+        `SELECT r.id, r.name, r.pictures FROM favorite_restaurant fr
+        JOIN restaurants r ON fr.restaurant_id = r.id
+        WHERE fr.user_id = $1 AND fr.restaurant_id = $2`, [userId, restaurant_id]);
+   
+    if (result.rows.length === 0) {
+      return res.status(200).json({ message: 'No favourited restaurants' });
+    }
+
+    res.status(200).json({ favourites: result.rows, totalFavourites: result.rows.length });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: 'Error retrieving user data' });
+  }
+});
+
+
 
 // localhost:3000/favourites
 // get users favourites
-router.get('/', async (req, res, next) => {
+router.get('/:username', async (req, res, next) => {
   try {
-    const restaurant = parseInt(req.query.restaurant);
-    const username = req.query.username;
+
+    const username = req.params.username;
 
     if (!username) {
       return res.status(400).json({ message: 'username required field' });
     }
 
-    const tempUserId = await db.query(
-      `SELECT id FROM users Where username = $1`, [username]);
+    const userId = await getUserId(username, res);
+    if (!userId) return;
 
-    if (tempUserId.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const userId = tempUserId.rows[0].id;
-
-    let result;
-
-    if (restaurant) {
-      result = await db.query(
-        `SELECT r.id, r.name, r.pictures FROM favorite_restaurant fr
-        JOIN restaurants r ON fr.restaurant_id = r.id
-        WHERE fr.user_id = $1 AND fr.restaurant_id = $2`, [userId, restaurant]);
-    } else {
-      result = await db.query(
+    const result = await db.query(
         `SELECT r.id, r.name, r.pictures FROM favorite_restaurant fr
         JOIN restaurants r ON fr.restaurant_id = r.id
         WHERE fr.user_id = $1`, [userId]);
-    }
-
 
     if (result.rows.length === 0) {
       return res.status(200).json({ message: 'No favourites' });
@@ -50,7 +82,6 @@ router.get('/', async (req, res, next) => {
     res.status(500).json({ message: 'Error retrieving user data' });
   }
 });
-
 
 
 // Add a favourites restaurant to logged in user
@@ -85,7 +116,7 @@ router.post('/:restaurant_id', authenticate, async (req, res, next) => {
 
     res.status(200).json("success");
 
-  } catch (error) {
+  } catch (error: any) {
     // Handle duplicate restaurantId error
     if (error.code === "23505") {
       return res.status(409).json({ message: "Restaurant is already added" });
@@ -115,6 +146,5 @@ router.delete('/:restaurant_id', authenticate, async (req, res, next) => {
   }
 });
 
-
-
-module.exports = router;
+//module.exports = router;
+export default router;
