@@ -29,7 +29,7 @@ router.get('/', authenticate, async (req, res, next) => {
 });
 
 
-// get logged in users favourite restaurant
+// get logged in user entry for specific restaurant
 router.get('/restaurants/:restaurant_id', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
@@ -50,7 +50,6 @@ router.get('/restaurants/:restaurant_id', authenticate, async (req, res, next) =
     res.status(500).json({ message: 'Error retrieving user data' });
   }
 });
-
 
 
 // localhost:3000/favourites
@@ -98,12 +97,9 @@ router.post('/:restaurant_id', authenticate, async (req, res, next) => {
 
     const amount = count.rows[0].count;
 
-    console.log(count.rows[0].count);
-
     if (amount >= 4) {
       return res.status(403).json({ error: "only 4 favourites allowed." });
     }
-
 
     const result = await db.query(`
         INSERT INTO favorite_restaurant 

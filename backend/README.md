@@ -64,7 +64,7 @@ POST /:restaurant_id' → Add a favourites restaurant to logged in user
 DELETE /favourites/:restaurant_id → remove a favourites restaurant from logged in user**
 
 ## /bookmarks
-**GET / → get all bookmarked restaurants
+**GET / → get all bookmarked restaurants  
 GET /:username → get all bookmarked restaurants from provided user   
 POST /:restaurant_id' → Add a bookmark restaurant to logged in user  
 DELETE /:restaurant_id → remove a bookmarked restaurant from logged in user**
