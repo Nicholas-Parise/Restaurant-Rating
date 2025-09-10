@@ -6,11 +6,11 @@ const restaurantRoutes = require('./routes/restaurant');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const friendRoutes = require('./routes/friends');
-const bookmarkRoutes = require('./routes/bookmarks');
 const favouriteRoutes = require('./routes/favourites');
 
 import listRoutes from './routes/lists';
 import notificationRoutes from './routes/notifications';
+import bookmarkRoutes from './routes/bookmarks';
 
 const cors = require('cors');
 const app = express();
