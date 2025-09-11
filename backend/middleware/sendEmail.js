@@ -1,23 +1,27 @@
-const mailgun = require("mailgun-js");
 require("dotenv").config();
 
-const mg = mailgun({
+const formData = require('form-data');
+const Mailgun = require('mailgun.js');
+const mailgun = new Mailgun(formData);
+
+const mg = mailgun.client({
   username: "api",
-  apiKey: process.env.MAILGUN_API_KEY,
-  domain: process.env.MAILGUN_DOMAIN
+  key: process.env.MAILGUN_API_KEY
 });
 
 const sendEmail = async (to, subject, text, html = null) => {
 
   const data = {
-    from: "Wishify Support Team <support@mail.TBD.ca>",
+    from: "TBD Support Team <support@mail.TBD.ca>",
     to,
     subject,
     html: html || text,
   };
 
   //console.log(data);
-  await mg.messages().send(data);
+  const res = await mg.messages().create(process.env.MAILGUN_DOMAIN, data);
+
+  console.log(res);
 
   // if it doesn't send it will throw error
   /*
