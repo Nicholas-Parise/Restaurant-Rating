@@ -5,7 +5,7 @@
         <input type="text" [(ngModel)]="searchQuery" (input)="onSearchChange()" placeholder="Search by name"
             class="search-input" />
 
-        <select [(ngModel)]="searchMode" (change)="onSearchChange()">
+        <select class="btn" [(ngModel)]="searchMode" (change)="onSearchChange()">
             <option value="restaurants">Restaurants</option>
             <option value="users">Users</option>
             <option value="lists">Lists</option>

@@ -31,7 +31,7 @@
         <div *ngIf="LoggedIn" class="user-lists">
             <h1>Your Lists</h1>
 
-            <button (click)="openNewListModal()">+ New List</button>
+            <button class="btn" (click)="openNewListModal()">+ New List</button>
 
             <div class="grid-container">
                 <div class="grid-item" *ngFor="let list of userList">
