@@ -18,7 +18,6 @@ const sendEmail = async (to, subject, text, html = null) => {
     html: html || text,
   };
 
-  //console.log(data);
   const res = await mg.messages().create(process.env.MAILGUN_DOMAIN, data);
 
   console.log(res);
