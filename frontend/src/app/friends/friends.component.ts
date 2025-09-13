@@ -29,7 +29,7 @@ export class FriendsComponent implements OnInit {
   maxPages: number = 0;
 
   username: string | null;
-  LoggedIn: boolean = true;
+  LoggedIn: boolean = false;
 
   acceptedUsers: UserEntry[];
   pendingUsers: UserEntry[];
@@ -64,6 +64,7 @@ export class FriendsComponent implements OnInit {
 
       }
     })
+
   }
 
 
@@ -74,7 +75,6 @@ export class FriendsComponent implements OnInit {
     this.declinedUsers = this.userEntry.filter(entry => entry.status === 'declined');
     this.blockedUsers = this.userEntry.filter(entry => entry.status === 'blocked');
   }
-
 
   onNextPage(): void {
     this.currentPage++;

@@ -20,7 +20,7 @@ export class BookmarkedComponent implements OnInit {
   restaurantEntry: RestaurantEntry[];
 
   username: string | null;
-  LoggedIn: boolean = true;
+  LoggedIn: boolean = false;
 
   currentPage: number = 1;
   pageSize: number = 10;
