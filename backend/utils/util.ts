@@ -4,7 +4,6 @@ import db from "./db";
 export async function getUserId(username: String, res: Response): Promise<number | void> {
 
     try {
-
         const userIDCheck = await db.query(
             `SELECT id 
             FROM users 
@@ -21,7 +20,4 @@ export async function getUserId(username: String, res: Response): Promise<number
         res.status(500).json({ message: 'Error retrieving user data' });
         return;
     }
-
 }
-
-

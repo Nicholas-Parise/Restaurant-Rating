@@ -4,7 +4,8 @@ const bodyParser = require('body-parser');
 const reviewRoutes = require('./routes/reviews');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
-const friendRoutes = require('./routes/friends');
+
+import friendRoutes from'./routes/friends';
 
 import restaurantRoutes from './routes/restaurant';
 import listRoutes from './routes/lists';

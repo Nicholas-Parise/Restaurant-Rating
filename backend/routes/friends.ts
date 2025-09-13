@@ -1,9 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const db = require('../utils/db');
+import express from "express";
+import db from "../utils/db";
+import createNotification from "../middleware/createNotification";
+import authenticate from "../middleware/authenticate";
+import { getUserId } from "../utils/util";
 
-const createNotification = require("../middleware/createNotification");
-const authenticate = require('../middleware/authenticate');
+const router = express.Router();
 
 // localhost:3000/friends
 // get all friends of logged in user
@@ -54,16 +55,8 @@ router.get('/:username', async (req, res) => {
       return res.status(400).json({ message: "username is required to get friends" });
     }
 
-    const userIDCheck = await db.query(
-      `SELECT id 
-        FROM users 
-        WHERE username = $1`, [username]);
-
-    if (userIDCheck.rows.length === 0) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const userId = userIDCheck.rows[0].id;
+    const userId = await getUserId(username, res);
+    if (!userId) return;
 
     const result = await db.query(
       `SELECT u.id, 
@@ -122,15 +115,9 @@ router.post('/:username', authenticate, async (req, res, next) => {
     const friendUserId = friendUserIDCheck.rows[0].id;
 
     // existing entry check:
-
-    const existCheck = await db.query(
-      `SELECT status FROM friends
-      WHERE (user_id = $1 AND friend_id = $2) OR (friend_id = $1 AND user_id = $2)`, [userId, friendUserId]);
-
-    if (existCheck.rows.length > 0) {
-      return res.status(400).json({ message: `friendship already exists, and you are ${existCheck.rows[0].status}` });
+    if (await doesExist(userId, friendUserId)) {
+      return res.status(404).json({ message: 'Friendship already exists' });
     }
-
 
     const result = await db.query(`
         INSERT INTO friends 
@@ -151,7 +138,7 @@ router.post('/:username', authenticate, async (req, res, next) => {
 
     res.status(200).json("success");
 
-  } catch (error) {
+  } catch (error: any) {
     // Handle duplicate restaurantId error
     if (error.code === "23505") {
       return res.status(409).json({ message: "Restaurant is already added" });
@@ -174,29 +161,12 @@ router.post('/:username/accept', authenticate, async (req, res, next) => {
       return res.status(400).json({ message: "username is required to accept friend request" });
     }
 
-    const requesterIDCheck = await db.query(
-      `SELECT id 
-        FROM users 
-        WHERE username = $1`, [username]);
-
-    if (requesterIDCheck.rows.length === 0) {
-      return res.status(404).json({ message: `User: ${username} not found` });
-    }
-
-    const requesterId = requesterIDCheck.rows[0].id;
+    const requesterId = await getUserId(username, res);
+    if (!requesterId) return;
 
     // existing entry check:
-
-    const existCheck = await db.query(
-      `SELECT status FROM friends
-      WHERE (user_id = $1 AND friend_id = $2)`, [requesterId, userId]);
-
-    if (existCheck.rows.length === 0) {
-      return res.status(404).json({ message: 'you cannot accept a friendship you started' });
-    }
-
-    if (existCheck.rows[0].status != 'pending') {
-      return res.status(400).json({ message: `friendship is not pending` });
+    if (!await isPending(requesterId, userId)) {
+      return res.status(404).json({ message: 'Friendship entry does not exist, or friendship is not pending' });
     }
 
     const result = await db.query(`
@@ -232,29 +202,12 @@ router.post('/:username/deny', authenticate, async (req, res, next) => {
       return res.status(400).json({ message: "username is required to deny friend request" });
     }
 
-    const requesterIDCheck = await db.query(
-      `SELECT id 
-      FROM users 
-      WHERE username = $1`, [username]);
-
-    if (requesterIDCheck.rows.length === 0) {
-      return res.status(404).json({ message: `User: ${username} not found` });
-    }
-
-    const requesterId = requesterIDCheck.rows[0].id;
+    const requesterId = await getUserId(username, res);
+    if (!requesterId) return;
 
     // existing entry check:
-
-    const existCheck = await db.query(
-      `SELECT status FROM friends
-      WHERE (user_id = $1 AND friend_id = $2)`, [requesterId, userId]);
-
-    if (existCheck.rows.length === 0) {
-      return res.status(404).json({ message: 'Friendship entry does not exist, add user as friend first' });
-    }
-
-    if (existCheck.rows[0].status != 'pending') {
-      return res.status(400).json({ message: `friendship is not pending` });
+    if (!await isPending(requesterId, userId)) {
+      return res.status(404).json({ message: 'Friendship entry does not exist, or friendship is not pending' });
     }
 
     const result = await db.query(`
@@ -290,23 +243,11 @@ router.delete('/:username', authenticate, async (req, res, next) => {
       return res.status(400).json({ message: "username is required to deny friend request" });
     }
 
-    const requesterIDCheck = await db.query(
-      `SELECT id 
-      FROM users 
-      WHERE username = $1`, [username]);
-
-    if (requesterIDCheck.rows.length === 0) {
-      return res.status(404).json({ message: `User: ${username} not found` });
-    }
-
-    const requesterId = requesterIDCheck.rows[0].id;
+    const requesterId = await getUserId(username, res);
+    if (!requesterId) return;
 
     // existing entry check:
-    const existCheck = await db.query(
-      `SELECT status FROM friends
-      WHERE (user_id = $1 AND friend_id = $2) OR (friend_id = $1 AND user_id = $2)`, [userId, requesterId]);
-
-    if (existCheck.rows.length === 0) {
+    if (!await doesExist(userId, requesterId)) {
       return res.status(404).json({ message: 'Friendship entry does not exist, add user as friend first' });
     }
 
@@ -329,4 +270,31 @@ router.delete('/:username', authenticate, async (req, res, next) => {
 });
 
 
-module.exports = router;
+// determine if user is on friendship
+async function doesExist(user_Id: number, friend_id: number): Promise<boolean> {
+
+  const existCheck = await db.query(
+    `SELECT status FROM friends
+      WHERE (user_id = $1 AND friend_id = $2) OR (friend_id = $1 AND user_id = $2)`, [user_Id, friend_id]);
+
+  if (existCheck.rows.length > 0) {
+    return true;
+  }
+  return false;
+}
+
+// determine if friendship is pending
+async function isPending(user_Id: number, friend_id: number): Promise<boolean> {
+
+  const existCheck = await db.query(
+    `SELECT status FROM friends
+      WHERE (user_id = $1 AND friend_id = $2)`, [user_Id, friend_id]);
+
+  if (existCheck.rows.length > 0 && existCheck.rows[0].status == 'pending') {
+    return true;
+  }
+  return false;
+}
+
+
+export default router;

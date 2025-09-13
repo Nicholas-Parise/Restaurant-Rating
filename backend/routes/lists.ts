@@ -1,4 +1,3 @@
-
 import express from "express";
 import db from "../utils/db";
 import createNotification from "../middleware/createNotification";
@@ -355,7 +354,6 @@ async function isOwner(user_Id: number, list_id: number): Promise<boolean> {
   }
   return false;
 }
-
 
 
 //module.exports = router;
