@@ -1,14 +1,19 @@
 <div class="cardBody" (click)="navigateToRestaurant($event)" (mouseleave)="closeDropdown()">
   <h2 class="name">{{restaurantEntry.name}}</h2>
   <img class="image" [src]="restaurantEntry.pictures || 'assets/placeholder-restaurant.png'" alt=""
-  (error)="onImageError($event)">
+    (error)="onImageError($event)">
 
   <div class="menu-wrapper" *ngIf="allowMenu" (click)="$event.stopPropagation()">
     <button class="menu-button" (click)="toggleMenu()">⋯</button>
     <ul class="menu-options" *ngIf="menuOpen">
-      <li *ngIf="favourite" (click)="removeFavourite()">remove favourite</li>
-      <li *ngIf="bookmark" (click)="removeBookmark()">remove bookmark</li>
-      <li *ngIf="list" (click)="removeList()">remove from list</li>
+      <li *ngIf="favourite">
+        <button class="btn" (click)="removeFavourite()">remove favourite</button>
+      </li>
+      <li *ngIf="bookmark">
+        <button class="btn" (click)="removeBookmark()">remove bookmark</button>
+      </li>
+      <li *ngIf="list">
+        <button class="btn" (click)="removeList()">remove from list</button>
     </ul>
   </div>
 </div>
