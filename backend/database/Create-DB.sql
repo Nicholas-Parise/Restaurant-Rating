@@ -207,7 +207,7 @@ CREATE INDEX lists_name_trgm_idx ON users USING GIN (name gin_trgm_ops);
 
 CREATE TABLE listed_restaurants(
 restaurant_id BIGINT REFERENCES restaurants(id),
-list_id BIGINT REFERENCES lists(id),
+list_id BIGINT REFERENCES lists(id) ON DELETE CASCADE,
 priority INT,
 created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, list_id)

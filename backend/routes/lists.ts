@@ -330,15 +330,14 @@ router.delete('/:list_id', authenticate, async (req, res, next) => {
     if (!await isOwner(userId, list_id)) {
       return res.status(403).json({ error: "must own list." });
     }
-
-    await db.query("DELETE FROM listed_restaurants WHERE list_id = $1", [list_id]);
-
-    await db.query("DELETE FROM lists WHERE user_id = $1 AND id = $2", [userId, list_id]);
+    // delete cascade
+    await db.query(`DELETE FROM lists WHERE id = $1 AND user_id = $2;`, [list_id, userId]);
 
     res.status(200).json("success");
 
   } catch (error) {
     console.error("Error removing restaurant:", error);
+     await db.query("ROLLBACK");
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
