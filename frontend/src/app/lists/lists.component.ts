@@ -62,21 +62,26 @@ export class ListsComponent implements OnInit {
 
     this.route.paramMap.subscribe(params => {
       this.list_id = params.get('id');
-      if (this.list_id) {
-        this.listDataService.getListById(this.list_id);
-      }
-    })
+
+      this.authDataService.getIsLoggedIn().then(isLoggedIn => {
+        if (isLoggedIn) {
+          this.LoggedIn = true;
+        } else {
+          this.LoggedIn = false;
+        }
+
+        if (this.list_id) {
+          this.listDataService.getListById(this.list_id);
+        } else {
+
+          if (isLoggedIn) {
+            this.listDataService.getLists();
+          }
+        }
+      });
+    });
 
     this.listDataService.getRecommended();
-
-    this.authDataService.getIsLoggedIn().then(isLoggedIn => {
-      if (isLoggedIn) {
-        this.listDataService.getLists();
-        this.LoggedIn = true;
-      } else {
-        this.LoggedIn = false;
-      }
-    });
   }
 
   ngOnDestroy(): void {
