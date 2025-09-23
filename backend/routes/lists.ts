@@ -2,7 +2,7 @@ import express from "express";
 import db from "../utils/db";
 import createNotification from "../middleware/createNotification";
 import authenticate from "../middleware/authenticate";
-import { getUserId } from "../utils/util";
+import { getUserId, maxString } from "../utils/util";
 
 const router = express.Router();
 
@@ -202,11 +202,14 @@ router.post('/', authenticate, async (req, res, next) => {
 
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
-    const { name, description } = req.body;
+    let { name, description } = req.body;
 
     if (!name) {
       return res.status(400).json({ error: "name is required." });
     }
+
+    name = maxString(name, 50);
+    description = maxString(description, 200);
 
     const result = await db.query(`
         INSERT INTO lists 
@@ -231,11 +234,14 @@ router.put('/:list_id', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const list_id = parseInt(req.params.list_id);
-    const { name, description } = req.body;
+    let { name, description } = req.body;
 
     if (!await isOwner(userId, list_id)) {
       return res.status(403).json({ error: "must own list." });
     }
+
+    name = maxString(name, 50);
+    description = maxString(description, 200);
 
     const result = await db.query(`
         UPDATE lists 

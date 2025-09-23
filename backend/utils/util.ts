@@ -21,3 +21,11 @@ export async function getUserId(username: String, res: Response): Promise<number
         return;
     }
 }
+
+// returns a string at most the length of max, otherwise the string is unchanged
+export function maxString(str: String, max: number): String | void {
+
+    if(!str || str.length == 0) return;
+
+    return str.slice(0,Math.min(str.length,max));
+}
