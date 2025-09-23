@@ -3,7 +3,6 @@ import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { UserEntry } from '../shared/user-entry.model';
 import { UserDataService } from '../shared/user-data.component';
-import { FormBuilder } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -18,43 +17,33 @@ export class UserFormComponent implements OnInit {
   @Input() userEntry: UserEntry;
 
   isFormVisible: boolean = false;
+  showDeleteConfirm: boolean = false;
 
-  //userForm: FormGroup;
+  currentTab: 'profile' | 'account' = 'profile';
 
-  constructor(private userDataService: UserDataService,
-    private fb: FormBuilder
-  ) { }
+  name: string | null;
+  bio: string | null;
+  notifications: boolean;
 
+  newPassword: string;
+  password: string;
+  email: string;
 
-  userForm = this.fb.group({
-    name: [''],
-    email: [''],
-    bio: [''],
-    password: [''],
-    newPassword: [''],
-    notifications: [true]
-  });
+  constructor(private userDataService: UserDataService) { }
 
   selectedFile: File | null = null;
   previewUrl: string | ArrayBuffer | null = null;
-  showAdvanced: boolean = false;
 
   ngOnInit() {
-    /*
-     this.userForm = new FormGroup({
-       "name": new FormControl(null),
-       "description": new FormControl(null)
-     })
- */
     this.prepopulate();
   }
 
   prepopulate() {
     if (this.userEntry) {
-      this.userForm.patchValue({ name: this.userEntry.name });
-      this.userForm.patchValue({ email: this.userEntry.email });
-      this.userForm.patchValue({ bio: this.userEntry.bio });
-      this.userForm.patchValue({ notifications: this.userEntry.notifications });
+      this.name = this.userEntry.name;
+      this.bio = this.userEntry.bio;
+      this.notifications = this.userEntry.notifications;
+      this.email = this.userEntry.email;
     }
   }
 
@@ -68,11 +57,8 @@ export class UserFormComponent implements OnInit {
         this.previewUrl = reader.result;
       };
       reader.readAsDataURL(this.selectedFile);
-
-
     }
   }
-
 
   removeImage(): void {
     this.previewUrl = null;
@@ -80,27 +66,16 @@ export class UserFormComponent implements OnInit {
   }
 
   closeForm(): void {
-    console.log("close");
     this.isFormVisible = false;
   }
 
   showForm(): void {
-    console.log("open");
     this.prepopulate();
     this.isFormVisible = true;
   }
 
   onSubmit() {
-
-    if (!this.showAdvanced) {
-
-      this.userForm.patchValue({ newPassword: "" });
-      this.userForm.patchValue({ email: "" });
-      this.userForm.patchValue({ password: "" });
-    }
-
-
-    this.userDataService.editUser(this.userForm.value);
+    this.userDataService.editUser({ name: this.name, bio: this.bio, notifications: this.notifications });
 
     if (this.selectedFile) {
       const picFormData = new FormData();
@@ -112,6 +87,50 @@ export class UserFormComponent implements OnInit {
   }
 
 
+  openDeleteConfirm() {
+    if (!this.password) {
+      alert("Please enter current password to delete account");
+      return;
+    }
+
+    this.showDeleteConfirm = true;
+  }
+
+  closeDeleteConfirm() {
+    this.showDeleteConfirm = false;
+  }
+
+  changeEmail() {
+    if (!this.email || !this.password) {
+      alert("Please enter new email and current password");
+      return;
+    }
+    this.userDataService.editUser({
+      email: this.email,
+      password: this.password
+    });
+    this.password = "";
+  }
+
+  changePassword() {
+    if (!this.newPassword || !this.password) {
+      alert("Please enter new password and current password");
+      return;
+    }
+    this.userDataService.editUser({
+      newPassword: this.newPassword,
+      password: this.password
+    });
+    this.password = "";
+    this.newPassword = "";
+  }
+
+
+  confirmDelete() {
+    this.userDataService.deleteAccount(this.password);
+    this.closeDeleteConfirm();
+    this.password = "";
+  }
 
 
 }

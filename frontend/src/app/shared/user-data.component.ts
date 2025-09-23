@@ -61,6 +61,22 @@ export class UserDataService {
   }
 
 
+  deleteAccount(password: string) {
+
+    const options = {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`),
+      body: {
+        password
+      },
+    };
+    this.http.delete<{ message: string }>(`${this.baseUrl}users`, options).subscribe((jsonData) => {
+      console.log("Delete account");
+    })
+
+  }
+
+
+
   friendUser(username: string): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 

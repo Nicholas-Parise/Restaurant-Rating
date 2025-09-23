@@ -1,19 +1,31 @@
 <div class="modal-overlay" *ngIf="isFormVisible">
     <div class="modal">
-        <form (ngSubmit)="onSubmit()" [formGroup]="userForm" enctype="multipart/form-data" class="user-form">
-            <div class="form-group">
-                <label for="name">Display Name</label>
-                <input type="text" formControlName="name" />
+        <div class="Pagination">
+            <button [class.active]="currentTab === 'profile'" (click)="currentTab = 'profile'">
+                Profile Settings
+            </button>
+            <button [class.active]="currentTab === 'account'" (click)="currentTab = 'account'">
+                Account Settings
+            </button>
+        </div>
+        <form *ngIf="currentTab === 'profile'" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="user-form">
+            <h2>Profile Settings</h2>
+            <label>Display Name
+                <input type="text" [(ngModel)]="name" name="name" />
+            </label>
 
-                <label for="bio">Bio</label>
-                <textarea formControlName="bio" rows="3"></textarea>
+            <label>Bio
+                <textarea [(ngModel)]="bio" name="bio" rows="3"></textarea>
+            </label>
 
-                <label for="notifications">
-                    <input type="checkbox" formControlName="notifications" />
-                    Email Notifications
-                </label>
+            <label class="toggle-label">Email Notifications</label>
+            <label class="switch">
+                <input type="checkbox" [(ngModel)]="notifications" [ngModelOptions]="{standalone: true}"
+                    name="advancedToggle" />
+                <span class="slider round"></span>
+            </label>
 
-                <label for="picture">Upload Profile Picture</label>
+            <label for="picture">Upload Profile Picture
                 <div class="photoArea">
                     <input type="file" (change)="onFileSelected($event)" accept="image/*" />
                     <button *ngIf="previewUrl" type="button" (click)="removeImage()"
@@ -22,33 +34,75 @@
                     </button>
                     <img *ngIf="previewUrl" [src]="previewUrl" style="max-width: 300px; max-height: 300px;" />
                 </div>
+            </label>
+            <div class="modal-actions">
+                <button class="btn btn-success" type="submit">Save Changes</button>
+                <button class="btn" type="button" (click)="closeForm()">cancel</button>
             </div>
-
-
-            <div class="toggle-container">
-                <label class="toggle-label">Show Advanced Settings</label>
-                <label class="switch">
-                    <input type="checkbox" [(ngModel)]="showAdvanced" [ngModelOptions]="{standalone: true}"
-                        name="advancedToggle" />
-                    <span class="slider round"></span>
-                </label>
-            </div>
-
-            <div *ngIf="showAdvanced" class="advanced-settings">
-                <label for="email">Email</label>
-                <input type="email" formControlName="email" />
-
-                <label for="password">Current Password</label>
-                <input type="password" formControlName="password" />
-
-                <label for="newPassword">New Password</label>
-                <input type="password" formControlName="newPassword" />
-            </div>
-            <button class="btn btn-success" type="submit">Save Changes</button>
-            <button class="btn btn-cancel" type="button" (click)="closeForm()">cancel</button>
         </form>
+
+        <form *ngIf="currentTab === 'account'">
+            <h2>Account Settings</h2>
+
+            <section>
+                <h3>Change Email</h3>
+                <label>
+                    New Email
+                    <input type="email" [(ngModel)]="email" name="email" required email #emailCtrl="ngModel" />
+                    <div *ngIf="emailCtrl.invalid && emailCtrl.touched" class="error">
+                        Please enter a valid email address.
+                    </div>
+                </label>
+                <label>
+                    Current Password
+                    <input type="password" [(ngModel)]="password" name="currentPasswordEmail" />
+                </label>
+                <button type="button" class="btn btn-success" (click)="changeEmail()">Update Email</button>
+            </section>
+
+            <section>
+                <h3>Change Password</h3>
+                <label>
+                    Current Password
+                    <input type="password" [(ngModel)]="password" name="currentPasswordPassword" />
+                </label>
+                <label>
+                    New Password
+                    <input type="password" [(ngModel)]="newPassword" name="newPassword" />
+                </label>
+                <button type="button" class="btn btn-success" (click)="changePassword()">Update Password</button>
+            </section>
+
+            <section>
+                <h3>Delete Account</h3>
+                <label>
+                    Current Password
+                    <input type="password" [(ngModel)]="password" name="currentPasswordDelete" />
+                </label>
+                <button type="button" class="btn btn-cancel" (click)="openDeleteConfirm()">Delete Account</button>
+            </section>
+
+            <div class="modal-actions">
+                <button class="btn" type="button" (click)="closeForm()">Cancel</button>
+            </div>
+        </form>
+
     </div>
 </div>
 <div>
     <button class="btn" (click)="showForm()">Edit profile</button>
+</div>
+
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" *ngIf="showDeleteConfirm">
+    <div class="modal">
+        <h2>Delete List</h2>
+        <p>Are you sure you want to delete your account? This action cannot be undone.
+        </p>
+        <div class="modal-actions">
+            <button class="btn btn-cancel" (click)="confirmDelete()">Delete</button>
+            <button class="btn" (click)="closeDeleteConfirm()">Cancel</button>
+        </div>
+    </div>
 </div>

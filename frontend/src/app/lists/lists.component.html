@@ -58,12 +58,14 @@
             <form (ngSubmit)="submitList()">
                 <label>
                     Name:
-                    <input type="text" [(ngModel)]="newListName" name="listName" required />
+                    <input type="text" [(ngModel)]="newListName" name="listName" maxlength="50" required />
+                    <span>characters left: {{50-newListName.length}}</span>
                 </label>
 
                 <label>
                     Description:
-                    <textarea [(ngModel)]="newListDescription" name="listDescription"></textarea>
+                    <textarea [(ngModel)]="newListDescription" name="listDescription" maxlength="200"></textarea>
+                    <span>characters left: {{200-(newListDescription ? newListDescription.length:0)}}</span>
                 </label>
 
                 <div class="modal-actions">
