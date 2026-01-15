@@ -55,6 +55,7 @@
     <div class="modal-overlay" *ngIf="showNewListModal">
         <div class="modal">
             <h2>{{ isEditMode ? 'Edit List' : 'Create New List' }}</h2>
+            <span>{{ isEditMode ? '' : 'Note: All lists are public' }}</span>
             <form (ngSubmit)="submitList()">
                 <label>
                     Name:

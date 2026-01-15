@@ -98,6 +98,8 @@ export class ListDataService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
     this.http.delete<{ message: string }>(`${this.baseUrl}lists/${list_id}`, { headers }).subscribe((jsonData) => {
+      this.listEntry = this.listEntry.filter(list => list.id !== list_id);
+      this.listSubject.next(this.listEntry);
     });
   }
 

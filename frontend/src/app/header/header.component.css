@@ -1,0 +1,32 @@
+.container1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+
+a{
+    text-decoration: none;
+    color: #EEE;
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+h1 span {
+    display: flex;
+    align-items: center;
+    color: #5651e5;
+}
+
+h1 svg {
+    font-size: 2.5rem;
+    margin-right: 5px;
+}

@@ -64,12 +64,9 @@ export class ListsComponent implements OnInit {
       this.list_id = params.get('id');
 
       this.authDataService.getIsLoggedIn().then(isLoggedIn => {
-        if (isLoggedIn) {
-          this.LoggedIn = true;
-        } else {
-          this.LoggedIn = false;
-        }
 
+        this.LoggedIn = isLoggedIn;
+        
         if (this.list_id) {
           this.listDataService.getListById(this.list_id);
         } else {
