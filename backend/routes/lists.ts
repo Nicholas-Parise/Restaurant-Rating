@@ -7,7 +7,7 @@ import { getUserId, maxString } from "../utils/util";
 const router = express.Router();
 
 // localhost:3000/lists
-// get logged in users restaurant lists
+// get logged in users lists
 router.get('/', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
@@ -23,6 +23,7 @@ router.get('/', authenticate, async (req, res, next) => {
           FROM lists li 
           JOIN users u ON u.id = li.user_id
           WHERE li.user_id = $1
+          ORDER BY created DESC 
         ) sub
           LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
 
@@ -41,7 +42,7 @@ router.get('/', authenticate, async (req, res, next) => {
 });
 
 
-// impliment later
+// TODO impliment later
 router.get('/recommended', async (req, res, next) => {
   try {
 
@@ -217,13 +218,23 @@ router.post('/', authenticate, async (req, res, next) => {
         VALUES ($1, $2, $3) RETURNING *;`, [userId, name, description]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "restaurant not found." });
+      return res.status(404).json({ error: "User not found." });
     }
 
-    res.status(200).json({ list: result.rows[0], message: "success" });
+    const user_result = await db.query(
+      `SELECT name AS owner_name, username AS owner_username
+      FROM users 
+      WHERE id = $1;`, [userId]);
+
+    var temp = result.rows[0];
+    var usr_temp = user_result.rows[0];
+
+    const list = {...temp, ...usr_temp};
+
+    res.status(200).json({ list, message: "success" });
 
   } catch (error: any) {
-    console.error("Error adding restaurant:", error);
+    console.error("Error creating List:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

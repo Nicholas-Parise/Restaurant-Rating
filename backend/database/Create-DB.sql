@@ -73,6 +73,7 @@ dinner BOOLEAN,
 facebook TEXT,
 indoor_seating BOOLEAN,
 updated TIMESTAMP,
+created TIMESTAMP DEFAULT NOW(),
 score_histogram JSONB DEFAULT '{}'::jsonb;
 );
 
