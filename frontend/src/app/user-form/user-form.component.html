@@ -12,10 +12,12 @@
             <h2>Profile Settings</h2>
             <label>Display Name
                 <input type="text" [(ngModel)]="name" name="name" />
+                <span>characters left: {{50-(name?.length ?? 0)}}</span>
             </label>
 
             <label>Bio
                 <textarea [(ngModel)]="bio" name="bio" rows="3"></textarea>
+                <span>characters left: {{200-(bio?.length ?? 0)}}</span>
             </label>
 
             <label class="toggle-label">Email Notifications</label>
