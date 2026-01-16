@@ -28,5 +28,8 @@
     "stripe": "^18.1.1",
     "typescript": "^5.9.2",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9"
   }
 }

@@ -29,3 +29,10 @@ export function maxString(str: String, max: number): String | void {
 
     return str.slice(0,Math.min(str.length,max));
 }
+
+
+// returns true if string is in email form
+export function isEmail(email: string): boolean {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
+}

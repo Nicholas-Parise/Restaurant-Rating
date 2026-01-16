@@ -1,17 +1,25 @@
-const express = require('express');
+import express from "express";
+import fs from "fs";
+import * as path from "path";
+import bcrypt from "bcryptjs";
+
+import db from "../utils/db";
+import authenticate from "../middleware/authenticate";
+import createNotification from "../middleware/createNotification";
+import uploadPicture from '../middleware/upload';
+
+import { getUserId, isEmail, maxString } from "../utils/util";
+
 const router = express.Router();
-const db = require('../utils/db');
-const fs = require('fs');
-const path = require('path');
-const bcrypt = require("bcryptjs");
 
-require("dotenv").config();
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const createNotification = require("../middleware/createNotification");
-const authenticate = require('../middleware/authenticate');
-const uploadPicture = require('../middleware/upload');
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2025-08-27.basil', // Use the latest API version from the Stripe dashboard
+});
 
 // localhost:3000/users
 // get logged in users
@@ -20,17 +28,12 @@ router.get('/', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
 
     const result = await db.query('SELECT id, username, email, name, bio, picture, pro, setup, notifications, created, updated, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1', [userId]);
-
-    const result2 = "null"/*await db.query(
-      `SELECT c.*, uc.love FROM categories c
-        JOIN user_categories uc ON c.id = uc.category_id
-        WHERE uc.user_id = $1`, [userId]);
-*/
+    
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({ user: result.rows[0], categories: result2.rows });
+    res.status(200).json({ user: result.rows[0] });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
@@ -43,9 +46,9 @@ router.get('/', authenticate, async (req, res, next) => {
 router.put('/', authenticate, async (req, res) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
-    const { email, name, password, newPassword, bio, notifications, setup } = req.body;
-    let newHashedPassword;
-    let newEmail;
+    var { email, name, password, newPassword, bio, notifications, setup } = req.body;
+    let newHashedPassword : string|null = null;
+    let newEmail : string|null = null;
 
     // Type checking
     if (email !== undefined && typeof email !== "string") {
@@ -69,6 +72,13 @@ router.put('/', authenticate, async (req, res) => {
     if (setup !== undefined && typeof setup !== "boolean") {
       return res.status(400).json({ error: "setup must be a boolean" });
     }
+
+    if(email && !isEmail(email)){
+      return res.status(400).json({ error: "wrong email format expected: a@a.a" });
+    }
+
+    name = maxString(name, 50);
+    bio = maxString(bio, 200);
 
     // if user sends a new password, make sure they supply their old password and it is correct.
     if (newPassword || email) {
@@ -122,7 +132,7 @@ router.put('/', authenticate, async (req, res) => {
 
     res.status(200).json({ message: "Profile updated", user: result.rows[0] });
 
-  } catch (error) {
+  } catch (error: any) {
 
     // Handle duplicate email error
     // error code 23505 means unique constraint violated.
@@ -157,6 +167,8 @@ router.delete('/', authenticate, async (req, res) => {
     }
 
     if (user.oauth) {
+      // TODO add proper workflow for authenticating an oauth delete
+
       // remove their autopayment
       if (user.pro) {
         if (user.stripe_subscription_id) {
@@ -245,7 +257,7 @@ router.get('/recent', async (req, res, next) => {
 router.get('/search', async (req, res, next) => {
 
   const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
+  var pageSize = parseInt(req.query.pageSize) || 10;
   const searchTerm = req.query.q;
   const offset = (page - 1) * pageSize;
   var result;
@@ -301,17 +313,12 @@ router.get('/:userId', async (req, res) => {
     }
 
     const result = await db.query('SELECT username, name, bio, picture, notifications, pro, created FROM users WHERE username = $1', [userId]);
-    const result2 = "null"
-    /*await db.query(
-      `SELECT c.*, uc.love FROM categories c
-        JOIN user_categories uc ON c.id = uc.category_id
-        WHERE uc.user_id = $1`, [userId]);
-*/
+    
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    return res.status(200).json({ user: result.rows[0], categories: result2.rows });
+    return res.status(200).json({ user: result.rows[0]});
   } catch (error) {
     console.error("Error fetching user:", error);
     return res.status(500).json({ message: 'Error retrieving user data' });
@@ -337,7 +344,9 @@ router.post('/upload', authenticate, uploadPicture, async (req, res) => {
 
     await db.query("UPDATE users SET picture = $1 WHERE id = $2", [filePath, userId]);
 
-    res.json({ message: "Profile picture updated!", imageUrl: `http://wishify.ca${filePath}` });
+    const url = process.env.FRONTEND_URL;
+
+    res.json({ message: "Profile picture updated!", imageUrl: `${url}${filePath}` });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -366,4 +375,5 @@ async function deleteImage(userId) {
 }
 
 
-module.exports = router;
+//module.exports = router;
+export default router;

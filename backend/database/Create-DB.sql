@@ -82,7 +82,7 @@ CREATE INDEX restaurants_location_users ON restaurants(location_id);
 
 CREATE TABLE menuItems(
 id SERIAL PRIMARY KEY, 
-restaurant_id BIGINT REFERENCES restaurants (id),
+restaurant_id BIGINT REFERENCES restaurants (id) ON DELETE CASCADE,
 name TEXT,
 description TEXT,
 price real,
@@ -129,8 +129,8 @@ CREATE INDEX users_name_trgm_idx ON users USING GIN (name gin_trgm_ops);
 CREATE INDEX users_username_trgm_idx ON users USING GIN (username gin_trgm_ops);
 
 CREATE TABLE friends(  
-user_id integer REFERENCES users(id),
-friend_id integer REFERENCES users(id),
+user_id integer REFERENCES users(id) ON DELETE CASCADE,
+friend_id integer REFERENCES users(id) ON DELETE CASCADE,
 status TEXT CHECK (status IN ('pending', 'accepted', 'declined')) DEFAULT 'pending',
 created TIMESTAMP DEFAULT NOW(),
 updated TIMESTAMP,
@@ -153,12 +153,12 @@ created TIMESTAMP DEFAULT NOW()
 
 CREATE TABLE popular(
 id SERIAL PRIMARY KEY,   
-restaurant_id BIGINT REFERENCES restaurants (id) ,
+restaurant_id BIGINT REFERENCES restaurants (id),
 created TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE sessions(  
-user_id integer REFERENCES users(id),
+user_id integer REFERENCES users(id) ON DELETE CASCADE,
 token TEXT UNIQUE,
 PRIMARY KEY(user_id, token),
 created TIMESTAMP DEFAULT NOW()
@@ -167,8 +167,8 @@ created TIMESTAMP DEFAULT NOW()
 
 CREATE TABLE reviews(
 id SERIAL PRIMARY KEY, 
-restaurant_id BIGINT REFERENCES restaurants(id),
-user_id BIGINT REFERENCES users(id),
+restaurant_id BIGINT REFERENCES restaurants(id) ON DELETE CASCADE,
+user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
 liked BOOLEAN,
 visited BOOLEAN,
 score INT,
@@ -182,15 +182,15 @@ CREATE INDEX idx_reviews_restaurant ON reviews(restaurant_id);
 
 
 CREATE TABLE favorite_restaurant(
-restaurant_id BIGINT REFERENCES restaurants(id),
-user_id BIGINT REFERENCES users(id),
+restaurant_id BIGINT REFERENCES restaurants(id) ON DELETE CASCADE,
+user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
 created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, user_id)
 );
 
 CREATE TABLE bookmarked_restaurant(
-restaurant_id BIGINT REFERENCES restaurants(id),
-user_id BIGINT REFERENCES users(id),
+restaurant_id BIGINT REFERENCES restaurants(id) ON DELETE CASCADE,
+user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
 created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, user_id)
 );
@@ -198,7 +198,7 @@ PRIMARY KEY(restaurant_id, user_id)
 
 CREATE TABLE lists(
 id SERIAL PRIMARY KEY,
-user_id BIGINT REFERENCES users(id), 
+user_id BIGINT REFERENCES users(id) ON DELETE CASCADE, 
 name TEXT NOT NULL,
 description TEXT,
 updated TIMESTAMP,
