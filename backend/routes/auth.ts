@@ -1,17 +1,22 @@
-const express = require('express');
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
-const fs = require('fs/promises');
-const path = require('path');
-const router = express.Router();
-const db = require('../utils/db');
-const passport = require('passport');
+import express from "express";
+import bcrypt from "bcryptjs";
+import * as jwt from "jsonwebtoken";
+import crypto from "crypto"
+import fs from "fs";
+import * as path from "path";
+import passport from "passport";
 
-const createNotification = require("../middleware/createNotification");
-const sendEmail = require("../middleware/sendEmail");
-require('../middleware/oauth');
-require("dotenv").config();
+import db from "../utils/db";
+import * as banned from '../banned-username-list.json';
+import createNotification from "../middleware/createNotification";
+import sendEmail from "../middleware/sendEmail";
+
+import '../middleware/oauth';
+
+const router = express.Router();
+
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 // localhost:3000/auth/register
 // register account
@@ -55,9 +60,9 @@ router.post('/register', async (req, res, next) => {
             // Emails are not needed right now. TODO 
             //await welcomeEmail(email, name);
         }
-        
+
         res.status(201).json({ message: "User registered successfully", user: result.rows[0] });
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
 
         // Handle duplicate email error
@@ -100,7 +105,7 @@ router.post('/login', async (req, res, next) => {
 
         await db.query("INSERT INTO sessions (user_id, token) VALUES ($1, $2)", [user.rows[0].id, token]);
 
- 
+
         const returnUser = user.rows[0];
 
         delete returnUser[password];
@@ -167,9 +172,9 @@ router.get('/me', async (req, res, next) => {
 
 // localhost:3000/auth/username
 // check if a username exists
-router.get('/username', async (req, res, next) => {
+router.get('/username/:username', async (req, res, next) => {
 
-   const { username } = req.body;
+    const username = req.params.username;
 
     if (!username) {
         return res.status(401).json({ message: "username required" });
@@ -178,11 +183,16 @@ router.get('/username', async (req, res, next) => {
     try {
         const user = await db.query("SELECT 1 FROM users WHERE username = $1", [username]);
 
-        if (user.rows.length === 0) {
+        if (!(user.rows.length === 0)) {
             return res.status(401).json({ message: "username exists" });
         }
+ 
+        if (banned.Banned.some(item => item === username)) {
+            return res.status(401).json({ message: "invalid username" });
+        }
 
-        return res.status(200);
+
+        return res.status(200).json({ message: "valid username" });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error" });
@@ -228,7 +238,7 @@ router.post('/forgot-password', async (req, res, next) => {
         }
 
         if (userCheck.rows[0].google_id) {
-        //    return res.status(404).json({ message: "Oauth users cannot change their password." });
+            //    return res.status(404).json({ message: "Oauth users cannot change their password." });
         }
 
         const userId = userCheck.rows[0].id;
@@ -239,12 +249,14 @@ router.post('/forgot-password', async (req, res, next) => {
 
         await db.query("INSERT INTO sessions (user_id, token, created) VALUES ($1, $2, NOW())", [userId, resetToken]);
 
-        const resetLink = `https://www.wishify.ca/forgot?token=${resetToken}`;
+        const url = process.env.FRONTEND_URL;
 
-        await forgotEmail(email,user_name,resetLink,resetToken,1);
+        const resetLink = `${url}forgot?token=${resetToken}`;
+
+        await forgotEmail(email, user_name, resetLink, resetToken, 1);
 
         await db.query("COMMIT"); // Commit the transaction
-        
+
         return res.status(200).json({ message: "email sent successfully" });
     } catch (error) {
         await db.query("ROLLBACK"); // if we can't send an email we want to Rollback
@@ -315,50 +327,70 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 
 
 // Callback route Google redirects to after auth, returns token
-router.get('/google/callback', passport.authenticate('google', { session: false }), async(req, res) => {
-  const user = req.user;
+router.get('/google/callback', passport.authenticate('google', { session: false }), async (req, res) => {
+    const user = req.user;
 
 
-  const token = jwt.sign(
-    { userId: user.id, email: user.email, name: user.name },
-    process.env.SECRET_KEY,
-    { expiresIn: "7d" });
+    const token = jwt.sign(
+        { userId: user.id, email: user.email, name: user.name },
+        process.env.SECRET_KEY,
+        { expiresIn: "7d" });
 
     await db.query("INSERT INTO sessions (user_id, token) VALUES ($1, $2)", [user.id, token]);
 
-//    res.status(200).json({ message: "oauth successful", token });
+    //    res.status(200).json({ message: "oauth successful", token });
     return res.redirect(`${process.env.FRONTEND_URL}/oauth-success?token=${token}`);
 });
 
 
-async function forgotEmail(to, first_name, reset_link, resetToken, expiry_time){
+async function forgotEmail(to: string, first_name: string, reset_link: string, resetToken, expiry_time) {
 
-    let htmlTemplate = await fs.readFile(path.join(__dirname, './emailtemplates/ForgetPassword.html'), 'utf8');
+    try {
+        const filePath: string = path.join(__dirname, './emailtemplates/ForgetPassword.html');
+        let htmlTemplate: string = fs.readFileSync(filePath, 'utf8');
 
-    htmlTemplate = htmlTemplate
-    .replace(/{{first_name}}/g, first_name)
-    .replace(/{{reset_link}}/g, reset_link)
-    .replace(/{{reset_token}}/g, resetToken)
-    .replace(/{{expiry_time}}/g, expiry_time)
-    .replace(/{{current_year}}/g, new Date().getFullYear());    
+        const currentYear: number = new Date().getFullYear();
 
-    await sendEmail(to,"Password Reset Request",null,htmlTemplate);
+        htmlTemplate = htmlTemplate
+            .replace(/{{first_name}}/g, first_name)
+            .replace(/{{reset_link}}/g, reset_link)
+            .replace(/{{reset_token}}/g, resetToken)
+            .replace(/{{expiry_time}}/g, expiry_time)
+            .replace(/{{current_year}}/g, currentYear.toString());
+
+        await sendEmail(to, "Password Reset Request", null, htmlTemplate);
+
+    } catch (error) {
+        // Handle potential errors (e.g., file not found)
+        console.error('Error reading file:', error);
+    }
+
 }
 
 
-async function welcomeEmail(to, first_name){
+async function welcomeEmail(to: string, first_name: string) {
 
-    let htmlTemplate = await fs.readFile(path.join(__dirname, './emailtemplates/CreateAccount.html'), 'utf8');
+    try {
+        const filePath: string = path.join(__dirname, './emailtemplates/CreateAccount.html');
+        let htmlTemplate: string = fs.readFileSync(filePath, 'utf8');
 
-    htmlTemplate = htmlTemplate
-    .replace(/{{first_name}}/g, first_name)
-    .replace(/{{email}}/g, to)
-    .replace(/{{creation_date}}/g, new Date().toISOString().split('T')[0])
-    .replace(/{{current_year}}/g, new Date().getFullYear());    
+        const currentYear: number = new Date().getFullYear();
 
-    await sendEmail(to,"Welcome to TBD!",null,htmlTemplate);
+        htmlTemplate = htmlTemplate
+            .replace(/{{first_name}}/g, first_name)
+            .replace(/{{email}}/g, to)
+            .replace(/{{creation_date}}/g, new Date().toISOString().split('T')[0])
+            .replace(/{{current_year}}/g, currentYear.toString());
+
+        await sendEmail(to, "Welcome to TBD!", null, htmlTemplate);
+    } catch (error) {
+        // Handle potential errors (e.g., file not found)
+        console.error('Error reading file:', error);
+    }
+
 }
 
 
 
-module.exports = router;
+//module.exports = router;
+export default router;

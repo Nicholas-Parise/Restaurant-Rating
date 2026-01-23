@@ -9,7 +9,7 @@ const mg = mailgun.client({
   key: process.env.MAILGUN_API_KEY
 });
 
-const sendEmail = async (to, subject, text, html = null) => {
+const sendEmail = async (to, subject, text, html) => {
 
   const data = {
     from: "TBD Support Team <support@mail.TBD.ca>",

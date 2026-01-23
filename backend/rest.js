@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const reviewRoutes = require('./routes/reviews');
-const authRoutes = require('./routes/auth');
+
+import authRoutes from'./routes/auth';
 
 import userRoutes from'./routes/users';
 import friendRoutes from'./routes/friends';

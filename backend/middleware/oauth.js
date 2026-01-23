@@ -2,6 +2,12 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const db = require('../utils/db');
 
+/*
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import db from "../utils/db";
+*/
+
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
