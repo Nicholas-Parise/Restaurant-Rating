@@ -20,7 +20,7 @@ export class AuthDataService {
   picture: string;
   userEntry: UserEntry;
 
-  authSubject = new Subject<UserEntry|null>();
+  authSubject = new Subject<UserEntry | null>();
 
   PostRegister(username: String, password: String, email: String): Observable<any> {
 
@@ -62,7 +62,7 @@ export class AuthDataService {
       console.log(jsonData);
     })
     localStorage.removeItem("authToken");
-     this.authSubject.next(null);
+    this.authSubject.next(null);
   }
 
 
@@ -89,6 +89,16 @@ export class AuthDataService {
       this.loggedin = false;
       return false;
     }
+  }
+
+
+  getIsValidUsername(username: null | string) {
+
+    return this.http.get<{ message: string }>(`${this.baseUrl}auth/username/${username}`).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
   }
 
 

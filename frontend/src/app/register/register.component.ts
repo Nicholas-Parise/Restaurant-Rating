@@ -1,4 +1,4 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -12,12 +12,13 @@ import { RouterLink } from '@angular/router';
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
-export class RegisterComponent implements OnInit{
+export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   passwordMismatch = false;
   errorMessage: string | null = null;
+  invalidUserErrorMessage: string | null = null;
 
-ngOnInit(): void {}
+  ngOnInit(): void { }
 
   constructor(private fb: FormBuilder, private auth: AuthDataService) {
     this.registerForm = this.fb.group({
@@ -34,8 +35,8 @@ ngOnInit(): void {}
 
 
 
-onSubmit(): void {
-     if (this.f['password'].value !== this.f['confirmPassword'].value) {
+  onSubmit(): void {
+    if (this.f['password'].value !== this.f['confirmPassword'].value) {
       this.passwordMismatch = true;
       return;
     }
@@ -61,5 +62,30 @@ onSubmit(): void {
       }
     });
   }
+
+
+  usernameCheck(){
+
+    if (this.f['username'].value.length < 5){
+      this.invalidUserErrorMessage = "Username must be atleast 5 characters";
+      return;
+    } 
+
+    this.auth.getIsValidUsername(this.f['username'].value).subscribe({
+      next: (response) => {
+        console.log('valid username success:', response);
+        this.invalidUserErrorMessage = null;
+      },
+      error: (error) => {
+        console.error('invalid username:', error);
+        this.invalidUserErrorMessage = error?.error?.message || 'Invalid username. Please use a different one.';
+      }
+    });
+
+  }
+
+
+
+
 
 }

@@ -3,8 +3,9 @@
       <h2>Register</h2>
     <div>
       <label>Username</label>
-      <input type="text" formControlName="username" />
+      <input type="text" formControlName="username" (input)="usernameCheck()" />
       <div *ngIf="f['username'].touched && f['username'].invalid" class="error">Username is required</div>
+      <div *ngIf="invalidUserErrorMessage" class="error">{{ invalidUserErrorMessage }}</div>
     </div>
 
     <div>
