@@ -19,7 +19,7 @@ FROM locations AS l
 JOIN temp_locations AS tl
   ON tl.lat = l.lat
   AND tl.lon = l.lon
-WHERE tr.id = tl.id;  -- Match temp_restaurants.id with temp_locations.id
+WHERE tr.id = tl.id;
 COMMIT;
 
 table temp_restaurants;

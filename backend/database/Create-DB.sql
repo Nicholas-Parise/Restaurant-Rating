@@ -184,6 +184,7 @@ CREATE INDEX idx_reviews_restaurant ON reviews(restaurant_id);
 CREATE TABLE favorite_restaurant(
 restaurant_id BIGINT REFERENCES restaurants(id) ON DELETE CASCADE,
 user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+order INT,
 created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, user_id)
 );
