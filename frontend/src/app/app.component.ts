@@ -4,11 +4,12 @@ import { NavbarComponent } from "./navbar/navbar.component";
 import { HeaderComponent } from "./header/header.component";
 import { Meta } from "@angular/platform-browser"
 import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
+import { FooterComponent } from './footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, HeaderComponent, ProfileMenuComponent],
+  imports: [RouterOutlet, NavbarComponent, HeaderComponent, ProfileMenuComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

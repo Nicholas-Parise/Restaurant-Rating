@@ -1,0 +1,39 @@
+.footerBackground{
+    background-color: rgba(240, 248, 255,0.1);
+    padding: 1rem 1rem;
+}
+
+.footerBackground a {
+    color: #9ab;
+    text-decoration: none;
+}
+
+.footerBackground a:hover {
+    color: rgb(141, 181, 221);
+    text-decoration: none;
+}
+
+
+.footerBackground .links>ul {
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.footerBackground .links>ul>li {
+    display: inline-block;
+    font-size: var(--body-medium-font-size);
+    margin-right: .8em;
+}
+
+.footerBackground .links {
+    flex: 0 0 auto;
+    margin-bottom: 1em;
+    font-weight: 700;
+}
+
+
+.footerBackground .copyright {
+    flex: 1 0 100%;
+    color: #678;
+    line-height: 1.5;
+}

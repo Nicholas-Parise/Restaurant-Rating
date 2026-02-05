@@ -5,7 +5,13 @@
 }
 
 .name {
-    font-size: calc(100% + 2);
+    font-size: calc(100% + 1);
+    white-space: nowrap;
+}
+
+.image {
+    max-width: calc(100% - 5px);
+    max-height: calc(100% - 5px);
 }
 
 @media (max-width: 800px) {
@@ -39,10 +45,7 @@
 
 
 
-.image {
-    max-width: calc(100% - 50px);
-    max-height: calc(100% - 50px);
-}
+
 
 a {
     text-decoration: none;

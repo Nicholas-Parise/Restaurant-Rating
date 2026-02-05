@@ -78,7 +78,7 @@ export class RegisterComponent implements OnInit {
       },
       error: (error) => {
         console.error('invalid username:', error);
-        this.invalidUserErrorMessage = error?.error?.message || 'Invalid username. Please use a different one.';
+        this.invalidUserErrorMessage = error?.error?.message || 'Username must be unique';
       }
     });
 
