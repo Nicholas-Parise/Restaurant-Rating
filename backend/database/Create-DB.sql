@@ -1,7 +1,7 @@
 /*
-DROP TABLE IF EXISTS listed_restaurants
-DROP TABLE IF EXISTS lists
-DROP TABLE IF EXISTS bookmarked_restaurant
+DROP TABLE IF EXISTS listed_restaurants;
+DROP TABLE IF EXISTS lists;
+DROP TABLE IF EXISTS bookmarked_restaurant;
 DROP TABLE IF EXISTS favorite_restaurant;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS sessions;
@@ -28,7 +28,8 @@ country TEXT,
 postalcode TEXT,
 lat DOUBLE PRECISION,
 lon DOUBLE PRECISION,
-geom GEOMETRY(Point, 4326)
+geom GEOMETRY(Point, 4326),
+updated TIMESTAMP
 );
 
 CREATE INDEX idx_locations_geom ON locations USING GIST ((geom::geography));
@@ -74,7 +75,7 @@ facebook TEXT,
 indoor_seating BOOLEAN,
 updated TIMESTAMP,
 created TIMESTAMP DEFAULT NOW(),
-score_histogram JSONB DEFAULT '{}'::jsonb;
+score_histogram JSONB DEFAULT '{}'::jsonb
 );
 
 CREATE INDEX restaurants_name_trgm_idx ON restaurants USING GIN (name gin_trgm_ops);
@@ -184,7 +185,7 @@ CREATE INDEX idx_reviews_restaurant ON reviews(restaurant_id);
 CREATE TABLE favorite_restaurant(
 restaurant_id BIGINT REFERENCES restaurants(id) ON DELETE CASCADE,
 user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
-order INT,
+sequence INT,
 created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, user_id)
 );

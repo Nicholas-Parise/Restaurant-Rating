@@ -72,6 +72,14 @@ local function set_boolean_field(value)
     return not (value == nil or false_values[value:lower()])
 end
 
+local function fix_facebook(value)
+    if value ~= nil and not string.find(value, "facebook") then
+        return "https://facebook.com/" .. value;
+    end 
+    return value
+end
+
+
 function process_poi(object, geom)
 
     if object.tags.amenity and 
@@ -88,7 +96,7 @@ function process_poi(object, geom)
             geom = geom,
             country = object.tags["addr:country"],
             addr = object.tags["addr:street"],
-            city = object.tags["addr:city"],
+            city = object.tags["addr:city"] or object.tags["addr:town"] or object.tags["addr:village"],
             province = object.tags["addr:province"] or object.tags["addr:state"],
             postcode = object.tags["addr:postcode"],
             housenumber = object.tags["addr:housenumber"],
@@ -96,6 +104,7 @@ function process_poi(object, geom)
             lat = nil
         }
        
+
         local restaurant_data  = {
             name = object.tags.name,
             type = object.tags.amenity,
@@ -123,10 +132,7 @@ function process_poi(object, geom)
             lunch = set_boolean_field(object.tags.lunch),
             dinner = set_boolean_field(object.tags.dinner),
             image = object.tags.image or object.tags.wikimedia_commons,
-            facebook = object.tags["contact:facebook"],
-            if ~string.find(facebook, "facebook") then
-                facebook = "https://facebook.com/" .. facebook;
-            end    
+            facebook = fix_facebook(object.tags["contact:facebook"]),
             indoor_seating = set_boolean_field(object.tags.indoor_seating),
             tags = object.tags
         }

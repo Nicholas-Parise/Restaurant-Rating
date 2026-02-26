@@ -3,10 +3,40 @@ import math
 
 BASE_URL = "http://localhost:8080"
 
-
 OVERPASS = "http://localhost:12345/api/interpreter"
 
 OVERPASS_ONLINE = "https://overpass-api.de/api/interpreter"
+
+
+# city, town and village is the same.
+# state AND province also the same
+REQUIRED_FIELDS = [
+    "road",
+    "suburb",
+    "city",
+    "town",
+    "village",
+    "state",
+    "province",
+    "postcode",
+    "country"
+]
+
+def is_complete(addr):
+    for field in REQUIRED_FIELDS:
+        # city/town/village are interchangeable
+        if field in ["city", "town", "village"]:
+            if not (addr.get("city") or addr.get("town") or addr.get("village")):
+                return False
+        # state/province are interchangeable
+        elif field in ["state", "province"]:
+            if not (addr.get("state") or addr.get("province")):
+                return False
+        else:
+            if not addr.get(field):
+                return False
+    return True
+
 
 def get_nearby_house_numbers(lat, lon, radius=50):
     query = f"""
@@ -94,54 +124,67 @@ def reverse(lat, lon):
     return r.json()
 
 
-def find_nearby_house_number(lat, lon, road, city, radius_m=10000):
-    delta = radius_m / 111_320
 
-    r = requests.get(
-        f"{BASE_URL}/search",
-        params={
-            "format": "json",
-            "street": road,
-            "city": city,
-            "viewbox": f"{lon-delta},{lat+delta},{lon+delta},{lat-delta}",
-            "bounded": 1,
-            "addressdetails": 1,
-            "limit": 50
-        },
-        timeout=10
-    )
-    r.raise_for_status()
-    print(r.url)
-    for res in r.json():
-        addr = res.get("address", {})
+def layered_reverse(lat, lon):
+    zoom_levels = [18, 16, 14, 10, 8, 5]
 
-        if "house_number" in addr:
-            hn = addr.get("house_number")
-            return int(hn)
+    merged = {}
 
-    return None
+    for zoom in zoom_levels:
+        r = requests.get(
+            f"{BASE_URL}/reverse",
+            params={
+                "format": "json",
+                "lat": lat,
+                "lon": lon,
+                "zoom": zoom,
+                "addressdetails": 1
+            },
+            timeout=10
+        )
+        r.raise_for_status()
+
+        addr = r.json().get("address", {})
+
+        for k, v in addr.items():
+            if k not in merged:
+                merged[k] = v
+
+    return merged
+
+
 
 def reverseAddress(lat, lon):
     rev = reverse(lat, lon)
-    addr = rev.get("address", {})
+    base_addr = rev.get("address", {}).copy()
 
-    if "house_number" in addr:
-        rev["source"] = "direct"
+    # If already complete, return immediately
+    if is_complete(base_addr):
+        rev["source"] = "reverse_complete"
         return rev
 
-    road = addr.get("road")
-    city = addr.get("city") or addr.get("town") or addr.get("village")
+    nearby = layered_reverse(lat, lon)
 
-    if not road or not city:
-        rev["source"] = "no_context"
-        return rev
+    #print("nearby: ",nearby)
 
-    nearby = find_nearby_house_number(lat, lon, road, city)
 
-    if nearby is not None:
-        rev["source"] = "estimated"
-        addr["house_number"] = nearby + 2
-        return rev
+    # collect nearest
+    for candidate in nearby:
+        candidate_addr = candidate or {}
 
-    rev["source"] = "no_context"
+        if not isinstance(candidate_addr, dict):
+            continue
+
+        for key, value in candidate_addr.items():
+            if key not in base_addr or not base_addr.get(key):
+                base_addr[key] = value
+
+
+        if is_complete(base_addr):
+            break
+
+    rev["address"] = base_addr
+    rev["source"] = "reverse_accumulated"
+
     return rev
+
