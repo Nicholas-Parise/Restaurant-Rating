@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Subject, combineLatest } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -10,7 +10,7 @@ import { UserEntry } from '../shared/user-entry.model';
 
 @Component({
     selector: 'app-friends',
-    imports: [CommonModule, FormsModule, UserCardComponent],
+    imports: [FormsModule, UserCardComponent],
     templateUrl: './friends.component.html',
     styleUrl: './friends.component.css',
     standalone: true

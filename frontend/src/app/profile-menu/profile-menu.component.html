@@ -7,45 +7,50 @@
   </div>
 
   <!-- Profile Button -->
-  <button class="profile-btn" 
-  *ngIf="userEntry"
-  routerLink='/user'
-  (click)="closePanel()"
-   (mouseenter)="userHover = true"
-   (mouseleave)="userHover = false" >
-    <img [src]="userEntry.picture" 
-    (error)="onImageError($event)" alt="Profile" class="profile-img" />
-    <div class="user-info">
-      <div class="name">{{ userEntry.name ? userEntry.name + ' (@' + userEntry.username + ')' : userEntry.username }}</div>
-      <div class="email">{{ userEntry.email }}</div>
-      <div *ngIf="userHover">(navigate to profile)</div>
+  @if (userEntry) {
+    <button class="profile-btn"
+      routerLink='/user'
+      (click)="closePanel()"
+      (mouseenter)="userHover = true"
+      (mouseleave)="userHover = false" >
+      <img [src]="userEntry.picture"
+        (error)="onImageError($event)" alt="Profile" class="profile-img" />
+        <div class="user-info">
+          <div class="name">{{ userEntry.name ? userEntry.name + ' (@' + userEntry.username + ')' : userEntry.username }}</div>
+          <div class="email">{{ userEntry.email }}</div>
+          @if (userHover) {
+            <div>(navigate to profile)</div>
+          }
+        </div>
+      </button>
+    }
+
+    <!-- Visit Later / Diary -->
+    <div class="button-row thirds">
+      <button routerLink='/user/bookmarked' (click)="closePanel()">Bookmarked</button>
+      <button routerLink='/user/diary' (click)="closePanel()">Diary</button>
+      <button routerLink='/user/friends' (click)="closePanel()">Friends</button>
     </div>
-  </button>
 
-  <!-- Visit Later / Diary -->
-  <div class="button-row thirds">
-    <button routerLink='/user/bookmarked' (click)="closePanel()">Bookmarked</button>
-    <button routerLink='/user/diary' (click)="closePanel()">Diary</button>
-    <button routerLink='/user/friends' (click)="closePanel()">Friends</button>
-  </div>
-
-  <!-- Notifications Section -->
-  <div class="notifications-section">
-    <h4 class="notifications-header">Notifications</h4>
-    <div class="notification-list">
-    <div class="center grid-item" *ngFor="let notificationEntry of notificationEntry">
-        <app-notification-card [notificationEntry] = "notificationEntry"></app-notification-card>
-</div>
+    <!-- Notifications Section -->
+    <div class="notifications-section">
+      <h4 class="notifications-header">Notifications</h4>
+      <div class="notification-list">
+        @for (notificationEntry of notificationEntry; track notificationEntry) {
+          <div class="center grid-item">
+            <app-notification-card [notificationEntry] = "notificationEntry"></app-notification-card>
+          </div>
+        }
+      </div>
     </div>
-  </div>
 
-  <!-- ToS / Privacy / About -->
-  <div class="button-row thirds">
-    <button routerLink='/privacy-policy' (click)="closePanel()">Privacy</button>
-    <button routerLink='/terms-of-service' (click)="closePanel()">ToS</button>
-    <button routerLink='/about' (click)="closePanel()">About</button>
-  </div>
+    <!-- ToS / Privacy / About -->
+    <div class="button-row thirds">
+      <button routerLink='/privacy-policy' (click)="closePanel()">Privacy</button>
+      <button routerLink='/terms-of-service' (click)="closePanel()">ToS</button>
+      <button routerLink='/about' (click)="closePanel()">About</button>
+    </div>
 
-  <!-- Logout -->
-  <button class="logout-btn" (click)="logout()">Logout</button>
-</div>
+    <!-- Logout -->
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>

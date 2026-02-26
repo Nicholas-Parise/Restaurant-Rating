@@ -1,32 +1,34 @@
 <div class="container">
 
-    <div class="sort">
-        Sort TBA
-    </div>
-    <table>
-        <colgroup>
-            <col class="col-date">
-            <col class="col-restaurant">
-            <col class="col-rating">
-            <col class="col-liked">
-            <col class="col-review">
-        </colgroup>
-        <thead>
-            <th scope="col" class="col-date">Date</th>
-            <th scope="col" class="col-restaurant">Restaurant</th>
-            <th scope="col" class="col-rating">Rating</th>
-            <th scope="col" class="col-liked">Liked</th>
-            <th scope="col" class="col-review">Review</th>
-        </thead>
-        <tbody>
-        <tr app-diary-card *ngFor="let reviewEntry of diaryEntries" [review]="reviewEntry"></tr>
-        </tbody>
-    </table>
+  <div class="sort">
+    Sort TBA
+  </div>
+  <table>
+    <colgroup>
+    <col class="col-date">
+    <col class="col-restaurant">
+    <col class="col-rating">
+    <col class="col-liked">
+    <col class="col-review">
+  </colgroup>
+  <thead>
+    <th scope="col" class="col-date">Date</th>
+    <th scope="col" class="col-restaurant">Restaurant</th>
+    <th scope="col" class="col-rating">Rating</th>
+    <th scope="col" class="col-liked">Liked</th>
+    <th scope="col" class="col-review">Review</th>
+  </thead>
+  <tbody>
+    @for (reviewEntry of diaryEntries; track reviewEntry) {
+      <tr app-diary-card [review]="reviewEntry"></tr>
+    }
+  </tbody>
+</table>
 
-    <div class="Pagination">
-        <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
-        <p>{{this.currentPage}}</p>
-        <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
-    </div>
+<div class="Pagination">
+  <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+  <p>{{this.currentPage}}</p>
+  <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+</div>
 
 </div>

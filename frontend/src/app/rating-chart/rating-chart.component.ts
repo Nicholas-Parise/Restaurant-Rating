@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { BaseChartDirective } from 'ng2-charts';
 /*
 import { ChartConfiguration, ChartOptions, ChartType, ChartDataset, Chart } from 'chart.js';
@@ -11,7 +11,7 @@ Chart.register(...registerables);
 
 @Component({
     selector: 'app-rating-chart',
-    imports: [CommonModule, BaseChartDirective],
+    imports: [BaseChartDirective],
     templateUrl: './rating-chart.component.html',
     styleUrl: './rating-chart.component.css',
     standalone: true

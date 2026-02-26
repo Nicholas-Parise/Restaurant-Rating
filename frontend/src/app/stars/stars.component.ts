@@ -1,9 +1,9 @@
 import { OnInit, Component, EventEmitter, Output, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
     selector: 'app-stars',
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './stars.component.html',
     styleUrl: './stars.component.css',
     standalone: true

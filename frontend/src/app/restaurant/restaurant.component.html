@@ -1,181 +1,184 @@
 <div class="container">
-  <div *ngIf="restaurantEntry; else loading">
-    <h2>{{restaurantEntry?.name}}</h2>
-
-    <div class="grid-container">
-
-      <div class="grid-item">
-        <img class="image" [src]="restaurantEntry?.pictures || 'assets/placeholder-restaurant.png'" alt=""
-        (error)="onImageError($event)">
-      </div>
-      <div class="grid-item">
-        <p>{{ restaurantEntry?.description }}</p>
-        <p><strong>Type:</strong> {{ restaurantEntry?.type }}</p>
-        <p *ngIf="restaurantEntry?.cuisine"><strong>Cuisine:</strong> {{ restaurantEntry?.cuisine }}</p>
-        <p *ngIf="restaurantEntry?.opening_hours"><strong>Opening Hours:</strong> {{ restaurantEntry?.opening_hours }}
-        </p>
-        <p *ngIf="restaurantEntry?.phone"><strong>Phone:</strong> {{ restaurantEntry?.phone }}</p>
-        <p *ngIf="restaurantEntry?.website"><strong>Website:</strong> <a [href]="restaurantEntry?.website"
-            target="_blank">{{ restaurantEntry?.website}}</a></p>
-        <p *ngIf="restaurantEntry?.wikipedia"><strong>Wikipedia:</strong> <a
-            [href]="'http://wikipedia.org/wiki/' + restaurantEntry.wikipedia" target="_blank">{{
-            restaurantEntry?.wikipedia }}</a></p>
-        <br>
-
-        <a *ngIf="restaurantEntry?.facebook" target="_blank " [href]="restaurantEntry?.facebook">
-          <i [ngClass]="restaurantEntry?.facebook ? 'fa-brands fa-facebook text-blue pointer': ''" title="facebook">
-
-          </i>
-        </a>
-
+  @if (restaurantEntry) {
+    <div>
+      <h2>{{restaurantEntry?.name}}</h2>
+      <div class="grid-container">
+        <div class="grid-item">
+          <img class="image" [src]="restaurantEntry?.pictures || 'assets/placeholder-restaurant.png'" alt=""
+            (error)="onImageError($event)">
+          </div>
+          <div class="grid-item">
+            <p>{{ restaurantEntry?.description }}</p>
+            <p><strong>Type:</strong> {{ restaurantEntry?.type }}</p>
+            @if (restaurantEntry?.cuisine) {
+              <p><strong>Cuisine:</strong> {{ restaurantEntry?.cuisine }}</p>
+            }
+            @if (restaurantEntry?.opening_hours) {
+              <p><strong>Opening Hours:</strong> {{ restaurantEntry?.opening_hours }}
+            </p>
+          }
+          @if (restaurantEntry?.phone) {
+            <p><strong>Phone:</strong> {{ restaurantEntry?.phone }}</p>
+          }
+          @if (restaurantEntry?.website) {
+            <p><strong>Website:</strong> <a [href]="restaurantEntry?.website"
+          target="_blank">{{ restaurantEntry?.website}}</a></p>
+        }
+        @if (restaurantEntry?.wikipedia) {
+          <p><strong>Wikipedia:</strong> <a
+          [href]="'http://wikipedia.org/wiki/' + restaurantEntry.wikipedia" target="_blank">{{
+        restaurantEntry?.wikipedia }}</a></p>
+      }
+      <br>
+        @if (restaurantEntry?.facebook) {
+          <a target="_blank " [href]="restaurantEntry?.facebook">
+            <i [ngClass]="restaurantEntry?.facebook ? 'fa-brands fa-facebook text-blue pointer': ''" title="facebook">
+            </i>
+          </a>
+        }
         <p>address:
-          <span *ngIf="restaurantEntry?.housenumber">{{ restaurantEntry.housenumber }} </span>
-          <span *ngIf="restaurantEntry?.addr">{{ restaurantEntry.addr }} </span>
-          <span *ngIf="restaurantEntry?.city">
-            {{ restaurantEntry.city }}<span *ngIf="restaurantEntry.province || restaurantEntry.country">,</span>
+          @if (restaurantEntry?.housenumber) {
+            <span>{{ restaurantEntry.housenumber }} </span>
+          }
+          @if (restaurantEntry?.addr) {
+            <span>{{ restaurantEntry.addr }} </span>
+          }
+          @if (restaurantEntry?.city) {
+            <span>
+              {{ restaurantEntry.city }}@if (restaurantEntry.province || restaurantEntry.country) {
+              <span>,</span>
+            }
           </span>
-          <span *ngIf="restaurantEntry?.province">
-            {{ restaurantEntry.province }}<span *ngIf="restaurantEntry.country">,</span>
-          </span>
-          <span *ngIf="restaurantEntry?.country">{{ restaurantEntry.country }}</span>
-        </p>
-      </div>
-
-      <div class="grid-item">
-
-        <div class="actionsPanel">
-            <app-review-form [bookmarked]="bookmarked" [restaurantEntry]="restaurantEntry" [reviewEntry]="userReviewEntry ? userReviewEntry[0] : null" [userList]="userList"></app-review-form>
-
-            <div *ngIf="restaurantEntry">
-              <h3>Ratings</h3>
-              <app-rating-chart [histogram]="restaurantEntry.score_histogram"></app-rating-chart>
-            </div>
-
-          </div>
-      </div>
-      
-    </div>
-
-
-    <h3>Amenities</h3>
-    <div class="amenities">
-      <ul class="icon-list">
-        <li>
-          <i [ngClass]="restaurantEntry?.cash ? 'fas fa-money-bill text-white' : 'fas fa-money-bill text-grey strikethrough'"
-            title="Cash"></i>
-        </li>
-        <li>
-          <i [ngClass]="restaurantEntry?.visa ? 'fab fa-cc-visa text-white' : 'fab fa-cc-visa text-grey strikethrough'"
-            title="Visa"></i>
-        </li>
-        <li>
-          <i [ngClass]="restaurantEntry?.mastercard ? 'fab fa-cc-mastercard text-white' : 'fab fa-cc-mastercard text-grey strikethrough'"
-            title="MasterCard"></i>
-        </li>
-        <li>
-          <i [ngClass]="restaurantEntry?.delivery ? 'fas fa-truck text-white' : 'fas fa-truck text-grey strikethrough'"
-            title="Delivery"></i>
-        </li>
-        <li>
-          <i [ngClass]="restaurantEntry?.takeaway ? 'fas fa-bag-shopping text-white' : 'fas fa-bag-shopping text-grey strikethrough'"
-            title="Takeaway"></i>
-        </li>
-        <li>
-          <i [ngClass]="restaurantEntry?.vegetarian ? 'fas fa-leaf text-green' : 'fas fa-leaf text-grey strikethrough'"
-            title="Vegetarian"></i>
-        </li>
-        <li>
-          <i [ngClass]="restaurantEntry?.wheelchair ? 'fas fa-wheelchair text-white' : 'fas fa-wheelchair text-grey strikethrough'"
-            title="Wheelchair Accessible"></i>
-        </li>
-        <li>
-          <i [ngClass]="restaurantEntry?.air_conditioning ? 'fas fa-snowflake text-blue' : 'fas fa-snowflake text-grey strikethrough'"
-            title="Air Conditioning"></i>
-        </li>
-        <li>
-          <i [ngClass]="restaurantEntry?.internet_access ? 'fas fa-wifi text-blue' : 'fas fa-wifi text-grey strikethrough'"
-            title="Wi-Fi"></i>
-        </li>
-        <li>
-          <i [ngClass]="restaurantEntry?.outdoor_seating ? 'fas fa-chair text-white' : 'fas fa-chair text-grey strikethrough'"
-            title="Outdoor Seating"></i>
-        </li>
-        <li>
-          <i [ngClass]="restaurantEntry?.drive_through ? 'fas fa-car text-white' : 'fas fa-car text-grey strikethrough'"
-            title="Drive Through"></i>
-        </li>
-
-        <li>
-          <i [ngClass]="restaurantEntry?.smoking ? 'fas fa-smoking text-white' : 'fas fa-smoking text-grey strikethrough'"
-            title="Smoking"></i>
-        </li>
-
-        <li>
-          <i [ngClass]="restaurantEntry?.toilets ? 'fas fa-toilet text-white' : 'fas fa-toilet text-grey strikethrough'"
-            title="Toilets"></i>
-        </li>
-
-        <li>
-          <i [ngClass]="restaurantEntry?.breakfast ? 'fas fa-egg text-white' : 'fas fa-egg text-grey strikethrough'"
-            title="Breakfast"></i>
-        </li>
-
-        <li>
-          <i [ngClass]="restaurantEntry?.lunch ? 'fas fa-burger text-white' : 'fas fa-burger text-grey strikethrough'"
-            title="Lunch"></i>
-        </li>
-
-        <li>
-          <i [ngClass]="restaurantEntry?.dinner ? 'fas fa-pizza-slice text-white' : 'fas fa-pizza-slice text-grey strikethrough'"
-            title="Dinner"></i>
-        </li>
-
-
-        <li>
-          <i [ngClass]="restaurantEntry?.indoor_seating ? 'fas fa-couch text-white' : 'fas fa-couch text-grey strikethrough'"
-            title="Indoor seating"></i>
-        </li>
-
-      </ul>
-    </div>
-
-
-
-
-    <div class="tags">
-      <div class="center tag-item" *ngFor="let tagEntry of tagEntry">
-        <app-tag-card [tagEntry]="tagEntry"></app-tag-card>
-      </div>
-    </div>
-
-
-    <h2>Food items</h2>
-    <div class="foods">
-      <!-- ngfor to place all foods -->
-    </div>
-
-
-    <h2>Reviews</h2>
-    <div class="reviews">
-
-      <ul class="all-reviews">
-        <li>
-          <div class="" *ngFor="let reviewEntry of reviewEntry">
-            <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
-          </div>
-        </li>
-      </ul>
-
-      <div class="Pagination">
-        <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
-        <p>{{this.currentPage}}</p>
-        <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
-      </div>
+        }
+        @if (restaurantEntry?.province) {
+          <span>
+            {{ restaurantEntry.province }}@if (restaurantEntry.country) {
+            <span>,</span>
+          }
+        </span>
+      }
+      @if (restaurantEntry?.country) {
+        <span>{{ restaurantEntry.country }}</span>
+      }
+    </p>
+  </div>
+  <div class="grid-item">
+    <div class="actionsPanel">
+      <app-review-form [bookmarked]="bookmarked" [restaurantEntry]="restaurantEntry" [reviewEntry]="userReviewEntry ? userReviewEntry[0] : null" [userList]="userList"></app-review-form>
+      @if (restaurantEntry) {
+        <div>
+          <h3>Ratings</h3>
+          <app-rating-chart [histogram]="restaurantEntry.score_histogram"></app-rating-chart>
+        </div>
+      }
     </div>
   </div>
+</div>
+<h3>Amenities</h3>
+<div class="amenities">
+  <ul class="icon-list">
+    <li>
+      <i [ngClass]="restaurantEntry?.cash ? 'fas fa-money-bill text-white' : 'fas fa-money-bill text-grey strikethrough'"
+      title="Cash"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.visa ? 'fab fa-cc-visa text-white' : 'fab fa-cc-visa text-grey strikethrough'"
+      title="Visa"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.mastercard ? 'fab fa-cc-mastercard text-white' : 'fab fa-cc-mastercard text-grey strikethrough'"
+      title="MasterCard"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.delivery ? 'fas fa-truck text-white' : 'fas fa-truck text-grey strikethrough'"
+      title="Delivery"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.takeaway ? 'fas fa-bag-shopping text-white' : 'fas fa-bag-shopping text-grey strikethrough'"
+      title="Takeaway"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.vegetarian ? 'fas fa-leaf text-green' : 'fas fa-leaf text-grey strikethrough'"
+      title="Vegetarian"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.wheelchair ? 'fas fa-wheelchair text-white' : 'fas fa-wheelchair text-grey strikethrough'"
+      title="Wheelchair Accessible"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.air_conditioning ? 'fas fa-snowflake text-blue' : 'fas fa-snowflake text-grey strikethrough'"
+      title="Air Conditioning"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.internet_access ? 'fas fa-wifi text-blue' : 'fas fa-wifi text-grey strikethrough'"
+      title="Wi-Fi"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.outdoor_seating ? 'fas fa-chair text-white' : 'fas fa-chair text-grey strikethrough'"
+      title="Outdoor Seating"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.drive_through ? 'fas fa-car text-white' : 'fas fa-car text-grey strikethrough'"
+      title="Drive Through"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.smoking ? 'fas fa-smoking text-white' : 'fas fa-smoking text-grey strikethrough'"
+      title="Smoking"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.toilets ? 'fas fa-toilet text-white' : 'fas fa-toilet text-grey strikethrough'"
+      title="Toilets"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.breakfast ? 'fas fa-egg text-white' : 'fas fa-egg text-grey strikethrough'"
+      title="Breakfast"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.lunch ? 'fas fa-burger text-white' : 'fas fa-burger text-grey strikethrough'"
+      title="Lunch"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.dinner ? 'fas fa-pizza-slice text-white' : 'fas fa-pizza-slice text-grey strikethrough'"
+      title="Dinner"></i>
+    </li>
+    <li>
+      <i [ngClass]="restaurantEntry?.indoor_seating ? 'fas fa-couch text-white' : 'fas fa-couch text-grey strikethrough'"
+      title="Indoor seating"></i>
+    </li>
+  </ul>
+</div>
+<div class="tags">
+  @for (tagEntry of tagEntry; track tagEntry) {
+    <div class="center tag-item">
+      <app-tag-card [tagEntry]="tagEntry"></app-tag-card>
+    </div>
+  }
+</div>
+<h2>Food items</h2>
+<div class="foods">
+  <!-- ngfor to place all foods -->
+</div>
+<h2>Reviews</h2>
+<div class="reviews">
+  <ul class="all-reviews">
+    <li>
+      @for (reviewEntry of reviewEntry; track reviewEntry) {
+        <div class="">
+          <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
+        </div>
+      }
+    </li>
+  </ul>
+  <div class="Pagination">
+    <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+    <p>{{this.currentPage}}</p>
+    <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+  </div>
+</div>
+</div>
+} @else {
+  <p>Loading...</p>
+}
 
-  <ng-template #loading>
-    <p>Loading...</p>
-  </ng-template>
 
 </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { UserEntry } from '../shared/user-entry.model';
 import { UserDataService } from '../shared/user-data.component';
@@ -16,7 +16,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
 
 @Component({
     selector: 'app-user',
-    imports: [CommonModule, RestaurantCardComponent, ReviewCardComponent, UserFormComponent],
+    imports: [RestaurantCardComponent, ReviewCardComponent, UserFormComponent],
     templateUrl: './user.component.html',
     styleUrl: './user.component.css',
     standalone: true

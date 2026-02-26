@@ -1,14 +1,18 @@
 <div class="container">
 
-    <h2>Bookmarked Restaurants</h2>
+  <h2>Bookmarked Restaurants</h2>
 
-    <div class="spacer grid-container">
-        <div class="center grid-item" *ngFor="let restaurantEntry of restaurantEntry">
-            <app-restaurant-card [restaurantEntry]="restaurantEntry" [menu]=LoggedIn [bookmark]=true></app-restaurant-card>
-        </div>
-    </div>
+  <div class="spacer grid-container">
+    @for (restaurantEntry of restaurantEntry; track restaurantEntry) {
+      <div class="center grid-item">
+        <app-restaurant-card [restaurantEntry]="restaurantEntry" [menu]=LoggedIn [bookmark]=true></app-restaurant-card>
+      </div>
+    }
+  </div>
 
-    <p *ngIf="!restaurantEntry || restaurantEntry.length === 0">No results found.</p>
+  @if (!restaurantEntry || restaurantEntry.length === 0) {
+    <p>No results found.</p>
+  }
 
 
 </div>

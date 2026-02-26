@@ -1,21 +1,33 @@
 <div class="cardBody user-card" (mouseleave)="closeDropdown()">
-    <a [routerLink]="['/user', userEntry.username]" class="user-info">
-        <img [src]="userEntry.picture || 'assets/placeholder-avatar.png'" class="profile-pic" alt="Profile Picture"
-            (error)="onImageError($event)" />
+  <a [routerLink]="['/user', userEntry.username]" class="user-info">
+    <img [src]="userEntry.picture || 'assets/placeholder-avatar.png'" class="profile-pic" alt="Profile Picture"
+      (error)="onImageError($event)" />
 
-        <span class="name">
-            {{ userEntry.name ? userEntry.name + ' (@' + userEntry.username + ')' : userEntry.username }}
-        </span>
+      <span class="name">
+        {{ userEntry.name ? userEntry.name + ' (@' + userEntry.username + ')' : userEntry.username }}
+      </span>
     </a>
 
-    <div class="menu-wrapper" *ngIf="allowMenu">
+    @if (allowMenu) {
+      <div class="menu-wrapper">
         <button class="menu-button" (click)="toggleMenu()">⋯</button>
-        <ul class="menu-options" *ngIf="menuOpen">
-            <li *ngIf="!userEntry.status" (click)="addFriend()">Add Friend</li>
-            <li *ngIf="userEntry.status === 'pending'" (click)="acceptFriend()">Accept Friend</li>
-            <li *ngIf="userEntry.status === 'pending'" (click)="denyFriend()">Deny Friend</li>
-            <li *ngIf="userEntry.status === 'accepted'" (click)="removeFriend()">Remove Friend</li>
+        @if (menuOpen) {
+          <ul class="menu-options">
+            @if (!userEntry.status) {
+              <li (click)="addFriend()">Add Friend</li>
+            }
+            @if (userEntry.status === 'pending') {
+              <li (click)="acceptFriend()">Accept Friend</li>
+            }
+            @if (userEntry.status === 'pending') {
+              <li (click)="denyFriend()">Deny Friend</li>
+            }
+            @if (userEntry.status === 'accepted') {
+              <li (click)="removeFriend()">Remove Friend</li>
+            }
             <li (click)="reportUser()">Report</li>
-        </ul>
-    </div>
-</div>
+          </ul>
+        }
+      </div>
+    }
+  </div>

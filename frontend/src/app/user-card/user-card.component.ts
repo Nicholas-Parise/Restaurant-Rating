@@ -1,12 +1,12 @@
 import { Component, Input, SimpleChanges, OnInit } from '@angular/core';
 import { UserEntry } from '../shared/user-entry.model';
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { UserDataService } from '../shared/user-data.component';
 
 @Component({
     selector: 'app-user-card',
-    imports: [RouterLink, CommonModule],
+    imports: [RouterLink],
     templateUrl: './user-card.component.html',
     styleUrl: './user-card.component.css',
     standalone: true

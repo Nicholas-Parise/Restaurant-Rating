@@ -1,14 +1,14 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { ListEntry } from '../shared/list-entry.model';
 import { ListDataService } from '../shared/list-data.component';
 
 @Component({
     selector: 'app-restaurant-card',
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './restaurant-card.component.html',
     styleUrl: './restaurant-card.component.css',
     standalone: true

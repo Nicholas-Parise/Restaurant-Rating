@@ -1,65 +1,63 @@
 <div class="container">
-    <div *ngIf="userEntry; else loading;">
-        <div class="grid-container">
-            <div class="grid-item">
-                <img class="image" [src]="userEntry.picture || 'assets/placeholder-avatar.png'" alt="Profile Picture"
-                    (error)="onImageError($event)">
+  @if (userEntry) {
+    <div>
+      <div class="grid-container">
+        <div class="grid-item">
+          <img class="image" [src]="userEntry.picture || 'assets/placeholder-avatar.png'" alt="Profile Picture"
+            (error)="onImageError($event)">
+          </div>
+          <div class="grid-item">
+            <h2>{{userEntry?.name || userEntry?.username}}</h2>
+            <p>{{userEntry?.bio}}</p>
+            <div class="profile-nav">
+              <button (click)="goToSection('diary')">Diary</button>
+              <button (click)="goToSection('friends')">Friends</button>
+              <button (click)="goToSection('bookmarked')">Bookmarked</button>
             </div>
-
-            <div class="grid-item">
-                <h2>{{userEntry?.name || userEntry?.username}}</h2>
-                <p>{{userEntry?.bio}}</p>
-
-
-                <div class="profile-nav">
-                    <button (click)="goToSection('diary')">Diary</button>
-                    <button (click)="goToSection('friends')">Friends</button>
-                    <button (click)="goToSection('bookmarked')">Bookmarked</button>
-                </div>
-
-                <div *ngIf="showEdit">
-                    <app-user-form [userEntry]="userEntry"></app-user-form>
-                </div>
-            </div>
+            @if (showEdit) {
+              <div>
+                <app-user-form [userEntry]="userEntry"></app-user-form>
+              </div>
+            }
+          </div>
         </div>
-
-
         <h2 class="section-header">Favourite Restaurants</h2>
         <div class="spacer grid-container favourites-grid">
-                <div class="center grid-item" *ngFor="let favRestaurantEntry of favRestaurantEntry">
-                    <app-restaurant-card [restaurantEntry]="favRestaurantEntry" [menu]=showEdit
-                        [favourite]=showEdit></app-restaurant-card>
-                </div>
-        </div>
-
-        <h2 class="section-header">Recent Activity</h2>
-
-        <div class="scroll-wrapper">
-            <div class="scroll">
-                <div class="center grid-item" *ngFor="let recentRestaurantEntry of recentRestaurantEntry">
-                    <app-restaurant-card [restaurantEntry]="recentRestaurantEntry"></app-restaurant-card>
-                </div>
+          @for (favRestaurantEntry of favRestaurantEntry; track favRestaurantEntry) {
+            <div class="center grid-item">
+              <app-restaurant-card [restaurantEntry]="favRestaurantEntry" [menu]=showEdit
+              [favourite]=showEdit></app-restaurant-card>
             </div>
+          }
         </div>
-
-
+        <h2 class="section-header">Recent Activity</h2>
+        <div class="scroll-wrapper">
+          <div class="scroll">
+            @for (recentRestaurantEntry of recentRestaurantEntry; track recentRestaurantEntry) {
+              <div class="center grid-item">
+                <app-restaurant-card [restaurantEntry]="recentRestaurantEntry"></app-restaurant-card>
+              </div>
+            }
+          </div>
+        </div>
         <h2 class="section-header">Recent reviews</h2>
         <ul class="all-reviews">
-            <li>
-                <div class="" *ngFor="let reviewEntry of reviewEntry">
-                    <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
-                </div>
-            </li>
+          <li>
+            @for (reviewEntry of reviewEntry; track reviewEntry) {
+              <div class="">
+                <app-review-card [reviewEntry]="reviewEntry"></app-review-card>
+              </div>
+            }
+          </li>
         </ul>
-
         <div class="Pagination">
-            <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
-            <p>{{this.currentPage}}</p>
-            <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+          <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+          <p>{{this.currentPage}}</p>
+          <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
         </div>
-    </div>
+      </div>
+    } @else {
+      <p>Loading...</p>
+    }
 
-    <ng-template #loading>
-        <p>Loading...</p>
-    </ng-template>
-</div>
+  </div>

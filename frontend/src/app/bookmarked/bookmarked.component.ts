@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Subscription } from 'rxjs';
 import { RestaurantCardComponent } from '../restaurant-card/restaurant-card.component';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
@@ -9,7 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-bookmarked',
-    imports: [CommonModule, RestaurantCardComponent],
+    imports: [RestaurantCardComponent],
     templateUrl: './bookmarked.component.html',
     styleUrl: './bookmarked.component.css',
     standalone: true

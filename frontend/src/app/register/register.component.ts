@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { AuthDataService } from '../shared/auth-data.component';
 import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-register',
-    imports: [ReactiveFormsModule, CommonModule, RouterLink],
+    imports: [ReactiveFormsModule, RouterLink],
     templateUrl: './register.component.html',
     styleUrl: './register.component.css',
     standalone: true

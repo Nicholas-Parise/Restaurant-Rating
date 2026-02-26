@@ -1,13 +1,13 @@
 import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { UserEntry } from '../shared/user-entry.model';
 import { UserDataService } from '../shared/user-data.component';
 import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-user-form',
-    imports: [ReactiveFormsModule, CommonModule, FormsModule],
+    imports: [ReactiveFormsModule, FormsModule],
     templateUrl: './user-form.component.html',
     styleUrl: './user-form.component.css',
     standalone: true

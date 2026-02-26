@@ -1,13 +1,14 @@
-  <div class="stars-input" (mouseleave)="removeHover()">
-    <span (click)="removeRating()" class="close fa-solid fa-circle-xmark"></span>
+<div class="stars-input" (mouseleave)="removeHover()">
+  <span (click)="removeRating()" class="close fa-solid fa-circle-xmark"></span>
+  @for (star of stars; track star; let i = $index) {
     <span
-    *ngFor="let star of stars; let i = index"
-    class="star"
-    [class.on]="selectedRating >= (i + 1) * 2"
-    [class.half]="selectedRating === (i * 2) + 1"
-    [class.onHover]="hoverRating >= (i + 1) * 2"
-    [class.halfHover]="hoverRating === (i * 2) + 1"
-    (click)="onStarClick($event,i)"
-    (mousemove)="onStarHover($event, i)"
+      class="star"
+      [class.on]="selectedRating >= (i + 1) * 2"
+      [class.half]="selectedRating === (i * 2) + 1"
+      [class.onHover]="hoverRating >= (i + 1) * 2"
+      [class.halfHover]="hoverRating === (i * 2) + 1"
+      (click)="onStarClick($event,i)"
+      (mousemove)="onStarHover($event, i)"
     ></span>
+  }
 </div>

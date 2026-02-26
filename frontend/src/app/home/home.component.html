@@ -1,8 +1,10 @@
 <div class="container">
-    <h2>hot new restaurants</h2>
-    <div class="spacer grid-container">
-        <div class="center grid-item" *ngFor="let restaurantEntry of restaurantEntry">
-            <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
-        </div>
-    </div>
+  <h2>hot new restaurants</h2>
+  <div class="spacer grid-container">
+    @for (restaurantEntry of restaurantEntry; track restaurantEntry) {
+      <div class="center grid-item">
+        <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
+      </div>
+    }
+  </div>
 </div>

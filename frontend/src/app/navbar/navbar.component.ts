@@ -1,14 +1,14 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthDataService } from '../shared/auth-data.component';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserEntry } from '../shared/user-entry.model';
 
 @Component({
     selector: 'app-navbar',
-    imports: [RouterModule, CommonModule],
+    imports: [RouterModule],
     templateUrl: './navbar.component.html',
     styleUrl: './navbar.component.css',
     standalone: true

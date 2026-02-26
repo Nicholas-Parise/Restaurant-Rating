@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Subscription, Subject, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,7 +22,7 @@ import { ListCardComponent } from '../list-card/list-card.component';
 
 @Component({
     selector: 'app-explore',
-    imports: [CommonModule, FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent],
+    imports: [FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent],
     templateUrl: './explore.component.html',
     styleUrl: './explore.component.css',
     standalone: true

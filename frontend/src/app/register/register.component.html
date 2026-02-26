@@ -1,40 +1,52 @@
 <div class="register-container">
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
-      <h2>Register</h2>
+    <h2>Register</h2>
     <div>
       <label>Username</label>
       <input type="text" formControlName="username" (input)="usernameCheck()" />
-      <div *ngIf="f['username'].touched && f['username'].invalid" class="error">Username is required</div>
-      <div *ngIf="invalidUserErrorMessage" class="error">{{ invalidUserErrorMessage }}</div>
+      @if (f['username'].touched && f['username'].invalid) {
+        <div class="error">Username is required</div>
+      }
+      @if (invalidUserErrorMessage) {
+        <div class="error">{{ invalidUserErrorMessage }}</div>
+      }
     </div>
 
     <div>
       <label>Email</label>
       <input type="email" formControlName="email" />
-      <div *ngIf="f['email'].touched && f['email'].invalid" class="error">
-        Enter a valid email
-      </div>
+      @if (f['email'].touched && f['email'].invalid) {
+        <div class="error">
+          Enter a valid email
+        </div>
+      }
     </div>
 
     <div>
       <label>Password</label>
       <input type="password" formControlName="password" />
-      <div *ngIf="f['password'].touched && f['password'].invalid" class="error">
-        Password is required (min 6 chars)
-      </div>
+      @if (f['password'].touched && f['password'].invalid) {
+        <div class="error">
+          Password is required (min 6 chars)
+        </div>
+      }
     </div>
 
     <div>
       <label>Confirm Password</label>
       <input type="password" formControlName="confirmPassword" />
-      <div *ngIf="f['confirmPassword'].touched && f['confirmPassword'].invalid || passwordMismatch" class="error">
-        {{ passwordMismatch ? 'Passwords do not match' : 'Confirm your password' }}
-      </div>
+      @if (f['confirmPassword'].touched && f['confirmPassword'].invalid || passwordMismatch) {
+        <div class="error">
+          {{ passwordMismatch ? 'Passwords do not match' : 'Confirm your password' }}
+        </div>
+      }
     </div>
 
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
+    @if (errorMessage) {
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+    }
 
     <button type="submit" [disabled]="registerForm.invalid">Register</button>
     <div>Have an account? <a [routerLink]="['/login']">Login!</a></div>

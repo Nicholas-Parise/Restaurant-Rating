@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { UserEntry } from '../shared/user-entry.model';
 import { UserDataService } from '../shared/user-data.component';
@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-profile-menu',
-    imports: [CommonModule, RouterLink, NotificationCardComponent],
+    imports: [RouterLink, NotificationCardComponent],
     templateUrl: './profile-menu.component.html',
     styleUrl: './profile-menu.component.css',
     standalone: true

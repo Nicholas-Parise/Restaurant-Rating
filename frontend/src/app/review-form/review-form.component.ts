@@ -3,7 +3,7 @@ import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angula
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { ReviewEntry } from '../shared/review-entry.model';
 import { ReviewDataService } from '../shared/review-data.component';
-import { CommonModule } from '@angular/common';
+
 import { StarsComponent } from '../stars/stars.component';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +13,7 @@ import { ListDataService } from '../shared/list-data.component';
 
 @Component({
     selector: 'app-review-form',
-    imports: [ReactiveFormsModule, FormsModule, CommonModule, StarsComponent],
+    imports: [ReactiveFormsModule, FormsModule, StarsComponent],
     templateUrl: './review-form.component.html',
     styleUrl: './review-form.component.css',
     standalone: true

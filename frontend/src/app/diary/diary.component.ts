@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthDataService } from '../shared/auth-data.component';
@@ -10,7 +10,7 @@ import { DiaryCardComponent } from '../diary-card/diary-card.component';
 
 @Component({
     selector: 'app-diary',
-    imports: [CommonModule, DiaryCardComponent],
+    imports: [DiaryCardComponent],
     templateUrl: './diary.component.html',
     styleUrl: './diary.component.css',
     standalone: true

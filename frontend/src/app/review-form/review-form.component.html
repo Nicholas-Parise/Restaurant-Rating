@@ -1,90 +1,95 @@
-<div class="modal-overlay" *ngIf="isFormVisible">
+@if (isFormVisible) {
+  <div class="modal-overlay">
     <div class="modal">
-
-        <h2>leave a review</h2>
-
-        <form (ngSubmit)="onSubmit()" [formGroup]="reviewForm">
-
-            <label for="review">review</label>
-            <textarea placeholder="Type your review..." type="text" class="form-control" rows="3"
-                formControlName="description"></textarea>
-
-            <label>Your rating</label>
-            <app-stars [inputRating]="selectedRating" (rating)="getDataFromStar($event)"></app-stars>
-
-            <input type="hidden" formControlName="score" [value]="selectedRating" />
-
-            <div class="rating-extras">
-
-                <div class="icon-label" (click)="toggleVisited()">
-                    <span class="fa-solid fa-utensils visited" [class.on]="reviewForm.get('visited')?.value"></span>
-                    <div class="icon-text">Visit<span *ngIf="reviewForm.get('visited')?.value">ed</span></div>
-                </div>
-
-                <div class="icon-label" (click)="toggleFavorite()">
-                    <span class="fa-solid fa-heart heart" [class.on]="reviewForm.get('liked')?.value"></span>
-                    <div class="icon-text">Love<span *ngIf="reviewForm.get('liked')?.value">d</span></div>
-                </div>
-
-            </div>
-            <div class="modal-actions">
-                <button type="submit" class="btn btn-success">Submit</button>
-                <button type="button" class="btn btn-cancel" (click)="closeForm()">Cancel</button>
-            </div>
-        </form>
+      <h2>leave a review</h2>
+      <form (ngSubmit)="onSubmit()" [formGroup]="reviewForm">
+        <label for="review">review</label>
+        <textarea placeholder="Type your review..." type="text" class="form-control" rows="3"
+        formControlName="description"></textarea>
+        <label>Your rating</label>
+        <app-stars [inputRating]="selectedRating" (rating)="getDataFromStar($event)"></app-stars>
+        <input type="hidden" formControlName="score" [value]="selectedRating" />
+        <div class="rating-extras">
+          <div class="icon-label" (click)="toggleVisited()">
+            <span class="fa-solid fa-utensils visited" [class.on]="reviewForm.get('visited')?.value"></span>
+            <div class="icon-text">Visit@if (reviewForm.get('visited')?.value) {
+              <span>ed</span>
+            }</div>
+          </div>
+          <div class="icon-label" (click)="toggleFavorite()">
+            <span class="fa-solid fa-heart heart" [class.on]="reviewForm.get('liked')?.value"></span>
+            <div class="icon-text">Love@if (reviewForm.get('liked')?.value) {
+              <span>d</span>
+            }</div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-success">Submit</button>
+          <button type="button" class="btn btn-cancel" (click)="closeForm()">Cancel</button>
+        </div>
+      </form>
     </div>
-</div>
+  </div>
+}
 
 <div>
-    <ul class="actions-list">
-        <li class="icons-row">
-            <div class="rating-extras">
+  <ul class="actions-list">
+    <li class="icons-row">
+      <div class="rating-extras">
 
-                <div class="icon-label" (click)="toggleVisited()">
-                    <span class="fa-solid fa-utensils visited" [class.on]="reviewForm.get('visited')?.value"></span>
-                    <div class="icon-text">Visit<span *ngIf="reviewForm.get('visited')?.value">ed</span></div>
-                </div>
-
-                <div class="icon-label" (click)="toggleFavorite()">
-                    <span class="fa-solid fa-heart heart" [class.on]="reviewForm.get('liked')?.value"></span>
-                    <div class="icon-text">Love<span *ngIf="reviewForm.get('liked')?.value">d</span></div>
-                </div>
-
-                <div class="icon-label" (click)="toggleBookmark()">
-                    <span class="fa-solid fa-clock bookmark" [class.on]="bookmark"></span>
-                    <div class="icon-text">Bookmark<span *ngIf="bookmark">ed</span></div>
-                </div>
-
-            </div>
-        </li>
-        <li class="star-row">
-            <label class="rating-label">Rate</label>
-            <app-stars [inputRating]="selectedRating" (rating)="getDataFromStar($event)"></app-stars>
-        </li>
-        <li class="action-buttons">
-            <button class="top btn" (click)="showForm()">Add a Review</button>
-        </li>
-        <li class="action-buttons">
-            <button class="top btn" (click)="addToFavourites()">Add to Favourites</button>
-        </li>
-        <li class="action-buttons">
-            <button class="top btn" (click)="showAddToListPopup()">Add to List</button>
-        </li>
-    </ul>
-</div>
-
-
-<div class="modal-overlay" *ngIf="addToListVisible">
-    <div class="modal">
-        <h2>Select a List</h2>
-
-        <select [(ngModel)]="selectedListId">
-            <option *ngFor="let list of userList" [value]="list.id">{{ list.name }}</option>
-        </select>
-
-        <div class="modal-actions">
-            <button class="btn btn-success" (click)="confirmAddToList()">Add</button>
-            <button class="btn btn-cancel" (click)="closeAddToListPopup()">Cancel</button>
+        <div class="icon-label" (click)="toggleVisited()">
+          <span class="fa-solid fa-utensils visited" [class.on]="reviewForm.get('visited')?.value"></span>
+          <div class="icon-text">Visit@if (reviewForm.get('visited')?.value) {
+            <span>ed</span>
+          }</div>
         </div>
-    </div>
+
+        <div class="icon-label" (click)="toggleFavorite()">
+          <span class="fa-solid fa-heart heart" [class.on]="reviewForm.get('liked')?.value"></span>
+          <div class="icon-text">Love@if (reviewForm.get('liked')?.value) {
+            <span>d</span>
+          }</div>
+        </div>
+
+        <div class="icon-label" (click)="toggleBookmark()">
+          <span class="fa-solid fa-clock bookmark" [class.on]="bookmark"></span>
+          <div class="icon-text">Bookmark@if (bookmark) {
+            <span>ed</span>
+          }</div>
+        </div>
+
+      </div>
+    </li>
+    <li class="star-row">
+      <label class="rating-label">Rate</label>
+      <app-stars [inputRating]="selectedRating" (rating)="getDataFromStar($event)"></app-stars>
+    </li>
+    <li class="action-buttons">
+      <button class="top btn" (click)="showForm()">Add a Review</button>
+    </li>
+    <li class="action-buttons">
+      <button class="top btn" (click)="addToFavourites()">Add to Favourites</button>
+    </li>
+    <li class="action-buttons">
+      <button class="top btn" (click)="showAddToListPopup()">Add to List</button>
+    </li>
+  </ul>
 </div>
+
+
+@if (addToListVisible) {
+  <div class="modal-overlay">
+    <div class="modal">
+      <h2>Select a List</h2>
+      <select [(ngModel)]="selectedListId">
+        @for (list of userList; track list) {
+          <option [value]="list.id">{{ list.name }}</option>
+        }
+      </select>
+      <div class="modal-actions">
+        <button class="btn btn-success" (click)="confirmAddToList()">Add</button>
+        <button class="btn btn-cancel" (click)="closeAddToListPopup()">Cancel</button>
+      </div>
+    </div>
+  </div>
+}

@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { RestaurantCardComponent } from "../restaurant-card/restaurant-card.component";
-import { CommonModule } from '@angular/common';
+
 import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-home',
-    imports: [RestaurantCardComponent, CommonModule],
+    imports: [RestaurantCardComponent],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css',
     standalone: true

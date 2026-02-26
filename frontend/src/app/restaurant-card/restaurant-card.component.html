@@ -3,17 +3,28 @@
   <img class="image" [src]="restaurantEntry.pictures || 'assets/placeholder-restaurant.png'" alt=""
     (error)="onImageError($event)">
 
-  <div class="menu-wrapper" *ngIf="allowMenu" (click)="$event.stopPropagation()">
-    <button class="menu-button" (click)="toggleMenu()">⋯</button>
-    <ul class="menu-options" *ngIf="menuOpen">
-      <li *ngIf="favourite">
-        <button class="btn" (click)="removeFavourite()">remove favourite</button>
-      </li>
-      <li *ngIf="bookmark">
-        <button class="btn" (click)="removeBookmark()">remove bookmark</button>
-      </li>
-      <li *ngIf="list">
-        <button class="btn" (click)="removeList()">remove from list</button>
-    </ul>
-  </div>
-</div>
+    @if (allowMenu) {
+      <div class="menu-wrapper" (click)="$event.stopPropagation()">
+        <button class="menu-button" (click)="toggleMenu()">⋯</button>
+        @if (menuOpen) {
+          <ul class="menu-options">
+            @if (favourite) {
+              <li>
+                <button class="btn" (click)="removeFavourite()">remove favourite</button>
+              </li>
+            }
+            @if (bookmark) {
+              <li>
+                <button class="btn" (click)="removeBookmark()">remove bookmark</button>
+              </li>
+            }
+            @if (list) {
+              <li>
+                <button class="btn" (click)="removeList()">remove from list</button>
+              }
+              <button class="btn" (click)="removeList()">remove from list</button>
+            </ul>
+          }
+        </div>
+      }
+    </div>

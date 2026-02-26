@@ -1,116 +1,119 @@
-<div class="modal-overlay" *ngIf="isFormVisible">
+@if (isFormVisible) {
+  <div class="modal-overlay">
     <div class="modal">
-        <div class="Pagination">
-            <button [class.active]="currentTab === 'profile'" (click)="currentTab = 'profile'">
-                Profile Settings
-            </button>
-            <button [class.active]="currentTab === 'account'" (click)="currentTab = 'account'">
-                Account Settings
-            </button>
-        </div>
-        <form *ngIf="currentTab === 'profile'" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="user-form">
-            <h2>Profile Settings</h2>
-            <label>Display Name
-                <input type="text" [(ngModel)]="name" name="name" />
-                <span>characters left: {{50-(name?.length ?? 0)}}</span>
+      <div class="Pagination">
+        <button [class.active]="currentTab === 'profile'" (click)="currentTab = 'profile'">
+          Profile Settings
+        </button>
+        <button [class.active]="currentTab === 'account'" (click)="currentTab = 'account'">
+          Account Settings
+        </button>
+      </div>
+      @if (currentTab === 'profile') {
+        <form (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="user-form">
+          <h2>Profile Settings</h2>
+          <label>Display Name
+            <input type="text" [(ngModel)]="name" name="name" />
+            <span>characters left: {{50-(name?.length ?? 0)}}</span>
+          </label>
+          <label>Bio
+            <textarea [(ngModel)]="bio" name="bio" rows="3"></textarea>
+            <span>characters left: {{200-(bio?.length ?? 0)}}</span>
+          </label>
+          <label class="toggle-label">Email Notifications</label>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="notifications" [ngModelOptions]="{standalone: true}"
+              name="advancedToggle" />
+              <span class="slider round"></span>
             </label>
-
-            <label>Bio
-                <textarea [(ngModel)]="bio" name="bio" rows="3"></textarea>
-                <span>characters left: {{200-(bio?.length ?? 0)}}</span>
-            </label>
-
-            <label class="toggle-label">Email Notifications</label>
-            <label class="switch">
-                <input type="checkbox" [(ngModel)]="notifications" [ngModelOptions]="{standalone: true}"
-                    name="advancedToggle" />
-                <span class="slider round"></span>
-            </label>
-
             <label for="picture">Upload Profile Picture
-                <div class="photoArea">
-                    <input type="file" (change)="onFileSelected($event)" accept="image/*" />
-                    <button *ngIf="previewUrl" type="button" (click)="removeImage()"
-                        style="background: none; border: none; margin-left: 8px; cursor: pointer;">
-                        <i class="fas fa-trash" style="color: #d00;"></i>
-                    </button>
-                    <img *ngIf="previewUrl" [src]="previewUrl" style="max-width: 300px; max-height: 300px;" />
-                </div>
+              <div class="photoArea">
+                <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+                @if (previewUrl) {
+                  <button type="button" (click)="removeImage()"
+                    style="background: none; border: none; margin-left: 8px; cursor: pointer;">
+                    <i class="fas fa-trash" style="color: #d00;"></i>
+                  </button>
+                }
+                @if (previewUrl) {
+                  <img [src]="previewUrl" style="max-width: 300px; max-height: 300px;" />
+                }
+              </div>
             </label>
             <div class="modal-actions">
-                <button class="btn btn-success" type="submit">Save Changes</button>
-                <button class="btn" type="button" (click)="closeForm()">cancel</button>
+              <button class="btn btn-success" type="submit">Save Changes</button>
+              <button class="btn" type="button" (click)="closeForm()">cancel</button>
             </div>
-        </form>
-
-        <form *ngIf="currentTab === 'account'">
+          </form>
+        }
+        @if (currentTab === 'account') {
+          <form>
             <h2>Account Settings</h2>
-
             <section>
-                <h3>Change Email</h3>
-                <label>
-                    Current Email
-                    <input type="email" [readonly]="true" value="{{currentEmail}}" />
-                </label>
-
-                
-                <label>
-                    New Email
-                    <input type="email" [(ngModel)]="email" name="email" required email #emailCtrl="ngModel" />
-                    <div *ngIf="emailCtrl.invalid && emailCtrl.touched" class="error">
-                        Please enter a valid email address.
-                    </div>
-                </label>
-                <label>
-                    Current Password
-                    <input type="password" [(ngModel)]="password" name="currentPasswordEmail" />
-                </label>
-                <button type="button" class="btn btn-success" (click)="changeEmail()">Update Email</button>
+              <h3>Change Email</h3>
+              <label>
+                Current Email
+                <input type="email" [readonly]="true" value="{{currentEmail}}" />
+              </label>
+              <label>
+                New Email
+                <input type="email" [(ngModel)]="email" name="email" required email #emailCtrl="ngModel" />
+                @if (emailCtrl.invalid && emailCtrl.touched) {
+                  <div class="error">
+                    Please enter a valid email address.
+                  </div>
+                }
+              </label>
+              <label>
+                Current Password
+                <input type="password" [(ngModel)]="password" name="currentPasswordEmail" />
+              </label>
+              <button type="button" class="btn btn-success" (click)="changeEmail()">Update Email</button>
             </section>
-
             <section>
-                <h3>Change Password</h3>
-                <label>
-                    Current Password
-                    <input type="password" [(ngModel)]="password" name="currentPasswordPassword" />
-                </label>
-                <label>
-                    New Password
-                    <input type="password" [(ngModel)]="newPassword" name="newPassword" />
-                </label>
-                <button type="button" class="btn btn-success" (click)="changePassword()">Update Password</button>
+              <h3>Change Password</h3>
+              <label>
+                Current Password
+                <input type="password" [(ngModel)]="password" name="currentPasswordPassword" />
+              </label>
+              <label>
+                New Password
+                <input type="password" [(ngModel)]="newPassword" name="newPassword" />
+              </label>
+              <button type="button" class="btn btn-success" (click)="changePassword()">Update Password</button>
             </section>
-
             <section>
-                <h3>Delete Account</h3>
-                <label>
-                    Current Password
-                    <input type="password" [(ngModel)]="password" name="currentPasswordDelete" />
-                </label>
-                <button type="button" class="btn btn-cancel" (click)="openDeleteConfirm()">Delete Account</button>
+              <h3>Delete Account</h3>
+              <label>
+                Current Password
+                <input type="password" [(ngModel)]="password" name="currentPasswordDelete" />
+              </label>
+              <button type="button" class="btn btn-cancel" (click)="openDeleteConfirm()">Delete Account</button>
             </section>
-
             <div class="modal-actions">
-                <button class="btn" type="button" (click)="closeForm()">Cancel</button>
+              <button class="btn" type="button" (click)="closeForm()">Cancel</button>
             </div>
-        </form>
-
+          </form>
+        }
+      </div>
     </div>
-</div>
-<div>
+  }
+  <div>
     <button class="btn" (click)="showForm()">Edit profile</button>
-</div>
+  </div>
 
 
-<!-- Delete Confirm Modal -->
-<div class="modal-overlay" *ngIf="showDeleteConfirm">
-    <div class="modal">
+  <!-- Delete Confirm Modal -->
+  @if (showDeleteConfirm) {
+    <div class="modal-overlay">
+      <div class="modal">
         <h2>Delete List</h2>
         <p>Are you sure you want to delete your account? This action cannot be undone.
         </p>
         <div class="modal-actions">
-            <button class="btn btn-cancel" (click)="confirmDelete()">Delete</button>
-            <button class="btn" (click)="closeDeleteConfirm()">Cancel</button>
+          <button class="btn btn-cancel" (click)="confirmDelete()">Delete</button>
+          <button class="btn" (click)="closeDeleteConfirm()">Cancel</button>
         </div>
+      </div>
     </div>
-</div>
+  }

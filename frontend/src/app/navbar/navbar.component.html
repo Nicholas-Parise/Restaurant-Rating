@@ -1,28 +1,33 @@
 <nav class="navbar"
-(mouseleave)="closeDropdown()">
- <div class="hamburger" (click)="toggleNav()">&#9776;</div>
+  (mouseleave)="closeDropdown()">
+  <div class="hamburger" (click)="toggleNav()">&#9776;</div>
 
-    <ul class="nav-links" [class.open]="navOpen">
-        <li><a routerLink="home" routerLinkActive="selected" (click)="navOpen = false">Home</a></li>
-        <li><a routerLink="Explore" routerLinkActive="selected" (click)="navOpen = false">Explore</a></li>
-        <li><a routerLink="List" routerLinkActive="selected" (click)="navOpen = false">Lists</a></li>
-    </ul>
+  <ul class="nav-links" [class.open]="navOpen">
+    <li><a routerLink="home" routerLinkActive="selected" (click)="navOpen = false">Home</a></li>
+    <li><a routerLink="Explore" routerLinkActive="selected" (click)="navOpen = false">Explore</a></li>
+    <li><a routerLink="List" routerLinkActive="selected" (click)="navOpen = false">Lists</a></li>
+  </ul>
 
-    <div class="nav-right">
-        <!-- Show login if not logged in -->
-        <a *ngIf="!loggedIn" routerLink="login" class="login-link">Login</a>
+  <div class="nav-right">
+    <!-- Show login if not logged in -->
+    @if (!loggedIn) {
+      <a routerLink="login" class="login-link">Login</a>
+    }
 
-        <!-- Show profile menu if logged in -->
-        <div *ngIf="loggedIn" class="profile-container" tabindex="0"
-       
-            (click)="toggleNotifications.emit()"
-            (blur)="closeDropdown()">
-            <img [src]="picture || 'assets/placeholder-avatar.png'" (error)="onImageError($event)" class="profile-pic" alt="Profile Picture" />
-            <div class="dropdown-menu" *ngIf="dropdownOpen">
-                <a routerLink="user">Profile</a>
-                <a routerLink="user/friends">Friends</a>
-                <a (click)="signOut()">Sign Out</a>
-            </div>
-        </div>
-    </div>
+    <!-- Show profile menu if logged in -->
+    @if (loggedIn) {
+      <div class="profile-container" tabindex="0"
+        (click)="toggleNotifications.emit()"
+        (blur)="closeDropdown()">
+        <img [src]="picture || 'assets/placeholder-avatar.png'" (error)="onImageError($event)" class="profile-pic" alt="Profile Picture" />
+        @if (dropdownOpen) {
+          <div class="dropdown-menu">
+            <a routerLink="user">Profile</a>
+            <a routerLink="user/friends">Friends</a>
+            <a (click)="signOut()">Sign Out</a>
+          </div>
+        }
+      </div>
+    }
+  </div>
 </nav>
