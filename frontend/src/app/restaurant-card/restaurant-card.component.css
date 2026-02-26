@@ -1,19 +1,44 @@
+/*
 .cardBody {
     min-width: 300px;
     max-width: 300px;
     cursor: pointer;
 }
+*/
+.cardBody {
+    width: 100%;
+    max-width: 300px;
+    cursor: pointer;
+}
 
+/*
 .name {
     font-size: calc(100% + 1);
     white-space: nowrap;
 }
+*/
+.name {
+    /*font-size: clamp(0.8rem, 2vw, 1.1rem);*/
+    font-size: calc(100%);
+    white-space: normal;
+}
 
+
+/*
 .image {
     max-width: calc(100% - 5px);
     max-height: calc(100% - 5px);
 }
+*/
 
+.image {
+    width: calc(100% - 5px);
+    height: auto;
+    object-fit: cover;
+}
+
+
+/*
 @media (max-width: 800px) {
     .cardBody {
         min-width: 250px;
@@ -42,7 +67,7 @@
     }
 }
 
-
+*/
 
 
 

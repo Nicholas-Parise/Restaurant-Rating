@@ -27,6 +27,7 @@ export class UserFormComponent implements OnInit {
 
   newPassword: string;
   password: string;
+  currentEmail: string;
   email: string;
 
   constructor(private userDataService: UserDataService) { }
@@ -43,7 +44,7 @@ export class UserFormComponent implements OnInit {
       this.name = this.userEntry.name;
       this.bio = this.userEntry.bio;
       this.notifications = this.userEntry.notifications;
-      this.email = this.userEntry.email;
+      this.currentEmail = this.userEntry.email;
     }
   }
 

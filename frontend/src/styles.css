@@ -51,13 +51,20 @@ html {
   }
 }
 
-
+/*
 .grid-container {
   display: grid;
-  /*grid-template-columns: auto auto auto;*/
   grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
   gap: 10px;
 }
+*/
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
 
 .grid-item {
   display: flex;

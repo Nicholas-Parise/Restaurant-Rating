@@ -49,6 +49,12 @@
             <section>
                 <h3>Change Email</h3>
                 <label>
+                    Current Email
+                    <input type="email" [readonly]="true" value="{{currentEmail}}" />
+                </label>
+
+                
+                <label>
                     New Email
                     <input type="email" [(ngModel)]="email" name="email" required email #emailCtrl="ngModel" />
                     <div *ngIf="emailCtrl.invalid && emailCtrl.touched" class="error">

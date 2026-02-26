@@ -7,9 +7,8 @@
     min-height: 100px;
 }
 
-
-.grid-container {
-    display: flex;
+.favourites-grid {
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .grid-item{
