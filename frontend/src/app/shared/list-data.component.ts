@@ -4,7 +4,6 @@ import { Subject } from 'rxjs';
 import { AuthDataService } from './auth-data.component';
 import { ListEntry } from './list-entry.model';
 import { RestaurantEntry } from './restaurant-entry.model';
-import { json } from 'express';
 
 @Injectable({
   providedIn: 'root'
