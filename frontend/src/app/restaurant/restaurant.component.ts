@@ -188,6 +188,20 @@ export class RestaurantComponent implements OnInit {
     target.src = 'assets/placeholder-restaurant.png';
   }
 
+  getMapsLink(): string {
+    const coords = `${this.restaurantEntry.lat},${this.restaurantEntry.lon}`;
+    
+    const address : string = (this.restaurantEntry.housenumber || this.restaurantEntry.name) +" "+this.restaurantEntry?.addr +" "+ this.restaurantEntry?.city +" "+ this.restaurantEntry?.province +" "+ this.restaurantEntry?.country;
+    
+    console.log(address);
 
+    const encodedAddress = encodeURIComponent(address);
+
+    if (/iPhone|iPad|Mac/.test(navigator.userAgent)) {
+      return `https://maps.apple.com/?ll=${coords}&q=${encodedAddress}`;
+    }
+
+    return `https://www.google.com/maps/search/?api=1&query=${coords}%20(${encodedAddress})`;
+  }
 
 }
