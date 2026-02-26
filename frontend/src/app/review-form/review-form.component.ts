@@ -12,11 +12,11 @@ import { ListEntry } from '../shared/list-entry.model';
 import { ListDataService } from '../shared/list-data.component';
 
 @Component({
-  selector: 'app-review-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, StarsComponent],
-  templateUrl: './review-form.component.html',
-  styleUrl: './review-form.component.css'
+    selector: 'app-review-form',
+    imports: [ReactiveFormsModule, FormsModule, CommonModule, StarsComponent],
+    templateUrl: './review-form.component.html',
+    styleUrl: './review-form.component.css',
+    standalone: true
 })
 export class ReviewFormComponent implements OnInit {
 

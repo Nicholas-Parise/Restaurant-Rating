@@ -23,11 +23,11 @@ import { ListDataService } from '../shared/list-data.component';
 import { ListEntry } from '../shared/list-entry.model';
 
 @Component({
-  selector: 'app-restaurant',
-  standalone: true,
-  imports: [TagCardComponent, CommonModule, ReviewCardComponent, ReviewFormComponent, RatingChartComponent],
-  templateUrl: './restaurant.component.html',
-  styleUrl: './restaurant.component.css'
+    selector: 'app-restaurant',
+    imports: [TagCardComponent, CommonModule, ReviewCardComponent, ReviewFormComponent, RatingChartComponent],
+    templateUrl: './restaurant.component.html',
+    styleUrl: './restaurant.component.css',
+    standalone: true
 })
 
 export class RestaurantComponent implements OnInit {

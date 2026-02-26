@@ -9,11 +9,11 @@ import { UserDataService } from '../shared/user-data.component';
 import { UserEntry } from '../shared/user-entry.model';
 
 @Component({
-  selector: 'app-friends',
-  standalone: true,
-  imports: [CommonModule, FormsModule, UserCardComponent],
-  templateUrl: './friends.component.html',
-  styleUrl: './friends.component.css'
+    selector: 'app-friends',
+    imports: [CommonModule, FormsModule, UserCardComponent],
+    templateUrl: './friends.component.html',
+    styleUrl: './friends.component.css',
+    standalone: true
 })
 export class FriendsComponent implements OnInit {
 

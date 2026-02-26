@@ -9,11 +9,11 @@ import { DiaryCardComponent } from '../diary-card/diary-card.component';
 
 
 @Component({
-  selector: 'app-diary',
-  standalone: true,
-  imports: [CommonModule, DiaryCardComponent],
-  templateUrl: './diary.component.html',
-  styleUrl: './diary.component.css'
+    selector: 'app-diary',
+    imports: [CommonModule, DiaryCardComponent],
+    templateUrl: './diary.component.html',
+    styleUrl: './diary.component.css',
+    standalone: true
 })
 export class DiaryComponent implements OnInit {
 

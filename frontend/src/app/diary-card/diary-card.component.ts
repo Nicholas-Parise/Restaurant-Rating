@@ -6,11 +6,11 @@ import { StarsComponent } from '../stars/stars.component';
 
 
 @Component({
-  selector: '[app-diary-card]',
-  standalone: true,
-  imports: [CommonModule, RouterLink, StarsComponent],
-  templateUrl: './diary-card.component.html',
-  styleUrl: './diary-card.component.css'
+    selector: '[app-diary-card]',
+    imports: [CommonModule, RouterLink, StarsComponent],
+    templateUrl: './diary-card.component.html',
+    styleUrl: './diary-card.component.css',
+    standalone: true
 })
 export class DiaryCardComponent {
 

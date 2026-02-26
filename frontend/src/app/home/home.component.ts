@@ -6,11 +6,11 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [RestaurantCardComponent,CommonModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+    selector: 'app-home',
+    imports: [RestaurantCardComponent, CommonModule],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.css',
+    standalone: true
 })
 export class HomeComponent implements OnInit{
 

@@ -6,11 +6,11 @@ import { UserDataService } from '../shared/user-data.component';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-user-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule],
-  templateUrl: './user-form.component.html',
-  styleUrl: './user-form.component.css'
+    selector: 'app-user-form',
+    imports: [ReactiveFormsModule, CommonModule, FormsModule],
+    templateUrl: './user-form.component.html',
+    styleUrl: './user-form.component.css',
+    standalone: true
 })
 export class UserFormComponent implements OnInit {
 

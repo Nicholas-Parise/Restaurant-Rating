@@ -11,11 +11,11 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-profile-menu',
-  standalone: true,
-  imports: [CommonModule,RouterLink,NotificationCardComponent],
-  templateUrl: './profile-menu.component.html',
-  styleUrl: './profile-menu.component.css'
+    selector: 'app-profile-menu',
+    imports: [CommonModule, RouterLink, NotificationCardComponent],
+    templateUrl: './profile-menu.component.html',
+    styleUrl: './profile-menu.component.css',
+    standalone: true
 })
 export class ProfileMenuComponent implements OnInit {
 

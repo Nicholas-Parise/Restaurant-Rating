@@ -21,11 +21,11 @@ import { ListDataService } from '../shared/list-data.component';
 import { ListCardComponent } from '../list-card/list-card.component';
 
 @Component({
-  selector: 'app-explore',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent],
-  templateUrl: './explore.component.html',
-  styleUrl: './explore.component.css'
+    selector: 'app-explore',
+    imports: [CommonModule, FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent],
+    templateUrl: './explore.component.html',
+    styleUrl: './explore.component.css',
+    standalone: true
 })
 export class ExploreComponent implements OnInit {
 

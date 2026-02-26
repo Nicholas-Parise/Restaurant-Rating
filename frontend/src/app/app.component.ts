@@ -7,11 +7,10 @@ import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
 import { FooterComponent } from './footer/footer.component';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, NavbarComponent, HeaderComponent, ProfileMenuComponent, FooterComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+    selector: 'app-root',
+    imports: [RouterOutlet, NavbarComponent, HeaderComponent, ProfileMenuComponent, FooterComponent],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
   title = 'restaurant-rating';

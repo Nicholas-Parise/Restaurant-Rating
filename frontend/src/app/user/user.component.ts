@@ -15,11 +15,11 @@ import { AuthDataService } from '../shared/auth-data.component';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @Component({
-  selector: 'app-user',
-  standalone: true,
-  imports: [CommonModule, RestaurantCardComponent, ReviewCardComponent, UserFormComponent],
-  templateUrl: './user.component.html',
-  styleUrl: './user.component.css'
+    selector: 'app-user',
+    imports: [CommonModule, RestaurantCardComponent, ReviewCardComponent, UserFormComponent],
+    templateUrl: './user.component.html',
+    styleUrl: './user.component.css',
+    standalone: true
 })
 export class UserComponent {
 

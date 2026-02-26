@@ -4,11 +4,11 @@ import { ListEntry } from '../shared/list-entry.model';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-list-card',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './list-card.component.html',
-  styleUrl: './list-card.component.css'
+    selector: 'app-list-card',
+    imports: [CommonModule],
+    templateUrl: './list-card.component.html',
+    styleUrl: './list-card.component.css',
+    standalone: true
 })
 export class ListCardComponent {
 

@@ -8,11 +8,11 @@ import { AuthDataService } from '../shared/auth-data.component';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-bookmarked',
-  standalone: true,
-  imports: [CommonModule, RestaurantCardComponent],
-  templateUrl: './bookmarked.component.html',
-  styleUrl: './bookmarked.component.css'
+    selector: 'app-bookmarked',
+    imports: [CommonModule, RestaurantCardComponent],
+    templateUrl: './bookmarked.component.html',
+    styleUrl: './bookmarked.component.css',
+    standalone: true
 })
 export class BookmarkedComponent implements OnInit {
 

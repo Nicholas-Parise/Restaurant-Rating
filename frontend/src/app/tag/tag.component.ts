@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-tag',
-  standalone: true,
-  imports: [],
-  templateUrl: './tag.component.html',
-  styleUrl: './tag.component.css'
+    selector: 'app-tag',
+    imports: [],
+    templateUrl: './tag.component.html',
+    styleUrl: './tag.component.css',
+    standalone: true
 })
 export class TagComponent {
 

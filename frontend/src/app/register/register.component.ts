@@ -6,11 +6,11 @@ import { AuthDataService } from '../shared/auth-data.component';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+    selector: 'app-register',
+    imports: [ReactiveFormsModule, CommonModule, RouterLink],
+    templateUrl: './register.component.html',
+    styleUrl: './register.component.css',
+    standalone: true
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;

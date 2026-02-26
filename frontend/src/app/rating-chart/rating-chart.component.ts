@@ -10,11 +10,11 @@ import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
 Chart.register(...registerables);
 
 @Component({
-  selector: 'app-rating-chart',
-  standalone: true,
-  imports: [CommonModule, BaseChartDirective],
-  templateUrl: './rating-chart.component.html',
-  styleUrl: './rating-chart.component.css'
+    selector: 'app-rating-chart',
+    imports: [CommonModule, BaseChartDirective],
+    templateUrl: './rating-chart.component.html',
+    styleUrl: './rating-chart.component.css',
+    standalone: true
 })
 export class RatingChartComponent {
 

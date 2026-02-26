@@ -7,11 +7,11 @@ import { Subscription } from 'rxjs';
 import { UserEntry } from '../shared/user-entry.model';
 
 @Component({
-  selector: 'app-navbar',
-  standalone: true,
-  imports: [RouterModule, CommonModule],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+    selector: 'app-navbar',
+    imports: [RouterModule, CommonModule],
+    templateUrl: './navbar.component.html',
+    styleUrl: './navbar.component.css',
+    standalone: true
 })
 export class NavbarComponent implements OnInit {
 

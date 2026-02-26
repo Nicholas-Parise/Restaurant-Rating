@@ -7,11 +7,11 @@ import { ListEntry } from '../shared/list-entry.model';
 import { ListDataService } from '../shared/list-data.component';
 
 @Component({
-  selector: 'app-restaurant-card',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './restaurant-card.component.html',
-  styleUrl: './restaurant-card.component.css'
+    selector: 'app-restaurant-card',
+    imports: [CommonModule],
+    templateUrl: './restaurant-card.component.html',
+    styleUrl: './restaurant-card.component.css',
+    standalone: true
 })
 export class RestaurantCardComponent implements OnInit {
   @Input() restaurantEntry = {} as RestaurantEntry

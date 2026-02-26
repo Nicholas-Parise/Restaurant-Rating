@@ -2,11 +2,11 @@ import { OnInit, Component, EventEmitter, Output, Input, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-stars',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './stars.component.html',
-  styleUrl: './stars.component.css'
+    selector: 'app-stars',
+    imports: [CommonModule],
+    templateUrl: './stars.component.html',
+    styleUrl: './stars.component.css',
+    standalone: true
 })
 export class StarsComponent implements OnInit{
 

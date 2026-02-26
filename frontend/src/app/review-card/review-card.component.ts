@@ -3,11 +3,11 @@ import { ReviewEntry } from '../shared/review-entry.model';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-review-card',
-  standalone: true,
-  imports: [RouterLink],
-  templateUrl: './review-card.component.html',
-  styleUrl: './review-card.component.css'
+    selector: 'app-review-card',
+    imports: [RouterLink],
+    templateUrl: './review-card.component.html',
+    styleUrl: './review-card.component.css',
+    standalone: true
 })
 export class ReviewCardComponent implements OnInit{
 

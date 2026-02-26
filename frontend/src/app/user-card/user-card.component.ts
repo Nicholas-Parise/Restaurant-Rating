@@ -5,11 +5,11 @@ import { CommonModule } from '@angular/common';
 import { UserDataService } from '../shared/user-data.component';
 
 @Component({
-  selector: 'app-user-card',
-  standalone: true,
-  imports: [RouterLink, CommonModule],
-  templateUrl: './user-card.component.html',
-  styleUrl: './user-card.component.css'
+    selector: 'app-user-card',
+    imports: [RouterLink, CommonModule],
+    templateUrl: './user-card.component.html',
+    styleUrl: './user-card.component.css',
+    standalone: true
 })
 export class UserCardComponent implements OnInit {
   @Input() userEntry = {} as UserEntry;

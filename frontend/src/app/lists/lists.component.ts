@@ -17,11 +17,11 @@ import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-lists',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ListCardComponent, RestaurantCardComponent, RouterLink],
-  templateUrl: './lists.component.html',
-  styleUrl: './lists.component.css'
+    selector: 'app-lists',
+    imports: [CommonModule, FormsModule, ListCardComponent, RestaurantCardComponent, RouterLink],
+    templateUrl: './lists.component.html',
+    styleUrl: './lists.component.css',
+    standalone: true
 })
 export class ListsComponent implements OnInit {
 

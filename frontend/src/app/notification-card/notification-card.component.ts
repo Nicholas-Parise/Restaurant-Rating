@@ -5,11 +5,11 @@ import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-notification-card',
-  standalone: true,
-  imports: [RouterLink, DatePipe],
-  templateUrl: './notification-card.component.html',
-  styleUrl: './notification-card.component.css'
+    selector: 'app-notification-card',
+    imports: [RouterLink, DatePipe],
+    templateUrl: './notification-card.component.html',
+    styleUrl: './notification-card.component.css',
+    standalone: true
 })
 export class NotificationCardComponent {
   @Input() notificationEntry: NotificationEntry;
