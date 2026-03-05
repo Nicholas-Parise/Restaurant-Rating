@@ -36,6 +36,22 @@
           </i>
         </a>
         }
+
+         @if (restaurantEntry?.instagram) {
+        <a target="_blank" [href]="restaurantEntry?.instagram">
+          <i [ngClass]="restaurantEntry?.instagram ? 'fa-brands fa-instagram text-blue pointer': ''" title="instagram">
+          </i>
+        </a>
+        }
+        
+        @if (restaurantEntry?.twitter) {
+        <a target="_blank" [href]="restaurantEntry?.twitter">
+          <i [ngClass]="restaurantEntry?.twitter ? 'fa-brands fa-twitter text-blue pointer': ''" title="twitter">
+          </i>
+        </a>
+        }
+
+
         
         <p>address:
           <a target="_blank" href="{{getMapsLink()}}">
