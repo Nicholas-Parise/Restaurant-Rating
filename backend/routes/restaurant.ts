@@ -33,7 +33,7 @@ router.get('/', async (req, res, next) => {
       result = await db.query(
         `SELECT *, COUNT(*) OVER() AS total_count 
         FROM (
-          SELECT id, name, pictures FROM restaurants 
+          SELECT id, name, pictures, type FROM restaurants 
         ) sub
         LIMIT $1 OFFSET $2;`, [pageSize, offset]);
     }
@@ -87,7 +87,7 @@ router.get('/search', async (req, res, next) => {
         result = await db.query(`
         SELECT *, COUNT(*) OVER() AS total_count 
         FROM (
-          SELECT r.id, r.name, r.pictures, l.city, similarity(r.name, $4) AS sim,
+          SELECT r.id, r.name, r.pictures, r.type, l.city, similarity(r.name, $4) AS sim,
         ST_Distance(
           l.geom::geography,
           ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
@@ -131,7 +131,7 @@ router.get('/search', async (req, res, next) => {
         result = await db.query(`
         SELECT *, COUNT(*) OVER() AS total_count 
           FROM (
-        SELECT r.id, r.name, r.pictures, l.city, 
+        SELECT r.id, r.name, r.pictures, r.type, l.city, 
         ST_Distance(
           l.geom::geography,
           ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
@@ -155,7 +155,7 @@ router.get('/search', async (req, res, next) => {
         result = await db.query(`
           SELECT *, COUNT(*) OVER() AS total_count 
           FROM (
-          SELECT id, name, pictures 
+          SELECT id, name, pictures, type
           FROM restaurants
           ) sub 
           LIMIT $1 OFFSET $2;`, [pageSize, offset]);
