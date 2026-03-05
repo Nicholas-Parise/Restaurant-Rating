@@ -185,7 +185,32 @@ export class RestaurantComponent implements OnInit {
 
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
-    target.src = 'assets/placeholder-restaurant.png';
+
+    console.log('test');
+
+    switch(this.restaurantEntry.type){
+      case "ice_cream":
+        target.src = 'assets/placeholder-icecream.jpg';
+        break;
+      case "pub":
+      case "biergarten":
+      case "bar":
+        target.src = 'assets/placeholder-bar.avif';
+        break;
+      case "cafe":
+        target.src = 'assets/placeholder-coffeshop.avif';  
+        break;
+      case "food_court":
+        target.src = 'assets/placeholder-food-court.png'; 
+        break;
+      case "fast_food":
+        target.src = 'assets/placeholder-fast-food.png';
+        break;
+      case "restaurant":
+      default:
+        target.src = 'assets/placeholder-restaurant.png';
+        break;
+      }   
   }
 
   getMapsLink(): string {

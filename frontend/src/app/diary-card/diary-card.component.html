@@ -5,7 +5,7 @@
 <td class="col-restaurant">
   <div class="restaurant-cell">
     <a [routerLink]="['/restaurant', review.restaurant_id]">
-      <img class="restaurant-image" [src]="review.pictures || 'assets/placeholder-restaurant.png'" alt=""
+      <img class="restaurant-image" [src]="review.pictures" alt=""
         (error)="onImageError($event)">
       </a>
       <a [routerLink]="['/restaurant', review.restaurant_id]" class="restaurant-name">

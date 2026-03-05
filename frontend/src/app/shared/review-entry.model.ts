@@ -11,5 +11,6 @@ export class ReviewEntry{
         public updated: Date,
         public created: Date,
         public pictures : string,
+        public type : string,
         public restaurant_name: string){}
 }

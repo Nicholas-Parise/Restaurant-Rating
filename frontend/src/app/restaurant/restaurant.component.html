@@ -4,7 +4,7 @@
     <h2>{{restaurantEntry?.name}}</h2>
     <div class="grid-container">
       <div class="grid-item">
-        <img class="image" [src]="restaurantEntry?.pictures || 'assets/placeholder-restaurant.png'" alt=""
+        <img class="image" [src]="restaurantEntry?.pictures" alt=""
           (error)="onImageError($event)">
       </div>
       <div class="grid-item">

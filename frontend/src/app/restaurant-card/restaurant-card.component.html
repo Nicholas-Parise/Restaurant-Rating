@@ -1,6 +1,6 @@
 <div class="cardBody" (click)="navigateToRestaurant($event)" (mouseleave)="closeDropdown()">
   <h2 class="name">{{restaurantEntry.name}}</h2>
-  <img class="image" [src]="restaurantEntry.pictures || 'assets/placeholder-restaurant.png'" alt=""
+  <img class="image" [src]="restaurantEntry.pictures" alt=""
     (error)="onImageError($event)">
 
     @if (allowMenu) {
