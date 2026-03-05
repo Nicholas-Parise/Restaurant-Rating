@@ -30,9 +30,19 @@ local restaurant = osm2pgsql.define_table({
         { column = 'breakfast', type = 'boolean' },
         { column = 'lunch', type = 'boolean' },
         { column = 'dinner', type = 'boolean' },
-        { column = 'image', type = 'text' },
-        { column = 'facebook', type = 'text' },
         { column = 'indoor_seating', type = 'boolean' },
+		
+		{ column = 'facebook', type = 'text' },
+		{ column = 'instagram', type = 'text' },
+		{ column = 'twitter', type = 'text' },
+
+		
+		{ column = 'image', type = 'text' },
+		{ column = 'wikimedia_commons', type = 'text' },
+		{ column = 'wikidata', type = 'text' },
+		{ column = 'mapillary', type = 'text' },
+		{ column = 'panoramax', type = 'text' },
+		
         { column = 'tags', type = 'jsonb' }
     },
         if_exists = 'append',
@@ -78,6 +88,21 @@ local function fix_facebook(value)
     end 
     return value
 end
+
+local function fix_instagram(value)
+    if value ~= nil and not string.find(value, "instagram") then
+        return "https://instagram.com/" .. value;
+    end 
+    return value
+end
+
+local function fix_twitter(value)
+    if value ~= nil and not string.find(value, "twitter") then
+        return "https://twitter.com/" .. value;
+    end 
+    return value
+end
+
 
 
 function process_poi(object, geom)
@@ -131,10 +156,19 @@ function process_poi(object, geom)
             breakfast = set_boolean_field(object.tags.breakfast),
             lunch = set_boolean_field(object.tags.lunch),
             dinner = set_boolean_field(object.tags.dinner),
-            image = object.tags.image or object.tags.wikimedia_commons,
-            facebook = fix_facebook(object.tags["contact:facebook"]),
             indoor_seating = set_boolean_field(object.tags.indoor_seating),
-            tags = object.tags
+			
+			facebook = fix_facebook(object.tags["contact:facebook"]),
+			instagram = fix_instagram(object.tags["contact:instagram"]),
+			twitter = fix_twitter(object.tags["contact:twitter"]),
+			
+		    image = object.tags.image,
+			wikimedia_commons = object.tags.wikimedia_commons,
+            wikidata = object.tags.wikidata,
+            mapillary = object.tags.mapillary,
+            panoramax = object.tags.panoramax,
+			
+			tags = object.tags
         }
 
         locations:insert(location_data)
