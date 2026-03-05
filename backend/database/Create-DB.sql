@@ -29,6 +29,7 @@ postalcode TEXT,
 lat DOUBLE PRECISION,
 lon DOUBLE PRECISION,
 geom GEOMETRY(Point, 4326),
+geocode_attempted BOOLEAN DEFAULT FALSE,
 updated TIMESTAMP
 );
 

@@ -1,6 +1,8 @@
 import requests
 import math
 
+session = requests.Session()
+
 BASE_URL = "http://localhost:8080"
 
 OVERPASS = "http://localhost:12345/api/interpreter"
@@ -109,7 +111,7 @@ def haversine(lat1, lon1, lat2, lon2):
 
 
 def reverse(lat, lon):
-    r = requests.get(
+    r = session.get(
         f"{BASE_URL}/reverse",
         params={
             "format": "json",
@@ -131,7 +133,7 @@ def layered_reverse(lat, lon):
     merged = {}
 
     for zoom in zoom_levels:
-        r = requests.get(
+        r = session.get(
             f"{BASE_URL}/reverse",
             params={
                 "format": "json",
