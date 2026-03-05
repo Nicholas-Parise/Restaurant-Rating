@@ -183,7 +183,7 @@ router.get('/:id', async (req, res, next) => {
     }
 
     const res_result = await db.query(
-      `SELECT r.id, r.name, r.pictures
+      `SELECT r.id, r.name, r.pictures, r.type 
       FROM restaurants r
       JOIN listed_restaurants lr ON lr.restaurant_id = r.id
       WHERE lr.list_id = $1;`, [list_id]);

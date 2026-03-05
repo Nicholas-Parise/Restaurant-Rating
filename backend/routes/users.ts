@@ -235,7 +235,7 @@ router.get('/recent', async (req, res, next) => {
     const userId = tempUserId.rows[0].id;
 
     const result = await db.query(
-      `SELECT r.id, r.name, r.pictures FROM reviews rev
+      `SELECT r.id, r.name, r.pictures, r.type FROM reviews rev
         JOIN restaurants r ON rev.restaurant_id = r.id
         WHERE rev.user_id = $1
         ORDER BY rev.created DESC
