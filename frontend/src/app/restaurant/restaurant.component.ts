@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -22,9 +22,13 @@ import { RatingChartComponent } from '../rating-chart/rating-chart.component';
 import { ListDataService } from '../shared/list-data.component';
 import { ListEntry } from '../shared/list-entry.model';
 
+import { RestaurantMapComponent } from '../restaurant-map/restaurant-map.component';
+
+import { UtilService} from '../util.service';
+
 @Component({
     selector: 'app-restaurant',
-    imports: [TagCardComponent, CommonModule, ReviewCardComponent, ReviewFormComponent, RatingChartComponent],
+    imports: [TagCardComponent, CommonModule, ReviewCardComponent, ReviewFormComponent, RatingChartComponent, RestaurantMapComponent],
     templateUrl: './restaurant.component.html',
     styleUrl: './restaurant.component.css',
     standalone: true
@@ -33,6 +37,8 @@ import { ListEntry } from '../shared/list-entry.model';
 export class RestaurantComponent implements OnInit {
 
   @ViewChild(ReviewFormComponent) reviewFormComponent: ReviewFormComponent;
+
+  util = inject(UtilService)
 
   restaurantEntry: any;
   restaurantSubscription = new Subscription();
@@ -188,45 +194,25 @@ export class RestaurantComponent implements OnInit {
 
     console.log('test');
 
-    switch(this.restaurantEntry.type){
-      case "ice_cream":
-        target.src = 'assets/placeholder-icecream.jpg';
-        break;
-      case "pub":
-      case "biergarten":
-      case "bar":
-        target.src = 'assets/placeholder-bar.avif';
-        break;
-      case "cafe":
-        target.src = 'assets/placeholder-coffeshop.avif';  
-        break;
-      case "food_court":
-        target.src = 'assets/placeholder-food-court.png'; 
-        break;
-      case "fast_food":
-        target.src = 'assets/placeholder-fast-food.png';
-        break;
-      case "restaurant":
-      default:
-        target.src = 'assets/placeholder-restaurant.png';
-        break;
-      }   
+    target.src = this.util.getPlaceholderImage(this.restaurantEntry.type); 
   }
 
   getMapsLink(): string {
-    const coords = `${this.restaurantEntry.lat},${this.restaurantEntry.lon}`;
+    const coords = encodeURIComponent(`${this.restaurantEntry.lat},${this.restaurantEntry.lon}`);
     
     const address : string = (this.restaurantEntry.housenumber || this.restaurantEntry.name) +" "+this.restaurantEntry?.addr +" "+ this.restaurantEntry?.city +" "+ this.restaurantEntry?.province +" "+ this.restaurantEntry?.country;
     
     console.log(address);
 
     const encodedAddress = encodeURIComponent(address);
+    const encodedName = encodeURIComponent(this.restaurantEntry.name)
 
     if (/iPhone|iPad|Mac/.test(navigator.userAgent)) {
       return `https://maps.apple.com/?ll=${coords}&q=${encodedAddress}`;
     }
 
-    return `https://www.google.com/maps/search/?api=1&query=${coords}%20(${encodedAddress})`;
+    //return `https://www.google.com/maps/search/?api=1&query=${coords}%20(${encodedAddress})`;
+    return `https://www.google.com/maps/search/?api=1&query=${encodedName}%2C${encodedAddress}`;
   }
 
 }

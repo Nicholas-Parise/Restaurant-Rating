@@ -1,10 +1,12 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, inject, Input, OnInit, SimpleChanges } from '@angular/core';
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
 
 import { Router } from '@angular/router';
 import { ListEntry } from '../shared/list-entry.model';
 import { ListDataService } from '../shared/list-data.component';
+
+import { UtilService} from '../util.service';
 
 @Component({
     selector: 'app-restaurant-card',
@@ -20,6 +22,8 @@ export class RestaurantCardComponent implements OnInit {
   @Input() bookmark: boolean = false;
 
   @Input() list: ListEntry;
+
+  util = inject(UtilService)
 
   allowMenu: boolean = false;
   menuOpen: boolean = false;
@@ -75,29 +79,7 @@ export class RestaurantCardComponent implements OnInit {
 
     console.log('test');
 
-    switch(this.restaurantEntry.type){
-      case "ice_cream":
-        target.src = 'assets/placeholder-icecream.jpg';
-        break;
-      case "pub":
-      case "biergarten":
-      case "bar":
-        target.src = 'assets/placeholder-bar.avif';
-        break;
-      case "cafe":
-        target.src = 'assets/placeholder-coffeshop.avif';  
-        break;
-      case "food_court":
-        target.src = 'assets/placeholder-food-court.png'; 
-        break;
-      case "fast_food":
-        target.src = 'assets/placeholder-fast-food.png';
-        break;
-      case "restaurant":
-      default:
-        target.src = 'assets/placeholder-restaurant.png';
-        break;
-      }   
+    target.src = this.util.getPlaceholderImage(this.restaurantEntry.type); 
   }
 
 }

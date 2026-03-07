@@ -62,6 +62,7 @@ export class ExploreComponent implements OnInit {
   lat: Number | null = null;
   lng: Number | null = null;
   searchRadius = 10;
+  bounce_time = 0;
 
   LoggedIn:boolean;
 
@@ -99,15 +100,15 @@ export class ExploreComponent implements OnInit {
 
     this.combinedSearchSub = combineLatest([
       this.searchQuerySubject.pipe(
-        debounceTime(300)
+        debounceTime(this.bounce_time)
         // ,distinctUntilChanged()
       ),
       this.searchRadiusSubject.pipe(
-        debounceTime(300)
+        debounceTime(this.bounce_time)
         // ,distinctUntilChanged()
       ),
       this.searchPageSubject.pipe(
-        debounceTime(300)
+        debounceTime(this.bounce_time)
         // ,distinctUntilChanged()
       )
     ]).subscribe(([query, radius, page]) => {
@@ -121,6 +122,7 @@ export class ExploreComponent implements OnInit {
       }
 
       this.updateQueryParams();
+      this.bounce_time = 500.0;
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -147,6 +149,7 @@ export class ExploreComponent implements OnInit {
     this.restaurantSubscription.unsubscribe();
     this.combinedSearchSub.unsubscribe();
     this.searchPageSubject.unsubscribe();
+    this.searchRadiusSubject.unsubscribe();
   }
 
 

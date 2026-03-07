@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReviewEntry } from '../shared/review-entry.model';
 import { StarsComponent } from '../stars/stars.component';
 
+import { UtilService} from '../util.service';
 
 @Component({
     selector: '[app-diary-card]',
@@ -18,37 +19,13 @@ export class DiaryCardComponent {
 
   expanded: Boolean = false;
   
+  util = inject(UtilService)
+
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
 
     console.log('test');
 
-    switch(this.review.type){
-      case "ice_cream":
-        target.src = 'assets/placeholder-icecream.jpg';
-        break;
-      case "pub":
-      case "biergarten":
-      case "bar":
-        target.src = 'assets/placeholder-bar.avif';
-        break;
-      case "cafe":
-        target.src = 'assets/placeholder-coffeshop.avif';  
-        break;
-      case "food_court":
-        target.src = 'assets/placeholder-food-court.png'; 
-        break;
-      case "fast_food":
-        target.src = 'assets/placeholder-fast-food.png';
-        break;
-      case "restaurant":
-      default:
-        target.src = 'assets/placeholder-restaurant.png';
-        break;
-      }   
+    target.src = this.util.getPlaceholderImage(this.review.type);   
   }
-
-
-
-
 }

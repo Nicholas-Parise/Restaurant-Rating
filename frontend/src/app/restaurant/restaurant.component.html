@@ -81,8 +81,14 @@
           <span>{{ restaurantEntry.country }}</span>
           }
 </a>
-          
         </p>
+      
+        <app-restaurant-map
+        [lat]="restaurantEntry.lat"
+        [lon]="restaurantEntry.lon"
+        [name]="restaurantEntry.name">
+      </app-restaurant-map>
+
       </div>
       <div class="grid-item">
         <div class="actionsPanel">
