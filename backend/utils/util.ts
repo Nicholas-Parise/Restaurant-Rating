@@ -1,5 +1,7 @@
 import { Response } from "express";
 import db from "./db";
+import * as path from "path";
+import fs from "fs";
 
 export async function getUserId(username: String, res: Response): Promise<number | void> {
 
@@ -21,6 +23,34 @@ export async function getUserId(username: String, res: Response): Promise<number
         return;
     }
 }
+
+// Delete the old picture off of server
+export async function deleteImage(picture: string) {
+
+  const projectRoot = path.join(process.cwd());
+  const filePath = picture;
+
+  // if the file is not null and is different that default
+  if (!filePath || filePath === "/assets/placeholder-avatar.png") return;
+
+  if (!filePath.startsWith('/uploads/')) return;
+
+  const oldPicPath = path.join(projectRoot, filePath);
+
+  try {
+    if (fs.existsSync(oldPicPath)) {
+      await fs.promises.unlink(oldPicPath);
+      console.log("Deleted: " + oldPicPath);
+    } else {
+      console.log("File does not exist:", oldPicPath);
+    }
+  } catch (error: any) {
+    if (error.code !== "ENOENT") {
+      console.error("Error deleting file:", error);
+    }
+  }
+}
+
 
 // returns a string at most the length of max, otherwise the string is unchanged
 export function maxString(str: String, max: number): String | void {

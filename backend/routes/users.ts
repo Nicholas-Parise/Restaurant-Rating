@@ -8,7 +8,7 @@ import authenticate from "../middleware/authenticate";
 import createNotification from "../middleware/createNotification";
 import uploadPicture from '../middleware/upload';
 
-import { getUserId, isEmail, maxString } from "../utils/util";
+import { getUserId, isEmail, maxString, deleteImage } from "../utils/util";
 
 const router = express.Router();
 
@@ -359,17 +359,16 @@ router.post('/upload', authenticate, uploadPicture, async (req, res) => {
   }
 });
 
-
+/*
 // Delete the old profile picture off of server
 async function deleteImage(picture: string) {
 
   const projectRoot = path.join(process.cwd());
-  /*
   //get the file name
-  const user = await db.query("SELECT picture FROM users WHERE id = $1", [userId]);
-  if (user.rows.length === 0) return;
-  const filePath = user.rows[0].picture;
-  */
+  //const user = await db.query("SELECT picture FROM users WHERE id = $1", [userId]);
+  //if (user.rows.length === 0) return;
+  //const filePath = user.rows[0].picture;
+  
   const filePath = picture;
 
   // if the file is not null and is different that default
@@ -392,6 +391,7 @@ async function deleteImage(picture: string) {
     }
   }
 }
+*/
 
 //module.exports = router;
 export default router;
