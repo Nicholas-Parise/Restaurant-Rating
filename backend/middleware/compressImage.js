@@ -8,8 +8,8 @@ const compressImage = async (filePath) => {
 
     try {
         await sharp(filePath)
-            .resize(300, 300, { fit: 'cover' })
-            .jpeg({ quality: 80 })
+            .resize(512, 512, { fit: 'cover', position: 'centre' })
+            .jpeg({ quality: 90 })
             .toFile(outputFilePath);
 
         // Remove the original file and rename the compressed one

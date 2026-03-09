@@ -28,12 +28,14 @@ router.get('/', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
 
     const result = await db.query('SELECT id, username, email, name, bio, picture, pro, setup, notifications, created, updated, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1', [userId]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({ user: result.rows[0] });
+    var user = result.rows[0];
+
+    res.status(200).json({ user });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
@@ -47,8 +49,8 @@ router.put('/', authenticate, async (req, res) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     var { email, name, password, newPassword, bio, notifications, setup } = req.body;
-    let newHashedPassword : string|null = null;
-    let newEmail : string|null = null;
+    let newHashedPassword: string | null = null;
+    let newEmail: string | null = null;
 
     // Type checking
     if (email !== undefined && typeof email !== "string") {
@@ -73,7 +75,7 @@ router.put('/', authenticate, async (req, res) => {
       return res.status(400).json({ error: "setup must be a boolean" });
     }
 
-    if(email && !isEmail(email)){
+    if (email && !isEmail(email)) {
       return res.status(400).json({ error: "wrong email format expected: a@a.a" });
     }
 
@@ -313,12 +315,12 @@ router.get('/:userId', async (req, res) => {
     }
 
     const result = await db.query('SELECT username, name, bio, picture, notifications, pro, created FROM users WHERE username = $1', [userId]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    return res.status(200).json({ user: result.rows[0]});
+    return res.status(200).json({ user: result.rows[0] });
   } catch (error) {
     console.error("Error fetching user:", error);
     return res.status(500).json({ message: 'Error retrieving user data' });
@@ -340,11 +342,15 @@ router.post('/upload', authenticate, uploadPicture, async (req, res) => {
 
   try {
 
-    await deleteImage(userId);
+    //get the file name
+    const user = await db.query("SELECT picture FROM users WHERE id = $1", [userId]);
+    const picture = user.rows[0].picture;
+
+    await deleteImage(picture);
 
     await db.query("UPDATE users SET picture = $1 WHERE id = $2", [filePath, userId]);
 
-    const url = process.env.FRONTEND_URL;
+    const url = process.env.BACKEND_URL;
 
     res.json({ message: "Profile picture updated!", imageUrl: `${url}${filePath}` });
   } catch (error) {
@@ -355,25 +361,37 @@ router.post('/upload', authenticate, uploadPicture, async (req, res) => {
 
 
 // Delete the old profile picture off of server
-async function deleteImage(userId) {
+async function deleteImage(picture: string) {
 
+  const projectRoot = path.join(process.cwd());
+  /*
   //get the file name
   const user = await db.query("SELECT picture FROM users WHERE id = $1", [userId]);
-
+  if (user.rows.length === 0) return;
   const filePath = user.rows[0].picture;
+  */
+  const filePath = picture;
 
   // if the file is not null and is different that default
-  if (filePath && filePath !== "/assets/placeholder-avatar.png") {
-    const oldPicPath = path.join(__dirname, '.', filePath);
+  if (!filePath || filePath === "/assets/placeholder-avatar.png") return;
+
+  if (!filePath.startsWith('/uploads/')) return;
+
+  const oldPicPath = path.join(projectRoot, filePath);
+
+  try {
     if (fs.existsSync(oldPicPath)) {
-      console.log("deleting this file: " + oldPicPath);
-      fs.unlinkSync(oldPicPath);
+      await fs.promises.unlink(oldPicPath);
+      console.log("Deleted: " + oldPicPath);
     } else {
-      console.log("Old picture file does not exist:", oldPicPath);
+      console.log("File does not exist:", oldPicPath);
+    }
+  } catch (error: any) {
+    if (error.code !== "ENOENT") {
+      console.error("Error deleting file:", error);
     }
   }
 }
-
 
 //module.exports = router;
 export default router;

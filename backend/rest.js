@@ -14,6 +14,8 @@ import notificationRoutes from './routes/notifications';
 import bookmarkRoutes from './routes/bookmarks';
 import favouriteRoutes from './routes/favourites';
 
+const responseFormatter = require('./middleware/responseFormatter');
+
 const cors = require('cors');
 const app = express();
 
@@ -39,6 +41,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
+app.use(responseFormatter);
 
 // Routes
 app.use('/reviews', reviewRoutes);
@@ -51,5 +54,6 @@ app.use('/bookmarks',bookmarkRoutes);
 app.use('/favourites',favouriteRoutes);
 app.use('/lists',listRoutes);
 
+app.use('/uploads', express.static('uploads'));
 
 module.exports = app;
