@@ -10,27 +10,25 @@ import { AuthDataService } from './auth-data.component';
 
 export class UserDataService {
 
-  userEntry: UserEntry[] = [];
-  userSubject = new Subject<UserEntry[]>();
+  userEntry: UserEntry;
+  userSubject = new Subject<UserEntry>();
+
+  friendEntry: UserEntry[] = [];
+  friendSubject = new Subject<UserEntry[]>();
+
+  userSearchEntry: UserEntry[] = [];
+  userSearchSubject = new Subject<UserEntry[]>();
 
   totalusers: number = 0;
   totalPages: number = 0;
 
 
-  friendEntry: UserEntry[] = [];
-  friendSubject = new Subject<UserEntry[]>();
-
   constructor(private http: HttpClient) { }
 
   private baseUrl = 'http://localhost:3000/';
 
-
-  GetUsers() {
-    //return this.userEntry;
-  }
-
   GetUserById(username: string) {
-    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}users/${username}`).subscribe((jsonData) => {
+    this.http.get<{ user: UserEntry, totalReviews: Number }>(`${this.baseUrl}users/${username}`).subscribe((jsonData) => {
       this.userEntry = jsonData.user;
       this.userSubject.next(this.userEntry);
     })
@@ -40,10 +38,11 @@ export class UserDataService {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}users`, { headers }).subscribe((jsonData) => {
-      this.userEntry = jsonData.user;
-      this.userSubject.next(this.userEntry);
-    })
+    this.http.get<{ user: UserEntry, totalReviews: Number  }>(`${this.baseUrl}users`, { headers })
+      .subscribe((jsonData) => {
+        this.userEntry = jsonData.user;
+        this.userSubject.next(this.userEntry);
+      })
   }
 
 
@@ -51,7 +50,7 @@ export class UserDataService {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.put<{ user: UserEntry[], message: string }>(`${this.baseUrl}users`, singleUserEntry, { headers }).subscribe((jsonData) => {
+    this.http.put<{ user: UserEntry, message: string }>(`${this.baseUrl}users`, singleUserEntry, { headers }).subscribe((jsonData) => {
       this.userEntry = jsonData.user;
       this.userSubject.next(this.userEntry);
     })
@@ -133,8 +132,12 @@ export class UserDataService {
   uploadProfilePicture(data: FormData) {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}users/upload`, data, { headers }).subscribe((jsonData) => {
+    this.http.post<{ imageUrl: string, message: string }>(`${this.baseUrl}users/upload`, data, { headers }).subscribe((jsonData) => {
       console.log(jsonData);
+
+      console.log(this.userEntry);
+      this.userEntry.picture = jsonData.imageUrl;
+      this.userSubject.next(this.userEntry);
     })
   }
 
@@ -144,14 +147,13 @@ export class UserDataService {
     let args = `?q=${searchQuery}&page=${page}`;
 
     this.http.get<{ users: UserEntry[], totalusers: number, pageSize: number }>(`${this.baseUrl}users/search${args}`).subscribe((jsonData) => {
-      this.userEntry = jsonData.users;
+      this.userSearchEntry = jsonData.users;
       this.totalusers = jsonData.totalusers;
       this.totalPages = Math.ceil(this.totalusers / jsonData.pageSize);
       console.log(this.totalusers, this.totalPages);
-      this.userSubject.next(this.userEntry);
+      this.userSearchSubject.next(this.userSearchEntry);
     })
   }
-
 
 
 }

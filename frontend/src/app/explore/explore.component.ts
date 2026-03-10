@@ -76,9 +76,9 @@ export class ExploreComponent implements OnInit {
     });
 
 
-    this.userSubscription = this.userDataService.userSubject.subscribe(userEntry => {
+    this.userSubscription = this.userDataService.userSearchSubject.subscribe(userSearchEntry => {
       //console.log(restaurantEntry)
-      this.userEntry = userEntry;
+      this.userEntry = userSearchEntry;
       this.maxPages = this.userDataService.totalPages;
       console.log(this.maxPages);
     });

@@ -1,15 +1,15 @@
-export class UserEntry{
-    constructor(public id:number, 
-        public name: string | null,
-        public email: string, 
-        public username: string, 
-        public picture: string, 
-        public bio: string,
-        public notifications: boolean, 
-        public isOwner: boolean, 
-        public isCritic: boolean,
-        public status:string,
-        public direction:string
-        ){}
+export interface UserEntry {
+    id: number,
+    name: string | null,
+    email: string,
+    username: string,
+    picture: string,
+    bio: string,
+    notifications: boolean,
+    isOwner: boolean,
+    isCritic: boolean,
+    status: string,
+    direction: string,
+    updated: Date,
+    created: Date
 }
-    
