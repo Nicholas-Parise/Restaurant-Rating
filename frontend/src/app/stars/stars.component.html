@@ -1,5 +1,7 @@
 <div class="stars-input" (mouseleave)="removeHover()">
-  <span (click)="removeRating()" class="close fa-solid fa-circle-xmark"></span>
+  @if (!static) {
+    <span (click)="removeRating()" class="close fa-solid fa-circle-xmark"></span>
+  }
   @for (star of stars; track star; let i = $index) {
     <span
       class="star"

@@ -99,6 +99,7 @@ export class ReviewFormComponent implements OnInit {
       new Date(),
       "null",
       "null",
+      "null",
       "null");
 
     this.reviewDataService.onAddReviewEntry(newEntry);

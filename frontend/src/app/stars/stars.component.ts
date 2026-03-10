@@ -2,13 +2,13 @@ import { OnInit, Component, EventEmitter, Output, Input, OnChanges, SimpleChange
 
 
 @Component({
-    selector: 'app-stars',
-    imports: [],
-    templateUrl: './stars.component.html',
-    styleUrl: './stars.component.css',
-    standalone: true
+  selector: 'app-stars',
+  imports: [],
+  templateUrl: './stars.component.html',
+  styleUrl: './stars.component.css',
+  standalone: true
 })
-export class StarsComponent implements OnInit{
+export class StarsComponent implements OnInit {
 
   stars = [1, 2, 3, 4, 5];
   selectedRating = 0;
@@ -26,18 +26,20 @@ export class StarsComponent implements OnInit{
   }
 
 
- ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['inputRating'] && !changes['inputRating'].firstChange) {
       this.selectedRating = changes['inputRating'].currentValue;
     }
   }
 
 
-getRating(): number{
-return this.selectedRating;
-}
+  getRating(): number {
+    return this.selectedRating;
+  }
 
-onStarHover(event: MouseEvent, star: number): void {
+  onStarHover(event: MouseEvent, star: number): void {
+
+    if (this.static) return;
 
     const onFirstHalf = this.onFirstHalf(event);
 
@@ -48,11 +50,13 @@ onStarHover(event: MouseEvent, star: number): void {
     }
   }
 
-onStarClick(event: MouseEvent, star: number): void {
+  onStarClick(event: MouseEvent, star: number): void {
+
+    if (this.static) return;
 
     const onFirstHalf = this.onFirstHalf(event);
 
-     this.removeHover();
+    this.removeHover();
 
     if (onFirstHalf) {
       this.selectedRating = (star + 1) * 2;
@@ -62,11 +66,14 @@ onStarClick(event: MouseEvent, star: number): void {
     this.rating.emit(this.selectedRating);
   }
 
-  removeHover(){
+  removeHover() {
     this.hoverRating = 0;
   }
 
-  removeRating(){
+  removeRating() {
+
+    if (this.static) return;
+
     this.selectedRating = 0;
     this.rating.emit(this.selectedRating);
   }

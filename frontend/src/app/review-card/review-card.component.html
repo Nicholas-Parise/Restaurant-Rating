@@ -1,18 +1,19 @@
 <div class="comment">
 
-    <p class="signature">Review by: <a [routerLink]="['/user', reviewEntry.username]">{{reviewEntry.name || reviewEntry.username}}</a></p>
-    <p>{{reviewEntry.description}}</p>
+    <a [routerLink]="['/user', reviewEntry.username]">
+    <img class="image" [src]="reviewEntry.picture || 'assets/placeholder-avatar.png'" alt="Profile Picture"
+        (error)="onImageError($event)">
+    </a>
+    <div class="comment-body">
+        <p class="signature">Review by: <a [routerLink]="['/user', reviewEntry.username]">{{reviewEntry.name ||
+                reviewEntry.username}}</a></p>
+        <p>{{reviewEntry.description}}</p>
 
-    <div class="stars">
-        <span class="star" [class.on]="reviewEntry.score >= 2" [class.half]="reviewEntry.score == 1 "></span>
-        <span class="star" [class.on]="reviewEntry.score >= 4" [class.half]="reviewEntry.score == 3 "></span>
-        <span class="star" [class.on]="reviewEntry.score >= 6" [class.half]="reviewEntry.score == 5 "></span>
-        <span class="star" [class.on]="reviewEntry.score >= 8" [class.half]="reviewEntry.score == 7 "></span>
-        <span class="star" [class.on]="reviewEntry.score >= 10" [class.half]="reviewEntry.score == 9 "></span>
-        <span class="heart" [class.on]="reviewEntry.liked == true"></span> 
-        <!-- 
-        <span class="visited" [class.on]="reviewEntry.visited == true"></span>  
-        -->
+        <div class="stars">
+            <app-stars [inputRating]=reviewEntry.score [static]=true></app-stars>
+            
+            <span class="heart" [class.on]="reviewEntry.liked == true"></span>
+        </div>
+
     </div>
 </div>
-

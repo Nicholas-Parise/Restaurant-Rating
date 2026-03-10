@@ -62,7 +62,7 @@
     </li>
     <li class="star-row">
       <label class="rating-label">Rate</label>
-      <app-stars [inputRating]="selectedRating" (rating)="getDataFromStar($event)"></app-stars>
+      <app-stars class="star-row" [inputRating]="selectedRating" (rating)="getDataFromStar($event)"></app-stars>
     </li>
     <li class="action-buttons">
       <button class="top btn" (click)="showForm()">Add a Review</button>

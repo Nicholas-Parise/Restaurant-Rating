@@ -1,25 +1,23 @@
 .close{
-    cursor: pointer;
-    width: 20px;
-    display: inline-block;
-    color: gray;
-    margin-top: 10px;
-    transition: 0.2s;
-    position: relative;
-    left: 10px;
-    opacity: 0;
-  }
+  cursor: pointer;
+  width: 20px;
+  color: gray;
+  position: absolute;
+  left: -22px;
+  top: 10px;
+  opacity: 0;
+  transition: 0.2s;
+}
 
 .close:hover{
-  left: 5px;
+  left: -20px;
   opacity: 1;
 }
 
 .stars-input {
   display: flex;
   gap: 4px;
-   position: relative;
-  right: 20px;
+  position: relative;
 }
 
 .star {

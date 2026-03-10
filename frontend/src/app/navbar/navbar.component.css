@@ -28,7 +28,6 @@ li a:hover {
   justify-content: space-between;
   align-items: center;
   background-color: var(--navbar);
-  ;
   padding: 0.75rem 1.5rem;
   border-bottom: 1px solid var(--navbar);
   position: sticky;
