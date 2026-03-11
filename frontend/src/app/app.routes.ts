@@ -4,7 +4,6 @@ import { ExploreComponent } from './explore/explore.component';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user.component';
 import { RestaurantComponent } from './restaurant/restaurant.component';
-import { TagComponent } from './tag/tag.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { FriendsComponent } from './friends/friends.component';
@@ -30,7 +29,6 @@ export const routes: Routes = [
     {path: 'user/:username/bookmarked', component: BookmarkedComponent},
     {path: 'user/:username', component: UserComponent},
     {path: 'user', component: UserComponent},
-    {path: 'tag/:id', component: TagComponent},
     {path: 'login', component: LoginComponent},
     {path: 'register', component: RegisterComponent},
     {path: 'about', component: AboutComponent},

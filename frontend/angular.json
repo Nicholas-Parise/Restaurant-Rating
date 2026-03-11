@@ -13,6 +13,9 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "allowedCommonJsDependencies": [
+                "leaflet"
+            ],
             "outputPath": "dist/restaurant-rating",
             "index": "src/index.html",
             "browser": "src/main.ts",

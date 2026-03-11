@@ -10,8 +10,15 @@
       <div class="grid-item">
         <p>{{ restaurantEntry?.description }}</p>
         <p><strong>Type:</strong> {{ restaurantEntry?.type }}</p>
-        @if (restaurantEntry?.cuisine) {
-        <p><strong>Cuisine:</strong> {{ restaurantEntry?.cuisine }}</p>
+        @if (restaurantEntry?.categories) {
+        <div class="tags">
+          @for (tagEntry of restaurantEntry.categories; track tagEntry) {
+          <div class="center tag-item">
+            <app-tag-card [tagEntry]="tagEntry"></app-tag-card>
+          </div>
+          }
+        </div>
+
         }
         @if (restaurantEntry?.opening_hours) {
         <p><strong>Opening Hours:</strong> {{ restaurantEntry?.opening_hours }}
@@ -176,13 +183,7 @@
         </li>
       </ul>
     </div>
-    <div class="tags">
-      @for (tagEntry of tagEntry; track tagEntry) {
-      <div class="center tag-item">
-        <app-tag-card [tagEntry]="tagEntry"></app-tag-card>
-      </div>
-      }
-    </div>
+
     <h2>Food items</h2>
     <div class="foods">
       <!-- ngfor to place all foods -->

@@ -1,37 +1,16 @@
-    
-.cardBody{
-    /*  min-width: 300px;*/
-      max-width: 100px;
-      max-height: 50px;
+.tag {
+  display: inline-block;
+  color: white;
+  padding: 6px 12px;
+  margin: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: background-color 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
 
-      padding: 0px !important;
-      cursor: pointer;
-      display: block;
-    }
-
-
-    a{
-    text-decoration: none;
-    color: white;
-    }
-
-
-    .tooltip{
-        visibility: hidden;
-        width: 120px;
-        background-color: black;
-        color: #fff;
-        text-align: center;
-        padding: 5px 0;
-        border-radius: 6px;
-        margin-left: -60px;
-
-        /* Position the tooltip text - see examples below! */
-        position: absolute;
-        z-index: 1;
-      }
-      
-      /* Show the tooltip text when you mouse over the tooltip container */
-      .cardBody:hover .tooltip {
-        visibility: visible;
-      }
+.tag:hover {
+  transform: translateY(-1px);
+}

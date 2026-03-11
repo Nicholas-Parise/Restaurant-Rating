@@ -3,6 +3,7 @@ import { RestaurantEntry } from './restaurant-entry.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { AuthDataService } from './auth-data.component';
+import { TagEntry } from './tag-entry.model';
 
 @Injectable({
   providedIn: 'root'

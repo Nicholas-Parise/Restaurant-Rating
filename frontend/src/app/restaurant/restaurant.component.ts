@@ -8,7 +8,6 @@ import { AuthDataService } from '../shared/auth-data.component';
 import { RestaurantDataService } from '../shared/restaurant-data.component';
 import { RestaurantEntry } from '../shared/restaurant-entry.model';
 
-import { TagDataService } from '../shared/tag-data.component';
 import { TagEntry } from '../shared/tag-entry.model';
 import { TagCardComponent } from "../tag-card/tag-card.component";
 
@@ -48,7 +47,6 @@ export class RestaurantComponent implements OnInit {
   bookmarked: boolean = false;
 
   tagEntry: TagEntry[]
-  tagSubscription = new Subscription();
 
   reviewEntry: ReviewEntry[]
   reviewSubscription = new Subscription();
@@ -66,7 +64,6 @@ export class RestaurantComponent implements OnInit {
 
   constructor(private router: Router,
     private restaurantDataService: RestaurantDataService,
-    private tagDataService: TagDataService,
     private reviewDataService: ReviewDataService,
     private route: ActivatedRoute,
     private authDataService: AuthDataService,
@@ -75,7 +72,6 @@ export class RestaurantComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.reviewSubscription.unsubscribe();
-    this.tagSubscription.unsubscribe();
     this.restaurantSubscription.unsubscribe();
     this.userReviewSubscription.unsubscribe();
     this.bookmarkSubscription.unsubscribe();
@@ -91,18 +87,10 @@ export class RestaurantComponent implements OnInit {
       this.maxPages = this.reviewDataService.totalPages;
     });
 
-
     this.userReviewSubscription = this.reviewDataService.userReviewSubject.subscribe(userReviewEntry => {
       this.userReviewEntry = userReviewEntry;
       this.maxPages = this.reviewDataService.totalUserPages;
     });
-
-
-    this.tagSubscription = this.tagDataService.tagSubject.subscribe(tagEntry => {
-      this.tagEntry = tagEntry;
-    });
-    this.tagEntry = this.tagDataService.GetTags();
-
 
     this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
       //console.log(restaurantEntry)
