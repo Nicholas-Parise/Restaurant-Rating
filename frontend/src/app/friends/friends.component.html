@@ -23,7 +23,7 @@
 
 
   @if (activeTab === 'pending' && LoggedIn) {
-
+  <h2>Pending</h2>
   <h3 (click)="showPendingSent=!showPendingSent" class="collapse">
     Sent
     <span class="arrow" [class.open]="showPendingSent">▶</span>
@@ -65,7 +65,7 @@
 
 
   @if (activeTab === 'declined' && LoggedIn) {
-
+  <h2>Declined</h2>
   <h3 (click)="showDeclinedSent=!showDeclinedSent" class="collapse">
     Sent
     <span class="arrow" [class.open]="showPendingSent">▶</span>

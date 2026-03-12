@@ -1,0 +1,5 @@
+.container {
+  background: var(--lightbackground);
+  border-radius: 10px;
+  border: 1px solid #3c455a;
+}
