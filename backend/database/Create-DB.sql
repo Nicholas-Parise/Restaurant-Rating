@@ -12,11 +12,13 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS restaurant_cats;
 DROP TABLE IF EXISTS menuItems;
 DROP TABLE IF EXISTS restaurants;
+DROP TABLE IF EXISTS category_aliases;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS locations;
 */
 CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS unaccent;
 
 CREATE TABLE locations (
 id SERIAL PRIMARY KEY,
@@ -37,9 +39,14 @@ CREATE INDEX idx_locations_geom ON locations USING GIST ((geom::geography));
 
 CREATE TABLE categories(
 id SERIAL PRIMARY KEY,   
-name TEXT,
+name TEXT UNIQUE NOT NULL,
 description TEXT,
 created TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE category_aliases (
+alias TEXT PRIMARY KEY,
+canonical_category_id INT REFERENCES categories(id) ON DELETE CASCADE
 );
 
 
@@ -95,11 +102,14 @@ updated TIMESTAMP
 );
 
 CREATE TABLE restaurant_cats( 
-restaurant_id BIGINT REFERENCES restaurants (id),
-category_id INTEGER REFERENCES categories (id),
+restaurant_id BIGINT NOT NULL REFERENCES restaurants (id) ON DELETE CASCADE,
+category_id INTEGER NOT NULL REFERENCES categories (id) ON DELETE CASCADE,
 PRIMARY KEY (restaurant_id, category_id),
 created TIMESTAMP DEFAULT NOW()
 );
+
+CREATE INDEX idx_restaurantcats_restaurant ON restaurant_cats(restaurant_id);
+CREATE INDEX idx_restaurantcats_category ON restaurant_cats(category_id);
 
 
 CREATE TABLE users(
@@ -117,6 +127,7 @@ notifications BOOLEAN,
 isadmin BOOLEAN,
 iscritic BOOLEAN,
 isowner BOOLEAN,
+permissions TEXT CHECK (permissions IN ('user', 'moderator', 'admin')) DEFAULT 'user',
 google_id TEXT UNIQUE,
 provider TEXT,
 stripe_customer_id TEXT,
@@ -133,8 +144,8 @@ CREATE INDEX users_name_trgm_idx ON users USING GIN (name gin_trgm_ops);
 CREATE INDEX users_username_trgm_idx ON users USING GIN (username gin_trgm_ops);
 
 CREATE TABLE friends(  
-user_id integer REFERENCES users(id) ON DELETE CASCADE,
-friend_id integer REFERENCES users(id) ON DELETE CASCADE,
+user_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+friend_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 status TEXT CHECK (status IN ('pending', 'accepted', 'declined')) DEFAULT 'pending',
 created TIMESTAMP DEFAULT NOW(),
 updated TIMESTAMP,
@@ -147,7 +158,7 @@ CREATE INDEX idx_friends_status_addressee ON friends(status, friend_id);
 
 CREATE TABLE notifications(
 id SERIAL PRIMARY KEY,   
-user_id integer REFERENCES users(id) ON DELETE CASCADE,
+user_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 title TEXT,
 body TEXT,
 url TEXT,
@@ -162,7 +173,7 @@ created TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE sessions(  
-user_id integer REFERENCES users(id) ON DELETE CASCADE,
+user_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 token TEXT UNIQUE,
 PRIMARY KEY(user_id, token),
 created TIMESTAMP DEFAULT NOW()
@@ -171,8 +182,8 @@ created TIMESTAMP DEFAULT NOW()
 
 CREATE TABLE reviews(
 id SERIAL PRIMARY KEY, 
-restaurant_id BIGINT REFERENCES restaurants(id) ON DELETE CASCADE,
-user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+restaurant_id BIGINT NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
+user_id BIGINT REFERENCES NOT NULL users(id) ON DELETE CASCADE,
 liked BOOLEAN,
 visited BOOLEAN,
 score INT,
@@ -186,16 +197,16 @@ CREATE INDEX idx_reviews_restaurant ON reviews(restaurant_id);
 
 
 CREATE TABLE favorite_restaurant(
-restaurant_id BIGINT REFERENCES restaurants(id) ON DELETE CASCADE,
-user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+restaurant_id BIGINT NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
+user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 sequence INT,
 created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, user_id)
 );
 
 CREATE TABLE bookmarked_restaurant(
-restaurant_id BIGINT REFERENCES restaurants(id) ON DELETE CASCADE,
-user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+restaurant_id BIGINT NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
+user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, user_id)
 );
@@ -203,17 +214,17 @@ PRIMARY KEY(restaurant_id, user_id)
 
 CREATE TABLE lists(
 id SERIAL PRIMARY KEY,
-user_id BIGINT REFERENCES users(id) ON DELETE CASCADE, 
+user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE, 
 name TEXT NOT NULL,
 description TEXT,
 updated TIMESTAMP,
 created TIMESTAMP DEFAULT NOW()
 );
-CREATE INDEX lists_name_trgm_idx ON users USING GIN (name gin_trgm_ops);
+CREATE INDEX lists_name_trgm_idx ON lists USING GIN (name gin_trgm_ops);
 
 CREATE TABLE listed_restaurants(
-restaurant_id BIGINT REFERENCES restaurants(id),
-list_id BIGINT REFERENCES lists(id) ON DELETE CASCADE,
+restaurant_id BIGINT NOT NULL REFERENCES restaurants(id),
+list_id BIGINT NOT NULL REFERENCES lists(id) ON DELETE CASCADE,
 priority INT,
 created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, list_id)

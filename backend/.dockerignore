@@ -1,0 +1,5 @@
+node_modules
+dist
+osm2pgsql-bin
+.git
+.env

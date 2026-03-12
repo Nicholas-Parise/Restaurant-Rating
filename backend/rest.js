@@ -56,4 +56,8 @@ app.use('/lists',listRoutes);
 
 app.use('/uploads', express.static('uploads'));
 
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 module.exports = app;
