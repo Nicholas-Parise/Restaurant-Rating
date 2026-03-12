@@ -3,7 +3,7 @@ import { ReviewEntry } from './review-entry.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { AuthDataService } from './auth-data.component';
-
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,7 @@ export class ReviewDataService {
 
   constructor(private http: HttpClient) { }
 
-  private baseUrl = 'http://localhost:3000/';
+  private baseUrl = environment.apiEndpoint;
 
   // get authenticated user reviews
   GetReviews(page: number, pageSize: number) {

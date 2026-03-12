@@ -3,7 +3,7 @@ import { RestaurantEntry } from './restaurant-entry.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { AuthDataService } from './auth-data.component';
-import { TagEntry } from './tag-entry.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +30,7 @@ export class RestaurantDataService {
 
   constructor(private http: HttpClient) { }
 
-  private baseUrl = 'http://localhost:3000/';
+  private baseUrl = environment.apiEndpoint;
 
   GetResturaunts() {
     this.http.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`${this.baseUrl}restaurants`).subscribe((jsonData) => {

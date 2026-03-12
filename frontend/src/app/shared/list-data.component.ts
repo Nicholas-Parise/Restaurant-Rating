@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { AuthDataService } from './auth-data.component';
 import { ListEntry } from './list-entry.model';
 import { RestaurantEntry } from './restaurant-entry.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class ListDataService {
 
   constructor(private http: HttpClient) { }
 
-  private baseUrl = 'http://localhost:3000/';
+  private baseUrl = environment.apiEndpoint;
 
   getListById(list_id: number | string) {
 

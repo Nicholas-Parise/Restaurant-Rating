@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { AuthDataService } from './auth-data.component';
 import { NotificationEntry } from './notification-entry.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class NotificationsDataService {
 
   constructor(private http: HttpClient) { }
 
-  private baseUrl = 'http://localhost:3000/';
+  private baseUrl = environment.apiEndpoint;
 
   Get() {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);

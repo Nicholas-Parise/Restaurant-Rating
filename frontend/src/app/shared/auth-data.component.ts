@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angul
 import { throwError, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserEntry } from './user-entry.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AuthDataService {
 
   constructor(private http: HttpClient) { }
 
-  private baseUrl = 'http://localhost:3000/';
+  private baseUrl = environment.apiEndpoint;
 
   private loggedin: boolean | null = null;
   private username: string;

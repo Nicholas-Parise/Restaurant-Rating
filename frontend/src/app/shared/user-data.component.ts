@@ -3,6 +3,7 @@ import { UserEntry } from './user-entry.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { AuthDataService } from './auth-data.component';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class UserDataService {
 
   constructor(private http: HttpClient) { }
 
-  private baseUrl = 'http://localhost:3000/';
+  private baseUrl = environment.apiEndpoint;
 
   GetUserById(username: string) {
     this.http.get<{ user: UserEntry, totalReviews: Number }>(`${this.baseUrl}users/${username}`).subscribe((jsonData) => {
