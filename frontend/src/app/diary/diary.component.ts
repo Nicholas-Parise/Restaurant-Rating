@@ -36,7 +36,6 @@ export class DiaryComponent implements OnInit {
   ngOnInit(): void {
 
     this.diarySubscription = this.reviewDataService.userReviewSubject.subscribe(reviewEntry => {
-      console.log(reviewEntry);
       this.diaryEntries = reviewEntry;
       this.maxPages = this.reviewDataService.totalUserPages;
     });

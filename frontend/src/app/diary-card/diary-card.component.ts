@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReviewEntry } from '../shared/review-entry.model';
 import { StarsComponent } from '../stars/stars.component';
-
 import { UtilService} from '../util.service';
 
 @Component({
@@ -18,14 +17,10 @@ export class DiaryCardComponent {
 @Input() review: ReviewEntry;
 
   expanded: Boolean = false;
-  
   util = inject(UtilService)
 
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
-
-    console.log('test');
-
     target.src = this.util.getPlaceholderImage(this.review.type);   
   }
 }

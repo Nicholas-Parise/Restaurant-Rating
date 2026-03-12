@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angul
 import { throwError, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserEntry } from './user-entry.model';
-import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +14,11 @@ export class AuthDataService {
 
   private baseUrl = 'http://localhost:3000/';
 
-  loggedin: boolean | null = null;
-  username: string;
-  picture: string;
-  userEntry: UserEntry;
-
-  authSubject = new Subject<UserEntry | null>();
+  private loggedin: boolean | null = null;
+  private username: string;
+  private picture: string;
+  private userEntry: UserEntry;
+  private loginCheckPromise: Promise<boolean> | null = null;
 
   PostRegister(username: String, password: String, email: String): Observable<any> {
 
@@ -45,7 +43,6 @@ export class AuthDataService {
           this.username = response.username;
           this.picture = response.picture;
           this.userEntry = response;
-          this.authSubject.next(this.userEntry);
         }
       }),
       catchError((error) => {
@@ -62,33 +59,58 @@ export class AuthDataService {
       console.log(jsonData);
     })
     localStorage.removeItem("authToken");
-    this.authSubject.next(null);
+    this.loginCheckPromise = null;
   }
 
 
   async getIsLoggedIn(): Promise<boolean> {
-    console.log(this.loggedin);
+
     if (this.loggedin !== null) {
       return this.loggedin;
     }
 
+
+    if(this.loginCheckPromise){
+      return this.loginCheckPromise;
+    }
+    console.log("contacting server");
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+/*
     try {
-      console.log("contacting server");
-      const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
       const response = await this.http.get<any>(`${this.baseUrl}auth/me`, { headers }).toPromise();
 
       this.loggedin = true;
       this.username = response.username;
       this.picture = response.picture;
       this.userEntry = response;
-      this.authSubject.next(this.userEntry);
-      //console.log(this.userEntry);
       return true;
-
     } catch (error) {
       this.loggedin = false;
       return false;
     }
+*/
+    this.loginCheckPromise = this.http
+      .get<any>(`${this.baseUrl}auth/me`, { headers })
+      .toPromise()
+      .then(response => {
+
+        this.loggedin = true;
+        this.username = response.username;
+        this.picture = response.picture;
+        this.userEntry = response;
+        return true;
+      })
+      .catch(() => {
+        this.loggedin = false;
+        return false;
+      })
+      .finally(() => {
+        // allow future refresh if needed
+        this.loginCheckPromise = null;
+      });
+
+    return this.loginCheckPromise;
   }
 
 
@@ -100,7 +122,6 @@ export class AuthDataService {
       })
     );
   }
-
 
 
   getUsername(): string {
@@ -118,9 +139,6 @@ export class AuthDataService {
   static getToken(): string | null {
     return localStorage.getItem('authToken');
   }
-
-
-
 
 
 }

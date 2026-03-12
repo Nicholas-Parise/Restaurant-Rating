@@ -30,15 +30,6 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.authSubscription = this.authDataService.authSubject.subscribe(userEntry => {
-      if (userEntry) {
-        this.picture = userEntry.picture;
-        this.loggedIn = true;
-      } else {
-        this.loggedIn = false;
-      }
-    });
-
     this.authDataService.getIsLoggedIn().then(isLoggedIn => {
       if (isLoggedIn) {
         this.picture = this.authDataService.getPicture();
@@ -52,25 +43,20 @@ export class NavbarComponent implements OnInit {
     target.src = 'assets/placeholder-avatar.png';
   }
 
-
-
   toggleNav() {
     this.navOpen = !this.navOpen;
   }
-
-
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
   }
 
   closeDropdown() {
-    // Close dropdown when losing focus
     setTimeout(() => this.dropdownOpen = false, 150);
   }
 
   signOut() {
-    this.authDataService.signOut(); // You should define this in your auth service
+    this.authDataService.signOut();
     this.router.navigate(['/login']);
   }
 
