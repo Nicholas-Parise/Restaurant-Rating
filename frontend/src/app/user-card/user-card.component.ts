@@ -76,6 +76,7 @@ export class UserCardComponent implements OnInit {
   reportUser(): void {
     // TODO: implement report
     console.log(`Report user: ${this.userEntry.username}`);
+    console.log("TO BE IMPLIMENTED");
     this.menuOpen = false;
   }
 

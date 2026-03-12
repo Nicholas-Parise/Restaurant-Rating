@@ -1,4 +1,6 @@
 :root {
+  --lightbackground: rgb(53, 71, 88);
+  --lightbackgroundHover: rgb(100, 121, 141);
   --background: rgb(36, 48, 60);
   --review: rgb(54, 66, 78);
   --navbar: rgb(54, 66, 78);
@@ -251,4 +253,14 @@ html {
 .btn-cancel:hover{
   /*background:rgb(204, 32, 32);*/
     background: #c9302c;
+}
+
+
+.arrow{
+  transition: transform 0.2s ease;
+  font-size:14px;
+}
+
+.arrow.open{
+  transform: rotate(90deg);
 }

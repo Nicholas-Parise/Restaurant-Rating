@@ -87,17 +87,16 @@ export class UserComponent {
       if (this.username) {
 
         this.userDataService.GetUserById(this.username);
-        this.reviewDataService.getUserReviews(this.username, 0, 10);
-        this.restaurantDataService.GetRecentResturaunts(this.username);
         this.restaurantDataService.GetFavouriteResturaunts(this.username);
-
+        this.restaurantDataService.GetRecentResturaunts(this.username);
+        this.reviewDataService.getUserReviews(this.username, 0, 10);
       } else {
         this.authDataService.getIsLoggedIn().then(isLoggedIn => {
           if (isLoggedIn) {
             this.userDataService.GetUser();
-            this.reviewDataService.GetReviews(0, 10);
-            this.restaurantDataService.GetRecentResturaunts(this.authDataService.getUsername());
             this.restaurantDataService.GetFavouriteResturaunts(this.authDataService.getUsername());
+            this.restaurantDataService.GetRecentResturaunts(this.authDataService.getUsername());
+            this.reviewDataService.GetReviews(0, 10);
             this.LoggedIn = true;
           } else {
             this.LoggedIn = false;

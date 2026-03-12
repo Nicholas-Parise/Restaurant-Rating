@@ -1,0 +1,56 @@
+.tab-bar{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.tab-bar button{
+  padding:8px 16px;
+  border:none;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.tab-bar button.active{
+  background:#444;
+}
+
+.collapse{
+  cursor:pointer;
+  margin-top:15px;
+}
+
+.container {
+  background: var(--lightbackground);
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #3c455a;
+}
+
+.section-card{
+  background:var(--review);
+  padding:20px;
+  border-radius:8px;
+  border:1px solid #e6e6e6;
+  margin-bottom:20px;
+}
+
+
+.collapse{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  padding:12px 10px;
+  font-weight:600;
+  border-top:1px solid #e5e5e5;
+  border-radius:2px;
+}
+
+.collapse:first-child{
+  border-top:none;
+}
+
+.collapse:hover{
+  background:var(--lightbackgroundHover);
+}

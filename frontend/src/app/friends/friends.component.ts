@@ -31,6 +31,16 @@ export class FriendsComponent implements OnInit {
   username: string | null;
   LoggedIn: boolean = false;
 
+  activeTab: 'friends' | 'pending' | 'declined' = 'friends';
+
+  showPendingSent = true;
+  showPendingReceived = true;
+
+  showDeclinedSent = true;
+  showDeclinedReceived = true;
+
+
+
   acceptedUsers: UserEntry[];
   pendingUsers: UserEntry[];
   declinedUsers: UserEntry[];

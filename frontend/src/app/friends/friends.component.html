@@ -1,58 +1,109 @@
 <div class="container">
-  <h2>Friends</h2>
 
-  <div class="spacer grid-container">
-    @for (userEntry of acceptedUsers; track userEntry) {
-      <div class="center grid-item">
-        <app-user-card [userEntry]="userEntry" [menu]="LoggedIn"></app-user-card>
-      </div>
+  <div class="tab-bar">
+    <button class="btn" (click)="activeTab='friends'" [class.active]="activeTab==='friends'">Friends</button>
+    @if (LoggedIn) {
+    <button class="btn" (click)="activeTab='pending'" [class.active]="activeTab==='pending'">Pending</button>
+    <button class="btn" (click)="activeTab='declined'" [class.active]="activeTab==='declined'">Declined</button>
     }
   </div>
 
-  @if (LoggedIn) {
-    <div>
-      <h3>Pending Users</h3>
-      <h4>Sent</h4>
-      <div class="spacer grid-container">
-        @for (userEntry of pendingUsers; track userEntry) {
-          @if (userEntry.direction === 'sent') {
-            <div class="center grid-item">
-              <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
-            </div>
-          }
-        }
+  @if (activeTab === 'friends') {
+  <h2>Friends</h2>
+  <div class="section-card">
+    <div class="spacer grid-container">
+      @for (userEntry of acceptedUsers; track userEntry) {
+      <div class="center grid-item">
+        <app-user-card [userEntry]="userEntry" [menu]="LoggedIn"></app-user-card>
       </div>
-      <h4>Recieved</h4>
-      <div class="spacer grid-container">
-        @for (userEntry of pendingUsers; track userEntry) {
-          @if (userEntry.direction === 'received') {
-            <div class="center grid-item">
-              <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
-            </div>
-          }
-        }
-      </div>
-      <h3>Declined Users</h3>
-      <div class="spacer grid-container">
-        <h4>Sent</h4>
-        @for (userEntry of declinedUsers; track userEntry) {
-          @if (userEntry.direction === 'sent') {
-            <div class="center grid-item">
-              <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
-            </div>
-          }
-        }
-      </div>
-      <h4>Recieved</h4>
-      <div class="spacer grid-container">
-        @for (userEntry of declinedUsers; track userEntry) {
-          @if (userEntry.direction === 'received') {
-            <div class="center grid-item">
-              <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
-            </div>
-          }
-        }
-      </div>
+      }
     </div>
+  </div>
   }
+
+
+  @if (activeTab === 'pending' && LoggedIn) {
+
+  <h3 (click)="showPendingSent=!showPendingSent" class="collapse">
+    Sent
+    <span class="arrow" [class.open]="showPendingSent">▶</span>
+  </h3>
+
+  @if (showPendingSent) {
+  <div class="section-card">
+    <div class="spacer grid-container">
+      @for (userEntry of pendingUsers; track userEntry) {
+      @if (userEntry.direction === 'sent') {
+      <div class="center grid-item">
+        <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
+      </div>
+      }
+      }
+    </div>
+  </div>
+  }
+
+  <h3 (click)="showPendingReceived=!showPendingReceived" class="collapse">
+    Received
+    <span class="arrow" [class.open]="showPendingReceived">▶</span>
+  </h3>
+
+  @if (showPendingReceived) {
+  <div class="section-card">
+    <div class="spacer grid-container">
+      @for (userEntry of pendingUsers; track userEntry) {
+      @if (userEntry.direction === 'received') {
+      <div class="center grid-item">
+        <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
+      </div>
+      }
+      }
+    </div>
+  </div>
+  }
+  }
+
+
+  @if (activeTab === 'declined' && LoggedIn) {
+
+  <h3 (click)="showDeclinedSent=!showDeclinedSent" class="collapse">
+    Sent
+    <span class="arrow" [class.open]="showPendingSent">▶</span>
+  </h3>
+
+  @if (showDeclinedSent) {
+  <div class="section-card">
+    <div class="spacer grid-container">
+      @for (userEntry of declinedUsers; track userEntry) {
+      @if (userEntry.direction === 'sent') {
+      <div class="center grid-item">
+        <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
+      </div>
+      }
+      }
+    </div>
+  </div>
+  }
+
+  <h3 (click)="showDeclinedReceived=!showDeclinedReceived" class="collapse">
+    Received
+    <span class="arrow" [class.open]="showPendingReceived">▶</span>
+  </h3>
+
+  @if (showDeclinedReceived) {
+  <div class="section-card">
+    <div class="spacer grid-container">
+      @for (userEntry of declinedUsers; track userEntry) {
+      @if (userEntry.direction === 'received') {
+      <div class="center grid-item">
+        <app-user-card [userEntry]="userEntry" [menu]="true"></app-user-card>
+      </div>
+      }
+      }
+    </div>
+  </div>
+  }
+
+  }
+
 </div>
