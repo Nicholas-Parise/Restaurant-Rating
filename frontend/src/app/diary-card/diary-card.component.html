@@ -14,10 +14,7 @@
     </div>
   </td>
   <td class="col-rating">
-    <app-stars [inputRating]="review.score"></app-stars>
-  </td>
-  <td col class="col-liked">
-    <span class="heart" [class.on]="review.liked == true"></span>
+    <app-stars [inputRating]="review.score" [static]=true [liked]=review.liked></app-stars>
   </td>
   <td class="col-review">
     <div class="review-cell">

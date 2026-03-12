@@ -13,4 +13,7 @@
       (mousemove)="onStarHover($event, i)"
     ></span>
   }
+  @if (liked) {
+    <span class="heart" [class.on]="true"></span>
+  }
 </div>

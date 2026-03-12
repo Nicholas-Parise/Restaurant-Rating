@@ -10,10 +10,7 @@
         <p>{{reviewEntry.description}}</p>
 
         <div class="stars">
-            <app-stars [inputRating]=reviewEntry.score [static]=true></app-stars>
-            
-            <span class="heart" [class.on]="reviewEntry.liked == true"></span>
+            <app-stars [inputRating]=reviewEntry.score [static]=true [liked]=reviewEntry.liked></app-stars>
         </div>
-
     </div>
 </div>

@@ -17,9 +17,9 @@ export class StarsComponent implements OnInit {
   @Output()
   rating: EventEmitter<number> = new EventEmitter();
 
-  @Input() inputRating: number
-  @Input() static: boolean
-
+  @Input() inputRating: number;
+  @Input() static: boolean;
+  @Input() liked: boolean;
 
   ngOnInit(): void {
     this.selectedRating = this.inputRating;

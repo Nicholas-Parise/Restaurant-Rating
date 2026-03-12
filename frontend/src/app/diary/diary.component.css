@@ -1,20 +1,21 @@
 table {
   width: 100%;
-  border-collapse: collapse; /* Ensures borders don’t double up */
+  border-collapse: collapse;
 }
 
 tbody tr {
-  border-bottom: 1px solid #ddd; /* Light gray line */
+  border-bottom: 1px solid #ddd;
   height: 100%;
 }
 
 tbody tr:last-child {
-  border-bottom: none; /* Optional: removes border from last row */
+  border-bottom: none;
 }
 
 thead th {
-  border-bottom: 2px solid #333; /* Darker line under the header */
+  border-bottom: 2px solid #333;
   padding: 8px;
+  text-align: left;
 }
 
 
