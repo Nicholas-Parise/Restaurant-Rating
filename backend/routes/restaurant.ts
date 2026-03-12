@@ -187,10 +187,19 @@ router.get('/:restaurantId', async (req, res, next) => {
 
   try {
     const result = await db.query(
-      `SELECT r.*, l.housenumber, l.addr, l.city, l.province, l.country, l.postalcode, l.lat, l.lon
+      `SELECT r.*, l.housenumber, l.addr, l.city, l.province, l.country, l.postalcode, l.lat, l.lon,
+      json_agg(
+        json_build_object(
+          'id', c.id,
+          'name', c.name
+        )
+      ) FILTER (WHERE c.id IS NOT NULL) AS categories
       FROM restaurants r
-      JOIN locations l ON l.id = r.location_id 
-      WHERE r.id = $1;`, [restaurantId]);
+      JOIN locations l ON l.id = r.location_id
+      LEFT JOIN restaurant_cats rc ON rc.restaurant_id = r.id
+      LEFT JOIN categories c ON c.id = rc.category_id 
+      WHERE r.id = $1
+      GROUP BY r.id, l.id;`, [restaurantId]);
 
     const restaurants = result.rows[0];
 

@@ -68,7 +68,7 @@ router.get('/:username', async (req, res, next) => {
     if (restaurantId) {
 
       result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username 
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture
       FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
       WHERE r.user_id = $1 AND r.restaurant_id = $2
@@ -82,7 +82,7 @@ router.get('/:username', async (req, res, next) => {
 
     } else {
       result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, res.name AS restaurant_name, res.pictures, res.type
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture, res.name AS restaurant_name, res.pictures, res.type
       FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
       LEFT JOIN restaurants res ON r.restaurant_id = res.id 
@@ -118,7 +118,8 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
 
   try {
     const result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username FROM reviews r 
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture 
+      FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
       WHERE r.restaurant_id = $1 
       ORDER BY r.created DESC

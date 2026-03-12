@@ -126,7 +126,7 @@ router.put('/', authenticate, async (req, res) => {
               setup = COALESCE($6, setup),
               updated = NOW()
           WHERE id = $7
-          RETURNING id, email, name, bio, notifications, setup, created, updated;`, [name, newHashedPassword, newEmail, bio, notifications, setup, userId]);
+          RETURNING id, email, name, picture, bio, notifications, setup, created, updated;`, [name, newHashedPassword, newEmail, bio, notifications, setup, userId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });

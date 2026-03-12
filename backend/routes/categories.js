@@ -3,15 +3,10 @@ const router = express.Router();
 const db = require('../utils/db');
 const authenticate = require('../middleware/authenticate');
 
-// localhost:3000/categories?page=1&pageSize=10
+// localhost:3000/categories
 // get all the categories
 router.get('/', async (req, res, next) => {
-
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
-
   try {
-
     const result = await db.query(`SELECT * FROM categories`);
 
     if (result.rows.length === 0) {
@@ -27,7 +22,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // localhost:3000/categories/0
-// get event details
+// get specific category
 router.get('/:categoryId', async (req, res, next) => {
   const categoryId = parseInt(req.params.categoryId);
 
