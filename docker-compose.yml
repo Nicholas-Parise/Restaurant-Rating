@@ -3,10 +3,15 @@ version: "3.9"
 services:
 
   traefik:
-    image: traefik:v3.0
+    build:
+      context: ./traefik
+      args:
+        DOCKER_GID: 111
+    image: restaurant-traefik:latest
     command:
       - "--api.dashboard=true"
       - "--providers.docker=true"
+      - --providers.docker.watch=true
 
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
@@ -42,6 +47,8 @@ services:
   backend:
     build: ./backend
     restart: always
+    env_file:
+      - ./backend/.env
     depends_on:
       db:
         condition: service_healthy
