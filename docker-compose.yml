@@ -68,6 +68,8 @@ services:
   frontend:
     build: ./frontend
     restart: always
+    volumes:
+      - uploads:/usr/share/nginx/html/uploads
 
     labels:
       - "traefik.enable=true"
