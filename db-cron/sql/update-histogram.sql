@@ -1,3 +1,4 @@
+BEGIN TRANSACTION;
 
 WITH scores AS (
   SELECT generate_series(1, 10) AS score
@@ -37,3 +38,5 @@ UPDATE restaurants r
 SET score_histogram = h.data
 FROM histograms h
 WHERE r.id = h.restaurant_id;
+
+COMMIT;
