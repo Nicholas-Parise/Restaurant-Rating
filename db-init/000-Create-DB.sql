@@ -1,4 +1,5 @@
 /*
+DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS listed_restaurants;
 DROP TABLE IF EXISTS lists;
 DROP TABLE IF EXISTS bookmarked_restaurant;
@@ -101,6 +102,13 @@ pictures TEXT,
 updated TIMESTAMP
 );
 
+CREATE TABLE popular(
+id SERIAL PRIMARY KEY,   
+restaurant_id BIGINT REFERENCES restaurants (id),
+priority INT,
+created TIMESTAMP DEFAULT NOW()
+);
+
 CREATE TABLE restaurant_cats( 
 restaurant_id BIGINT NOT NULL REFERENCES restaurants (id) ON DELETE CASCADE,
 category_id INTEGER NOT NULL REFERENCES categories (id) ON DELETE CASCADE,
@@ -124,10 +132,7 @@ bio TEXT,
 pro BOOLEAN,
 setup BOOLEAN,
 notifications BOOLEAN,
-isadmin BOOLEAN,
-iscritic BOOLEAN,
-isowner BOOLEAN,
-permissions TEXT CHECK (permissions IN ('user', 'moderator', 'admin')) DEFAULT 'user',
+permissions TEXT CHECK (permissions IN ('banned','user', 'moderator', 'admin')) DEFAULT 'user',
 google_id TEXT UNIQUE,
 provider TEXT,
 stripe_customer_id TEXT,
@@ -166,11 +171,6 @@ is_read BOOLEAN,
 created TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE popular(
-id SERIAL PRIMARY KEY,   
-restaurant_id BIGINT REFERENCES restaurants (id),
-created TIMESTAMP DEFAULT NOW()
-);
 
 CREATE TABLE sessions(  
 user_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -230,3 +230,38 @@ created TIMESTAMP DEFAULT NOW(),
 PRIMARY KEY(restaurant_id, list_id)
 );
 
+
+CREATE TABLE reports (
+    id SERIAL PRIMARY KEY,
+
+    reporter_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    target_type TEXT NOT NULL CHECK (target_type IN ('review', 'user')),
+    target_id BIGINT NOT NULL,
+    UNIQUE (reporter_id, target_type, target_id),
+
+    reason TEXT NOT NULL CHECK (reason IN (
+        'spam',
+        'harassment',
+        'hate',
+        'nudity',
+        'violence',
+        'misinformation',
+        'other'
+    )),
+
+    description TEXT,
+
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN (
+        'pending',
+        'reviewed',
+        'resolved',
+        'dismissed'
+    )),
+
+    reviewed_by BIGINT REFERENCES users(id),
+    reviewed_at TIMESTAMP,
+    created TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_reports_target ON reports(target_type, target_id);
+CREATE INDEX idx_reports_status ON reports(status);
