@@ -56,7 +56,7 @@ router.post('/register', async (req, res, next) => {
 
         // send notification if allowed  
         if (result.rows[0].notifications) {
-            await createNotification([result.rows[0].id], "Welcome to RestauRate!", "Hello from the RestauRate team! we are so excited to welcome you to this platform.", "/home");
+            await createNotification([result.rows[0].id], "Welcome to Deglazd!", "Hello from the Deglazd team! we are so excited to welcome you to this platform.", "/home");
             // Emails are not needed right now. TODO 
             //await welcomeEmail(email, name);
         }
@@ -382,7 +382,7 @@ async function welcomeEmail(to: string, first_name: string) {
             .replace(/{{creation_date}}/g, new Date().toISOString().split('T')[0])
             .replace(/{{current_year}}/g, currentYear.toString());
 
-        await sendEmail(to, "Welcome to RestauRate!", null, htmlTemplate);
+        await sendEmail(to, "Welcome to Deglazd!", null, htmlTemplate);
     } catch (error) {
         // Handle potential errors (e.g., file not found)
         console.error('Error reading file:', error);

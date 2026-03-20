@@ -180,6 +180,35 @@ router.get('/search', async (req, res, next) => {
 });
 
 
+
+router.get('/popular', async (req, res, next) => {
+
+  try {
+
+    const result = await db.query(
+      `SELECT r.id, r.name, r.pictures, r.type, p.priority 
+       FROM restaurants r
+       JOIN popular p ON r.id = p.restaurant_id 
+        `, []);
+
+
+    const restaurants = result.rows;
+    const totalRestaurants = restaurants.length;
+
+    res.json({
+      restaurants,
+      totalRestaurants
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
 // localhost:3000/restaurants
 router.get('/:restaurantId', async (req, res, next) => {
 

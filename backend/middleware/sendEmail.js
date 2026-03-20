@@ -12,7 +12,7 @@ const mg = mailgun.client({
 const sendEmail = async (to, subject, text, html) => {
 
   const data = {
-    from: "RestauRate Support Team <support@mail.RestauRate.com>",
+    from: "Deglazd Support Team <support@mail.deglazd.com>",
     to,
     subject,
     html: html || text,
