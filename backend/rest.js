@@ -14,6 +14,9 @@ import notificationRoutes from './routes/notifications';
 import bookmarkRoutes from './routes/bookmarks';
 import favouriteRoutes from './routes/favourites';
 
+import sitemap from './routes/sitemap';
+
+
 const responseFormatter = require('./middleware/responseFormatter');
 
 const cors = require('cors');
@@ -34,7 +37,11 @@ app.use((req,res,next)=>{
 */
 
 app.use(cors({
-  origin: 'http://localhost:4200',
+  origin: [
+    'http://localhost:4200',
+    'https://www.deglazd.com',
+    'https://deglazd.com'
+  ],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Authorization'],
@@ -59,5 +66,7 @@ app.use('/uploads', express.static('uploads'));
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
+
+app.use('/sitemap.xml',sitemap);
 
 module.exports = app;
