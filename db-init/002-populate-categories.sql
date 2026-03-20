@@ -9,7 +9,8 @@ ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO category_aliases (alias, canonical_category_id)
 SELECT name, id
-FROM categories;
+FROM categories
+ON CONFLICT (alias) DO NOTHING;
 
 UPDATE category_aliases
 SET canonical_category_id = (SELECT id FROM categories WHERE name='acai')
@@ -142,19 +143,6 @@ WHERE alias IN ('phillipines');
 UPDATE category_aliases
 SET canonical_category_id = (SELECT id FROM categories WHERE name='regional')
 WHERE alias IN ('region');
-
-/*
-INSERT INTO restaurant_cats (restaurant_id, category_id)
-SELECT
-    r.id,
-    c.id
-FROM restaurants r
-CROSS JOIN regexp_split_to_table(r.cuisine, '[,;/]') AS cat
-JOIN categories c
-    ON c.name = lower(unaccent(replace(replace(trim(cat), '_', ' '), '-', ' ')))
-WHERE r.cuisine IS NOT NULL
-ON CONFLICT DO NOTHING;
-*/
 
 INSERT INTO restaurant_cats (restaurant_id, category_id)
 SELECT

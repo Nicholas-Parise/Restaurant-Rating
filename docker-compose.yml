@@ -3,6 +3,7 @@ version: "3.9"
 services:
 
   traefik:
+    user: root
     build:
       context: ./traefik
       args:
@@ -16,9 +17,10 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
 
-      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.email=you@email.com"
+      - "--certificatesresolvers.letsencrypt.acme.email=1nicholasparise@gmail.com"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
 
     ports:
       - "80:80"
@@ -29,7 +31,8 @@ services:
       - "letsencrypt:/letsencrypt"
 
   db:
-    image: postgis/postgis:16-3.4
+    image: postgres:16-bookworm
+    build: ./db
     restart: always
     environment:
       POSTGRES_USER: postgres
