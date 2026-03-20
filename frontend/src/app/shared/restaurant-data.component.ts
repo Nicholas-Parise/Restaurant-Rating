@@ -64,6 +64,14 @@ export class RestaurantDataService {
   }
 
 
+  GetHotResturaunts(){
+   this.http.get<{ restaurants: RestaurantEntry[], totalRestaurants: Number }>(`${this.baseUrl}restaurants/popular`).subscribe((jsonData) => {
+      this.restaurantEntry = jsonData.restaurants;
+      this.restaurantSubject.next(this.restaurantEntry);
+    })
+  }
+
+
   GetResturauntsById(id: number) {
     this.http.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`${this.baseUrl}restaurants/${id}`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;

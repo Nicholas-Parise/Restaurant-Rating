@@ -2,9 +2,17 @@
   <h2>hot new restaurants</h2>
   <div class="spacer grid-container">
     @for (restaurantEntry of restaurantEntry; track restaurantEntry) {
-      <div class="center grid-item">
-        <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
-      </div>
+    <div class="center grid-item">
+      <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
+    </div>
+    }
+  </div>
+  <h2>Popular lists</h2>
+  <div class="spacer grid-container">
+    @for (listEntry of listEntry; track listEntry) {
+    <div class="center grid-item">
+      <app-list-card [listEntry]="listEntry"></app-list-card>
+    </div>
     }
   </div>
 </div>
