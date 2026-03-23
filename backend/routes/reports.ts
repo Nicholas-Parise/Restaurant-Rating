@@ -6,7 +6,7 @@ import db from "../utils/db";
 import authenticate from "../middleware/authenticate";
 import createNotification from "../middleware/createNotification";
 
-import { isBanned, isMod, deleteImage } from "../utils/util";
+import { isBanned, isMod, deleteImage, getUserPermissions } from "../utils/util";
 
 const router = express.Router();
 
@@ -18,7 +18,16 @@ router.get('/', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
 
-    if (!(await isMod(userId, res))) return;
+    const permission = await getUserPermissions(userId);
+
+    if (!permission) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!isMod(permission)) {
+      return res.status(403).json({ message: "User lacks permissions" });
+    }
+
 
     const result = await db.query(`
       SELECT 
@@ -49,7 +58,15 @@ router.get('/review/:reviewId', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
     const reviewId = req.params.reviewId;
 
-    if (!(await isMod(userId, res))) return;
+    const permission = await getUserPermissions(userId);
+
+    if (!permission) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!isMod(permission)) {
+      return res.status(403).json({ message: "User lacks permissions" });
+    }
 
     const result = await db.query(`
     SELECT 
@@ -99,7 +116,15 @@ router.get('/user/:userReportId', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
     const userReportId = req.params.userReportId;
 
-    if (!(await isMod(userId, res))) return;
+    const permission = await getUserPermissions(userId);
+
+    if (!permission) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!isMod(permission)) {
+      return res.status(403).json({ message: "User lacks permissions" });
+    }
 
     const result = await db.query(`
     SELECT 
@@ -146,7 +171,15 @@ router.post('/:type/:id/dismiss', authenticate, async (req, res, next) => {
     const type = req.params.type;
     const id = req.params.id;
 
-     if (!(await isMod(userId, res))) return;
+    const permission = await getUserPermissions(userId);
+
+    if (!permission) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!isMod(permission)) {
+      return res.status(403).json({ message: "User lacks permissions" });
+    }
 
     const result = await db.query(`
     UPDATE reports
@@ -172,7 +205,15 @@ router.post('/review/:id/remove', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
 
-     if (!(await isMod(userId, res))) return;
+    const permission = await getUserPermissions(userId);
+
+    if (!permission) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!isMod(permission)) {
+      return res.status(403).json({ message: "User lacks permissions" });
+    }
 
     const result = await db.query(`
     BEGIN;
@@ -187,7 +228,7 @@ router.post('/review/:id/remove', authenticate, async (req, res, next) => {
     WHERE target_type = 'review'
       AND target_id = $1;
 
-    COMMIT;`, [id, userId ]);
+    COMMIT;`, [id, userId]);
 
     return res.status(200).json({ message: "success" });
   } catch (error) {
@@ -203,8 +244,15 @@ router.post('/user/:id/ban', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
 
-    if (!(await isMod(userId, res))) return;
+    const permission = await getUserPermissions(userId);
 
+    if (!permission) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!isMod(permission)) {
+      return res.status(403).json({ message: "User lacks permissions" });
+    }
     const result = await db.query(`
     BEGIN;
 
@@ -223,7 +271,7 @@ router.post('/user/:id/ban', authenticate, async (req, res, next) => {
     WHERE target_type = 'user'
       AND target_id = $1;
 
-    COMMIT;`, [id, userId ]);
+    COMMIT;`, [id, userId]);
 
 
     const user = await db.query("SELECT picture FROM users WHERE id = $1", [id]);
@@ -249,7 +297,7 @@ router.post('/', authenticate, async (req, res) => {
 
   // 2. Validate reason
   const validReasons = [
-    'spam', 'harassment', 'hate', 'nudity', 
+    'spam', 'harassment', 'hate', 'nudity',
     'violence', 'misinformation', 'other'
   ];
 

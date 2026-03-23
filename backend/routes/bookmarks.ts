@@ -17,13 +17,13 @@ router.get('/', authenticate, async (req, res, next) => {
 
     if (restaurant) {
       result = await db.query(
-        `SELECT r.id, r.name, r.pictures, r.type 
+        `SELECT r.id, r.name, r.pictures, r.type, r.slug 
         FROM bookmarked_restaurant br
         JOIN restaurants r ON br.restaurant_id = r.id
           WHERE br.user_id = $1 AND br.restaurant_id = $2`, [userId, restaurant]);
     } else {
       result = await db.query(
-        `SELECT r.id, r.name, r.pictures, r.type 
+        `SELECT r.id, r.name, r.pictures, r.type, r.slug 
         FROM bookmarked_restaurant br
         JOIN restaurants r ON br.restaurant_id = r.id
         WHERE br.user_id = $1`, [userId]);
@@ -60,7 +60,7 @@ router.get('/:username', async (req, res, next) => {
     if (!userId) return;
 
     const result = await db.query(
-      `SELECT r.id, r.name, r.pictures, r.type 
+      `SELECT r.id, r.name, r.pictures, r.type, r.slug 
       FROM bookmarked_restaurant br
       JOIN restaurants r ON br.restaurant_id = r.id
       WHERE br.user_id = $1

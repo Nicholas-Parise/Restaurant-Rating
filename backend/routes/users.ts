@@ -8,7 +8,7 @@ import authenticate from "../middleware/authenticate";
 import createNotification from "../middleware/createNotification";
 import uploadPicture from '../middleware/upload';
 
-import { getUserId, isEmail, maxString, deleteImage, isBanned } from "../utils/util";
+import { getUserId, isEmail, maxString, deleteImage, isBanned, getUserPermissions } from "../utils/util";
 
 const router = express.Router();
 
@@ -52,8 +52,15 @@ router.put('/', authenticate, async (req, res) => {
     let newHashedPassword: string | null = null;
     let newEmail: string | null = null;
 
+    const permission = await getUserPermissions(userId);
 
-    if(await isBanned(userId,res)) return;
+    if (!permission) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (isBanned(permission)) {
+      return res.status(403).json({ message: "User is banned" });
+    }
 
     // Type checking
     if (email !== undefined && typeof email !== "string") {
@@ -240,7 +247,7 @@ router.get('/recent', async (req, res, next) => {
     const userId = tempUserId.rows[0].id;
 
     const result = await db.query(
-      `SELECT r.id, r.name, r.pictures, r.type FROM reviews rev
+      `SELECT r.id, r.slug, r.name, r.pictures, r.type FROM reviews rev
         JOIN restaurants r ON rev.restaurant_id = r.id
         WHERE rev.user_id = $1
         ORDER BY rev.created DESC
@@ -345,7 +352,15 @@ router.post('/upload', authenticate, uploadPicture, async (req, res) => {
 
   try {
 
-    if(await isBanned(userId,res)) return;
+    const permission = await getUserPermissions(userId);
+
+    if (!permission) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (isBanned(permission)) {
+      return res.status(403).json({ message: "User is banned" });
+    }
 
     //get the file name
     const user = await db.query("SELECT picture FROM users WHERE id = $1", [userId]);

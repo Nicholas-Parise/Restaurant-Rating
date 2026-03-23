@@ -93,7 +93,7 @@ router.get('/:username', async (req, res, next) => {
 
     } else {
       result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture, res.name AS restaurant_name, res.pictures, res.type
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture, res.name AS restaurant_name, res.pictures, res.type, res.slug
       FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
       LEFT JOIN restaurants res ON r.restaurant_id = res.id 
@@ -164,7 +164,9 @@ router.post('/', authenticate, async (req, res) => {
   }
   try {
 
-    if(await isBanned(userId,res)) return;
+    if(await isBanned(userId)){
+       return res.status(403).json({ message: "User is banned" });
+    }
 
     const result = await db.query(
       `INSERT INTO reviews (restaurant_id, user_id, liked, visited, score, description) 

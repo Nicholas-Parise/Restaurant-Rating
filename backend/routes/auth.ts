@@ -87,7 +87,7 @@ router.post('/login', async (req, res, next) => {
     }
 
     try {
-        const user = await db.query("SELECT id,password,username,name,email,picture FROM users WHERE email = $1", [email]);
+        const user = await db.query("SELECT id,password,username,name,email,picture,permissions FROM users WHERE email = $1", [email]);
 
         if (user.rows.length === 0) {
             return res.status(401).json({ message: "Email or password incorrect" });
@@ -155,7 +155,7 @@ router.get('/me', async (req, res, next) => {
             return res.status(401).json({ message: "Invalid token" });
         }
 
-        const user = await db.query("SELECT id, name, username, email, picture, bio, setup, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1", [session.rows[0].user_id]);
+        const user = await db.query("SELECT id, name, username, email, picture, bio, setup, permissions, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1", [session.rows[0].user_id]);
 
         if (user.rows.length === 0) { // If a user gets removed but the token is still active 
             return res.status(404).json({ message: "User not found" });

@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT id, COALESCE(updated, created) AS updated_at
+      SELECT id, slug, COALESCE(updated, created) AS updated_at
       FROM restaurants;
     `);
 

@@ -13,7 +13,7 @@ router.get('/', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
   
     const result = await db.query(
-        `SELECT r.id, r.name, r.pictures, r.type 
+        `SELECT r.id, r.name, r.pictures, r.type, r.slug 
         FROM favorite_restaurant fr
         JOIN restaurants r ON fr.restaurant_id = r.id
         WHERE fr.user_id = $1`, [userId]);
@@ -37,7 +37,7 @@ router.get('/restaurants/:restaurant_id', authenticate, async (req, res, next) =
     const restaurant_id = req.params.restaurant_id;
 
     const result = await db.query(
-        `SELECT r.id, r.name, r.pictures, r.type 
+        `SELECT r.id, r.name, r.pictures, r.type, r.slug 
         FROM favorite_restaurant fr
         JOIN restaurants r ON fr.restaurant_id = r.id
         WHERE fr.user_id = $1 AND fr.restaurant_id = $2`, [userId, restaurant_id]);
@@ -69,7 +69,7 @@ router.get('/:username', async (req, res, next) => {
     if (!userId) return;
 
     const result = await db.query(
-        `SELECT r.id, r.name, r.pictures, r.type  
+        `SELECT r.id, r.name, r.pictures, r.type, r.slug  
         FROM favorite_restaurant fr
         JOIN restaurants r ON fr.restaurant_id = r.id
         WHERE fr.user_id = $1`, [userId]);
