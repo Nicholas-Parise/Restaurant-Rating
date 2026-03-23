@@ -6,7 +6,7 @@ import db from "../utils/db";
 import authenticate from "../middleware/authenticate";
 import createNotification from "../middleware/createNotification";
 
-import { getUserId, isMod, isEmail, maxString, deleteImage } from "../utils/util";
+import { isBanned, isMod, deleteImage } from "../utils/util";
 
 const router = express.Router();
 

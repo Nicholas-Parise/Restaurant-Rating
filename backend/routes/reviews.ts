@@ -1,7 +1,18 @@
-const express = require('express');
-const db = require('../utils/db');
+import express from "express";
+import fs from "fs";
+import * as path from "path";
+
+import db from "../utils/db";
+import authenticate from "../middleware/authenticate";
+import createNotification from "../middleware/createNotification";
+
+import { isBanned, isMod } from "../utils/util";
+
 const router = express.Router();
-const authenticate = require('../middleware/authenticate');
+
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 
 // get logged in users reviews
 router.get('/', authenticate, async (req, res, next) => {
@@ -152,6 +163,9 @@ router.post('/', authenticate, async (req, res) => {
     return res.status(400).json({ message: "restaurant_id is required" });
   }
   try {
+
+    if(await isBanned(userId,res)) return;
+
     const result = await db.query(
       `INSERT INTO reviews (restaurant_id, user_id, liked, visited, score, description) 
                 VALUES ($1, $2, COALESCE($3, false), COALESCE($4, false), COALESCE($5, 0), $6) RETURNING *`,
@@ -161,10 +175,11 @@ router.post('/', authenticate, async (req, res) => {
     return res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error creating review:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error });
   }
 
 });
 
 
-module.exports = router;
+//module.exports = router;
+export default router;
