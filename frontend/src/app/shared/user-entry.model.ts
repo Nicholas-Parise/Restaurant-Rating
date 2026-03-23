@@ -10,6 +10,7 @@ export interface UserEntry {
     isCritic: boolean,
     status: string,
     direction: string,
+    permissions: string,
     updated: Date,
     created: Date
 }

@@ -47,7 +47,7 @@ export class RestaurantCardComponent implements OnInit {
   }
 
   navigateToRestaurant(event: MouseEvent): void {
-    this.router.navigate(['/restaurant', this.restaurantEntry.id]);
+    this.router.navigate(['/restaurant', this.restaurantEntry.slug + '-' + this.restaurantEntry.id]);
   }
 
   removeFavourite(): void {

@@ -100,6 +100,7 @@ export class ReviewFormComponent implements OnInit {
       "null",
       "null",
       "null",
+      "null",
       "null");
 
     this.reviewDataService.onAddReviewEntry(newEntry);

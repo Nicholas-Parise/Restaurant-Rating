@@ -23,14 +23,14 @@ import { ListEntry } from '../shared/list-entry.model';
 
 import { RestaurantMapComponent } from '../restaurant-map/restaurant-map.component';
 
-import { UtilService} from '../util.service';
+import { UtilService } from '../util.service';
 
 @Component({
-    selector: 'app-restaurant',
-    imports: [TagCardComponent, CommonModule, ReviewCardComponent, ReviewFormComponent, RatingChartComponent, RestaurantMapComponent],
-    templateUrl: './restaurant.component.html',
-    styleUrl: './restaurant.component.css',
-    standalone: true
+  selector: 'app-restaurant',
+  imports: [TagCardComponent, CommonModule, ReviewCardComponent, ReviewFormComponent, RatingChartComponent, RestaurantMapComponent],
+  templateUrl: './restaurant.component.html',
+  styleUrl: './restaurant.component.css',
+  standalone: true
 })
 
 export class RestaurantComponent implements OnInit {
@@ -94,8 +94,17 @@ export class RestaurantComponent implements OnInit {
 
     this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
       //console.log(restaurantEntry)
+
       this.restaurantEntry = restaurantEntry;
-      //console.log(this.restaurantEntry.score_histogram);
+
+      const correctSlug = `${this.restaurantEntry.slug}-${this.restaurantEntry.id}`;
+      const currentSlug = this.route.snapshot.params['slug'];
+
+      if (currentSlug !== correctSlug) {
+        this.router.navigate(['/restaurant', correctSlug], { replaceUrl: true });
+        return;
+      }
+
     });
 
     this.bookmarkSubscription = this.restaurantDataService.bookmarkSubject.subscribe(bookmarkEntry => {
@@ -112,35 +121,36 @@ export class RestaurantComponent implements OnInit {
 
     this.route.params.subscribe(params => {
 
-      //console.log(this.route.snapshot.params)
-      this.restaurantId = params['id'];
-      //console.log('test: ', this.restaurantId);
+      const slug = params['slug'];
 
-      if (this.restaurantId == null) {
-        //console.log('empty');
+      if (!slug) {
         this.router.navigate(['/']);
-      } else {
-        try {
-          this.restaurantDataService.GetResturauntsById(this.restaurantId);
-          this.loadReviews();
-
-        } catch (e) {
-          this.router.navigate(['/']);
-          //this.restaurantDataService.GetResturaunts();
-        }
+        return;
       }
-      //this.restaurantDataService.GetResturauntsById(this.id).subscribe( restaurantEntry => {
-      //this.restaurantEntry = restaurantEntry
-      //}
 
-    })
+      const parts = slug.split('-');
+      const id = parts[parts.length - 1];
+
+      if (!id || isNaN(+id)) {
+        this.router.navigate(['/']);
+        return;
+      }
+
+      this.restaurantId = id;
+
+      try {
+        this.restaurantDataService.GetResturauntsById(this.restaurantId);
+        this.loadReviews();
+      } catch (e) {
+        this.router.navigate(['/']);
+      }
+    });
+
   }
-
 
   showReviewForm(): void {
     this.reviewFormComponent.showForm();
   }
-
 
   loadReviews(): void {
     this.reviewDataService.getRestauranReviews(this.restaurantId, this.currentPage, this.pageSize);
@@ -154,7 +164,7 @@ export class RestaurantComponent implements OnInit {
     });
   }
 
-  
+
   getSingleReview(): ReviewEntry | null {
     if (this.userReviewEntry) {
       if (this.userReviewEntry.length > 0) {
@@ -182,14 +192,14 @@ export class RestaurantComponent implements OnInit {
 
     console.log('test');
 
-    target.src = this.util.getPlaceholderImage(this.restaurantEntry.type); 
+    target.src = this.util.getPlaceholderImage(this.restaurantEntry.type);
   }
 
   getMapsLink(): string {
     const coords = encodeURIComponent(`${this.restaurantEntry.lat},${this.restaurantEntry.lon}`);
-    
-    const address : string = (this.restaurantEntry.housenumber || this.restaurantEntry.name) +" "+this.restaurantEntry?.addr +" "+ this.restaurantEntry?.city +" "+ this.restaurantEntry?.province +" "+ this.restaurantEntry?.country;
-    
+
+    const address: string = (this.restaurantEntry.housenumber || this.restaurantEntry.name) + " " + this.restaurantEntry?.addr + " " + this.restaurantEntry?.city + " " + this.restaurantEntry?.province + " " + this.restaurantEntry?.country;
+
     console.log(address);
 
     const encodedAddress = encodeURIComponent(address);

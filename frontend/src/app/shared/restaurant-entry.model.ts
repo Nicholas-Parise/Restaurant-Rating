@@ -8,6 +8,7 @@ export class RestaurantEntry{
 export class RestaurantEntry{
     constructor(
         public id : number,
+        public slug: string,
         public location_id : number,
         public name : string,
         public description : string,

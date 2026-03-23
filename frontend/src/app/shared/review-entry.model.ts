@@ -13,5 +13,6 @@ export class ReviewEntry{
         public pictures : string,
         public picture : string,
         public type : string,
+        public slug: string,
         public restaurant_name: string){}
 }

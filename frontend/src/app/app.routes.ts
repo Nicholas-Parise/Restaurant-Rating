@@ -21,7 +21,7 @@ export const routes: Routes = [
     {path: 'user/:username/diary', component: DiaryComponent},
     {path: 'List', component: ListsComponent},
     {path: 'List/:id', component: ListsComponent},
-    {path: 'restaurant/:id', component: RestaurantComponent},
+    {path: 'restaurant/:slug', component: RestaurantComponent},
     {path: 'restaurant', component: RestaurantComponent},
     {path: 'user/friends', component: FriendsComponent},
     {path: 'user/:username/friends', component: FriendsComponent},
