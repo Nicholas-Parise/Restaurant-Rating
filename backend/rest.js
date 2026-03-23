@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const reviewRoutes = require('./routes/reviews');
 
 import authRoutes from'./routes/auth';
 
@@ -9,6 +8,7 @@ import userRoutes from'./routes/users';
 import friendRoutes from'./routes/friends';
 
 import restaurantRoutes from './routes/restaurant';
+import reviewRoutes from'./routes/reviews';
 import listRoutes from './routes/lists';
 import notificationRoutes from './routes/notifications';
 import bookmarkRoutes from './routes/bookmarks';
