@@ -140,7 +140,7 @@ router.get('/user/:userReportId', authenticate, async (req, res, next) => {
 });
 
 //Dismiss reports
-router.get('/:type/:id/dismiss', authenticate, async (req, res, next) => {
+router.post('/:type/:id/dismiss', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const type = req.params.type;
@@ -167,7 +167,7 @@ router.get('/:type/:id/dismiss', authenticate, async (req, res, next) => {
 
 
 // Remove review (and resolve reports)
-router.get('/review/:id/remove', authenticate, async (req, res, next) => {
+router.post('/review/:id/remove', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
@@ -198,7 +198,7 @@ router.get('/review/:id/remove', authenticate, async (req, res, next) => {
 
 
 // Ban / restrict user
-router.get('/user/:id/ban', authenticate, async (req, res, next) => {
+router.post('/user/:id/ban', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
@@ -236,6 +236,68 @@ router.get('/user/:id/ban', authenticate, async (req, res, next) => {
     res.status(500).json({ message: 'Error retrieving user data' });
   }
 });
+
+
+router.post('/', authenticate, async (req, res) => {
+  const userId = req.user.userId; // Get user ID from authenticated token
+  const { target_type, target_id, reason, description } = req.body;
+
+  // 1. Validate target_type
+  if (!['review', 'user'].includes(target_type)) {
+    return res.status(400).json({ error: 'Invalid target_type' });
+  }
+
+  // 2. Validate reason
+  const validReasons = [
+    'spam', 'harassment', 'hate', 'nudity', 
+    'violence', 'misinformation', 'other'
+  ];
+
+  if (!validReasons.includes(reason)) {
+    return res.status(400).json({ error: 'Invalid reason' });
+  }
+
+  try {
+    // 3. Prevent self-reporting (optional but recommended)
+    if (target_type === 'user' && target_id === userId) {
+      return res.status(400).json({ error: 'Cannot report yourself' });
+    }
+
+    // 4. Check target exists
+    let existsQuery;
+    if (target_type === 'review') {
+      existsQuery = await db.query(
+        'SELECT id FROM reviews WHERE id = $1',
+        [target_id]
+      );
+    } else {
+      existsQuery = await db.query(
+        'SELECT id FROM users WHERE id = $1',
+        [target_id]
+      );
+    }
+
+    if (existsQuery.rowCount === 0) {
+      return res.status(404).json({ error: 'Target not found' });
+    }
+
+    // 5. Insert report (handles duplicate via constraint)
+    await db.query(
+      `INSERT INTO reports 
+       (reporter_id, target_type, target_id, reason, description)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (reporter_id, target_type, target_id) DO NOTHING`,
+      [userId, target_type, target_id, reason, description || null]
+    );
+
+    return res.status(201).json({ message: 'Report submitted' });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 
 
