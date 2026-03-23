@@ -53,7 +53,7 @@ canonical_category_id INT REFERENCES categories(id) ON DELETE CASCADE
 
 CREATE TABLE restaurants (
 id BIGINT PRIMARY KEY,
-location_id BIGINT REFERENCES locations (id),
+location_id BIGINT NOT NULL REFERENCES locations (id),
 name TEXT,
 description TEXT,
 pictures TEXT,
@@ -84,6 +84,7 @@ facebook TEXT,
 instagram TEXT,
 twitter TEXT,
 indoor_seating BOOLEAN,
+slug TEXT,
 updated TIMESTAMP,
 created TIMESTAMP DEFAULT NOW(),
 score_histogram JSONB DEFAULT '{}'::jsonb
@@ -91,6 +92,7 @@ score_histogram JSONB DEFAULT '{}'::jsonb
 
 CREATE INDEX restaurants_name_trgm_idx ON restaurants USING GIN (name gin_trgm_ops);
 CREATE INDEX restaurants_location_users ON restaurants(location_id);
+CREATE INDEX idx_restaurants_slug ON restaurants(slug);
 
 CREATE TABLE menuItems(
 id SERIAL PRIMARY KEY, 
