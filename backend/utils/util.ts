@@ -68,56 +68,28 @@ export function isEmail(email: string): boolean {
 }
 
 
-export async function isMod(id: number, res: Response): Promise<boolean> {
+export async function getUserPermissions(id: number): Promise<string | null> {
+  try {
+    const result = await db.query(
+      `SELECT permissions FROM users WHERE id = $1`,
+      [id]
+    );
 
-    try {
-        const userIDCheck = await db.query(
-            `SELECT id, permissions FROM users 
-            WHERE id = $1`, [id]);
+    if (result.rows.length === 0) return null;
 
-        if (userIDCheck.rows.length === 0) {
-            res.status(404).json({ message: "User not found" });
-            return false;
-        }
+    return result.rows[0].permissions;
 
-        if(userIDCheck.rows[0].permissions == 'moderator' || userIDCheck.rows[0].permissions == 'admin'){
-          res.status(200).json({ message: "permission granted" });
-          return true;
-        }else{
-          res.status(403).json({ message: "permission denied" });
-          return false;
-        }
-    } catch (error) {
-        console.error("Error fetching user:", error);
-        res.status(500).json({ message: 'Error retrieving user data' });
-        return false;
-    }
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
 }
 
 
+export function isMod(permission: string): boolean {
+  return permission === 'moderator' || permission === 'admin';
+}
 
-export async function isBanned(id: number, res: Response): Promise<boolean> {
-
-    try {
-        const userIDCheck = await db.query(
-            `SELECT id, permissions FROM users 
-            WHERE id = $1`, [id]);
-
-        if (userIDCheck.rows.length === 0) {
-            res.status(404).json({ message: "User not found" });
-            return false;
-        }
-
-        if(userIDCheck.rows[0].permissions == 'banned'){
-          res.status(403).json({ message: "user is banned" });
-          return true;
-        }else{
-          res.status(200).json({ message: "permission granted" });
-          return false;
-        }
-    } catch (error) {
-        console.error("Error fetching user:", error);
-        res.status(500).json({ message: 'Error retrieving user data' });
-        return false;
-    }
+export function isBanned(permission: string): boolean {
+  return permission === 'banned';
 }
