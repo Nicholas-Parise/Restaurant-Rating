@@ -66,3 +66,58 @@ export function isEmail(email: string): boolean {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailPattern.test(email);
 }
+
+
+export async function isMod(id: number, res: Response): Promise<boolean> {
+
+    try {
+        const userIDCheck = await db.query(
+            `SELECT id, permissions FROM users 
+            WHERE id = $1`, [id]);
+
+        if (userIDCheck.rows.length === 0) {
+            res.status(404).json({ message: "User not found" });
+            return false;
+        }
+
+        if(userIDCheck.rows[0].permissions == 'moderator' || userIDCheck.rows[0].permissions == 'admin'){
+          res.status(200).json({ message: "permission granted" });
+          return true;
+        }else{
+          res.status(403).json({ message: "permission denied" });
+          return false;
+        }
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).json({ message: 'Error retrieving user data' });
+        return false;
+    }
+}
+
+
+
+export async function isBanned(id: number, res: Response): Promise<boolean> {
+
+    try {
+        const userIDCheck = await db.query(
+            `SELECT id, permissions FROM users 
+            WHERE id = $1`, [id]);
+
+        if (userIDCheck.rows.length === 0) {
+            res.status(404).json({ message: "User not found" });
+            return false;
+        }
+
+        if(userIDCheck.rows[0].permissions == 'banned'){
+          res.status(403).json({ message: "user is banned" });
+          return true;
+        }else{
+          res.status(200).json({ message: "permission granted" });
+          return false;
+        }
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).json({ message: 'Error retrieving user data' });
+        return false;
+    }
+}

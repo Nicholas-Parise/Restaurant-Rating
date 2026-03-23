@@ -14,6 +14,8 @@ import notificationRoutes from './routes/notifications';
 import bookmarkRoutes from './routes/bookmarks';
 import favouriteRoutes from './routes/favourites';
 
+import reportRoutes from './routes/reports'
+
 import sitemap from './routes/sitemap';
 
 
@@ -60,13 +62,14 @@ app.use('/friends',friendRoutes);
 app.use('/bookmarks',bookmarkRoutes);
 app.use('/favourites',favouriteRoutes);
 app.use('/lists',listRoutes);
+app.use('/reports',reportRoutes);
 
 app.use('/uploads', express.static('uploads'));
+
+app.use('/sitemap.xml',sitemap);
 
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
-
-app.use('/sitemap.xml',sitemap);
 
 module.exports = app;

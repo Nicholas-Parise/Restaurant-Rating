@@ -8,7 +8,7 @@ import authenticate from "../middleware/authenticate";
 import createNotification from "../middleware/createNotification";
 import uploadPicture from '../middleware/upload';
 
-import { getUserId, isEmail, maxString, deleteImage } from "../utils/util";
+import { getUserId, isEmail, maxString, deleteImage, isBanned } from "../utils/util";
 
 const router = express.Router();
 
@@ -27,7 +27,7 @@ router.get('/', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
 
-    const result = await db.query('SELECT id, username, email, name, bio, picture, pro, setup, notifications, created, updated, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1', [userId]);
+    const result = await db.query('SELECT id, username, email, name, bio, picture, pro, setup, notifications, permissions, created, updated, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1', [userId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
@@ -51,6 +51,9 @@ router.put('/', authenticate, async (req, res) => {
     var { email, name, password, newPassword, bio, notifications, setup } = req.body;
     let newHashedPassword: string | null = null;
     let newEmail: string | null = null;
+
+
+    if(await isBanned(userId,res)) return;
 
     // Type checking
     if (email !== undefined && typeof email !== "string") {
@@ -314,7 +317,7 @@ router.get('/:userId', async (req, res) => {
       return res.status(400).json({ message: "username is required to get account" });
     }
 
-    const result = await db.query('SELECT username, name, bio, picture, notifications, pro, created FROM users WHERE username = $1', [userId]);
+    const result = await db.query('SELECT username, name, bio, picture, notifications, pro, permissions, created FROM users WHERE username = $1', [userId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
@@ -341,6 +344,8 @@ router.post('/upload', authenticate, uploadPicture, async (req, res) => {
   const filePath = `/uploads/users/${req.file.filename}`; // get file name from file
 
   try {
+
+    if(await isBanned(userId,res)) return;
 
     //get the file name
     const user = await db.query("SELECT picture FROM users WHERE id = $1", [userId]);
