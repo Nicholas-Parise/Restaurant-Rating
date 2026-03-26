@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
     const urls = result.rows.map(row => {
       return `
         <url>
-          <loc>${baseUrl}/restaurant/${row.id}</loc>
+          <loc>${baseUrl}/restaurant/${row.slug}-${row.id}</loc>
           <lastmod>${new Date(row.updated_at).toISOString()}</lastmod>
           <changefreq>weekly</changefreq>
           <priority>0.8</priority>

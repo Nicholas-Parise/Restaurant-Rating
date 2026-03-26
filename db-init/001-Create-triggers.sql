@@ -3,7 +3,7 @@ RETURNS TRIGGER AS $$
 DECLARE
   loc RECORD;
 BEGIN
-  SELECT city, addr, housenumber
+  SELECT city, addr, province
   INTO loc
   FROM locations
   WHERE id = NEW.location_id;

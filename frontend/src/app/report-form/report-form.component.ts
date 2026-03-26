@@ -8,7 +8,7 @@ import { UserEntry } from '../shared/user-entry.model';
 import { ReviewEntry } from '../shared/review-entry.model';
 
 import { ReportModalService } from '../reportModal.service';
-import { ReportTarget } from '../shared/report-target';
+import { ReportTarget } from '../shared/report-target.model';
 
 @Component({
   selector: 'app-report-form',

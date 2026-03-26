@@ -36,6 +36,15 @@ POST / → create a new review for a given restaurant**
 PUT /:id → Edit a notifications (ex: is_read)   
 DELETE /:id → Delete a notifications**  
 
+## /reports
+**GET / → Get all reports  
+GET /review/:reviewId → Get all reports on a review
+GET /user/:userReportId → Get all reports on a user   
+POST / → Add a new report     
+POST /:type/:id/dismiss → Dismiss a report     
+POST /review/:id/remove → Remove a review
+POST /user/:id/ban → Ban a user**  
+
 
 ## /payments
 GET /subscription → Get current users subscription status  
