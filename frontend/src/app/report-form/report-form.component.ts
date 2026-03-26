@@ -7,6 +7,9 @@ import { ReportEntry } from '../shared/report-entry.model';
 import { UserEntry } from '../shared/user-entry.model';
 import { ReviewEntry } from '../shared/review-entry.model';
 
+import { ReportModalService } from '../reportModal.service';
+import { ReportTarget } from '../shared/report-target';
+
 @Component({
   selector: 'app-report-form',
   imports: [ReactiveFormsModule, FormsModule],
@@ -15,15 +18,11 @@ import { ReviewEntry } from '../shared/review-entry.model';
 })
 export class ReportFormComponent implements OnInit {
 
-  constructor(private reportDataService: ReportDataService) { }
-
-  @Input() userEntry: UserEntry | null;
-  @Input() reviewEntry: ReviewEntry | null;
-  @Output() close = new EventEmitter<void>();
+  constructor(private reportDataService: ReportDataService, private modal: ReportModalService) { }
 
   form: FormGroup;
-  target_type: string;
-  target_id: number;
+
+  target: ReportTarget | null = null;
 
   validReasons = [
     { key: 1, value: 'spam' },
@@ -38,38 +37,40 @@ export class ReportFormComponent implements OnInit {
   ngOnInit() {
     this.form = new FormGroup({
       "description": new FormControl(null),
-      "reason": new FormControl(this.validReasons[1].value)
+      "reason": new FormControl(this.validReasons[0].value)
     })
 
-    if (this.userEntry) {
-      this.target_type = "user"
-      this.target_id = this.userEntry.id;
-    } else if (this.reviewEntry) {
-      this.target_type = "review"
-      this.target_id = this.reviewEntry.id;
-    } else {
-      console.log("Undefined State NO ENTRY PROVIDED")
-    }
+    this.modal.target$.subscribe(target => {
+      this.target = target;
+
+      if (target) {
+        this.form.reset({
+          description: null,
+          reason: this.validReasons[0].value
+        });
+      }
+    });
   }
 
-
   onSubmit() {
-    const description = this.form.value.description;
-    const reason = this.form.value.reason;
+    if (!this.target) {
+      console.error('No report target');
+      return;
+    }
 
     const newEntry = {
-      description: description,
-      reason: reason,
-      target_type: this.target_type,
-      target_id: this.target_id
+      description: this.form.value.description,
+      reason: this.form.value.reason,
+      target_type: this.target.type,
+      target_id: this.target.data.id
     } as ReportEntry;
 
     this.reportDataService.report(newEntry);
     this.closeForm();
   }
 
-  closeForm(): void {
-    this.close.emit();
-    console.log('report gone'); 
+  closeForm() {
+    this.modal.close();
   }
+
 }

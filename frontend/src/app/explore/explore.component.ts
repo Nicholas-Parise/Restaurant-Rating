@@ -20,11 +20,9 @@ import { ListEntry } from '../shared/list-entry.model';
 import { ListDataService } from '../shared/list-data.component';
 import { ListCardComponent } from '../list-card/list-card.component';
 
-import { ReportFormComponent } from '../report-form/report-form.component';
-
 @Component({
   selector: 'app-explore',
-  imports: [FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent, ReportFormComponent],
+  imports: [FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent],
   templateUrl: './explore.component.html',
   styleUrl: './explore.component.css',
   standalone: true

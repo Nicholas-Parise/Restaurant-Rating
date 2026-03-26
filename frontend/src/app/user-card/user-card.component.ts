@@ -4,13 +4,14 @@ import { RouterLink } from '@angular/router';
 import { UserDataService } from '../shared/user-data.component';
 import { UserEntry } from '../shared/user-entry.model';
 
+import { ReportModalService } from '../reportModal.service';
 
 @Component({
-    selector: 'app-user-card',
-    imports: [RouterLink],
-    templateUrl: './user-card.component.html',
-    styleUrl: './user-card.component.css',
-    standalone: true
+  selector: 'app-user-card',
+  imports: [RouterLink],
+  templateUrl: './user-card.component.html',
+  styleUrl: './user-card.component.css',
+  standalone: true
 })
 export class UserCardComponent implements OnInit {
   @Input() userEntry = {} as UserEntry;
@@ -20,7 +21,7 @@ export class UserCardComponent implements OnInit {
   menuOpen: boolean = false;
   allowMenu: boolean = false;
 
-  constructor(private userDataService: UserDataService) { }
+  constructor(private userDataService: UserDataService, private reportModalService:ReportModalService) { }
 
   ngOnInit(): void {
     if (this.menu) {
@@ -74,8 +75,12 @@ export class UserCardComponent implements OnInit {
     this.menuOpen = false;
   }
 
+
   reportUser() {
-    this.report.emit(this.userEntry);
+    this.reportModalService.open({
+      type: 'user',
+      data: this.userEntry
+    });
   }
 
 

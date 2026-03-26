@@ -46,13 +46,9 @@
   <div class="spacer grid-container">
     @for (userEntry of userEntry; track userEntry) {
     <div class="center grid-item">
-      <app-user-card [userEntry]="userEntry" [menu]="LoggedIn" (report)="openReportModal($event)"></app-user-card>
+      <app-user-card [userEntry]="userEntry" [menu]="LoggedIn"></app-user-card>
     </div>
     }
-    @if(selectedUser){
-    <app-report-form [userEntry]="selectedUser" (close)="selectedUser = null"></app-report-form>
-    }
-
     @if (userEntry && userEntry.length === 0) {
     <p>No results found.</p>
     }

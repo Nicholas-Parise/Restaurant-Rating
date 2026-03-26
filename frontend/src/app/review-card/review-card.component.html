@@ -1,9 +1,12 @@
 <div class="comment">
-
-    <a [routerLink]="['/user', reviewEntry.username]">
-    <img class="image" [src]="reviewEntry.picture || 'assets/placeholder-avatar.png'" alt="Profile Picture"
-        (error)="onImageError($event)">
-    </a>
+    <div class="comment-pic">
+        <p class="signature">
+        <a [routerLink]="['/user', reviewEntry.username]">
+            <img class="image" [src]="reviewEntry.picture || 'assets/placeholder-avatar.png'" alt="Profile Picture"
+                (error)="onImageError($event)">
+        </a>
+        </p>
+    </div>
     <div class="comment-body">
         <p class="signature">Review by: <a [routerLink]="['/user', reviewEntry.username]">{{reviewEntry.name ||
                 reviewEntry.username}}</a></p>
