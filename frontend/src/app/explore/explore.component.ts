@@ -20,12 +20,14 @@ import { ListEntry } from '../shared/list-entry.model';
 import { ListDataService } from '../shared/list-data.component';
 import { ListCardComponent } from '../list-card/list-card.component';
 
+import { ReportFormComponent } from '../report-form/report-form.component';
+
 @Component({
-    selector: 'app-explore',
-    imports: [FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent],
-    templateUrl: './explore.component.html',
-    styleUrl: './explore.component.css',
-    standalone: true
+  selector: 'app-explore',
+  imports: [FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent, ReportFormComponent],
+  templateUrl: './explore.component.html',
+  styleUrl: './explore.component.css',
+  standalone: true
 })
 export class ExploreComponent implements OnInit {
 
@@ -35,7 +37,7 @@ export class ExploreComponent implements OnInit {
     private authDataService: AuthDataService,
     private restaurantDataService: RestaurantDataService,
     private userDataService: UserDataService,
-    private listDataService:ListDataService
+    private listDataService: ListDataService
   ) { }
 
   searchMode: 'restaurants' | 'users' | 'lists' = 'restaurants';
@@ -64,7 +66,9 @@ export class ExploreComponent implements OnInit {
   searchRadius = 10;
   bounce_time = 0;
 
-  LoggedIn:boolean;
+  selectedUser: UserEntry | null = null;
+
+  LoggedIn: boolean;
 
   ngOnInit(): void {
 
@@ -112,12 +116,12 @@ export class ExploreComponent implements OnInit {
         // ,distinctUntilChanged()
       )
     ]).subscribe(([query, radius, page]) => {
-      
-      if(this.searchMode == 'restaurants'){
+
+      if (this.searchMode == 'restaurants') {
         this.restaurantDataService.GetSearch(query, this.lat, this.lng, radius, page);
-      }else if(this.searchMode == 'users'){
+      } else if (this.searchMode == 'users') {
         this.userDataService.GetSearch(query, page);
-      }else{
+      } else {
         this.listDataService.GetSearch(query, page, 10);
       }
 
@@ -131,18 +135,18 @@ export class ExploreComponent implements OnInit {
       this.searchMode = params['mode'] || 'restaurants';
       this.currentPage = +params['page'] || 1;
       this.nearbyEnabled = params['nearby'] === 'true';
-      this.maxPages = this.currentPage +1;
+      this.maxPages = this.currentPage + 1;
     })
 
 
-      this.onSearchChange(false);
+    this.onSearchChange(false);
 
-      if(this.nearbyEnabled){
-        this.onToggleNearby(true,false);
-      }
+    if (this.nearbyEnabled) {
+      this.onToggleNearby(true, false);
+    }
 
-      this.onRadiusChange(false);
-      this.onPageChange();
+    this.onRadiusChange(false);
+    this.onPageChange();
   }
 
   ngOnDestroy(): void {
@@ -191,24 +195,26 @@ export class ExploreComponent implements OnInit {
       this.lng = null
     }
 
-    if(resetPage){
+    if (resetPage) {
       this.currentPage = 1;
       this.onRadiusChange();
     }
   }
 
-  updateQueryParams(): void{
+  updateQueryParams(): void {
     this.router.navigate(
-        [], 
-        {
-          relativeTo: this.activatedRoute,
-          queryParams: { search: this.searchQuery, 
-            mode: this.searchMode,
-             page: this.currentPage,
-            nearby: this.nearbyEnabled }, 
-          queryParamsHandling: 'merge',
-        }
-      );
+      [],
+      {
+        relativeTo: this.activatedRoute,
+        queryParams: {
+          search: this.searchQuery,
+          mode: this.searchMode,
+          page: this.currentPage,
+          nearby: this.nearbyEnabled
+        },
+        queryParamsHandling: 'merge',
+      }
+    );
   }
 
 
@@ -224,6 +230,8 @@ export class ExploreComponent implements OnInit {
     }
   }
 
-
+  openReportModal(user: UserEntry) {
+    this.selectedUser = user;
+  }
 
 }

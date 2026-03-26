@@ -1,8 +1,9 @@
-import { Component, Input, SimpleChanges, OnInit } from '@angular/core';
-import { UserEntry } from '../shared/user-entry.model';
+import { Component, Input, SimpleChanges, OnInit, Output, EventEmitter } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { UserDataService } from '../shared/user-data.component';
+import { UserEntry } from '../shared/user-entry.model';
+
 
 @Component({
     selector: 'app-user-card',
@@ -14,6 +15,7 @@ import { UserDataService } from '../shared/user-data.component';
 export class UserCardComponent implements OnInit {
   @Input() userEntry = {} as UserEntry;
   @Input() menu: boolean;
+  @Output() report = new EventEmitter<UserEntry>();
 
   menuOpen: boolean = false;
   allowMenu: boolean = false;
@@ -72,12 +74,8 @@ export class UserCardComponent implements OnInit {
     this.menuOpen = false;
   }
 
-
-  reportUser(): void {
-    // TODO: implement report
-    console.log(`Report user: ${this.userEntry.username}`);
-    console.log("TO BE IMPLIMENTED");
-    this.menuOpen = false;
+  reportUser() {
+    this.report.emit(this.userEntry);
   }
 
 

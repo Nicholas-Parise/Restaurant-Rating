@@ -1,0 +1,15 @@
+export interface ReportEntry {
+    id: number,
+    reporter_id: number,
+    reporter: string,
+    target_type: string,
+    target_id: number,
+    reason: string,
+    description: string,
+    status: string,
+    reviewed_by: number,
+    reviewed_at: Date,
+    created: Date,
+    report_count: number,
+    last_reported_at: Date,
+}

@@ -5,74 +5,78 @@
     <input type="text" [(ngModel)]="searchQuery" (input)="onSearchChange()" placeholder="Search by name"
       class="search-input" />
 
-      <select class="btn" [(ngModel)]="searchMode" (change)="onSearchChange()">
-        <option value="restaurants">Restaurants</option>
-        <option value="users">Users</option>
-        <option value="lists">Lists</option>
-      </select>
+    <select class="btn" [(ngModel)]="searchMode" (change)="onSearchChange()">
+      <option value="restaurants">Restaurants</option>
+      <option value="users">Users</option>
+      <option value="lists">Lists</option>
+    </select>
 
-      @if (searchMode === 'restaurants') {
-        <div>
-          <label class="switch-label">
-            <input type="checkbox" [(ngModel)]="nearbyEnabled" (ngModelChange)="onToggleNearby($event)" />
-            <span class="slider"></span>
-            <span class="switch-text">Near Me</span>
-          </label>
-          @if (nearbyEnabled) {
-            <div class="radius-control">
-              <label for="radius">Radius: {{ searchRadius }} km</label>
-              <input type="range" id="radius" min="1" max="50" step="1" [(ngModel)]="searchRadius"
-                (change)="onRadiusChange()" />
-              </div>
-            }
-          </div>
-        }
+    @if (searchMode === 'restaurants') {
+    <div>
+      <label class="switch-label">
+        <input type="checkbox" [(ngModel)]="nearbyEnabled" (ngModelChange)="onToggleNearby($event)" />
+        <span class="slider"></span>
+        <span class="switch-text">Near Me</span>
+      </label>
+      @if (nearbyEnabled) {
+      <div class="radius-control">
+        <label for="radius">Radius: {{ searchRadius }} km</label>
+        <input type="range" id="radius" min="1" max="50" step="1" [(ngModel)]="searchRadius"
+          (change)="onRadiusChange()" />
       </div>
-
-      @if (searchMode === 'restaurants') {
-        <div class="spacer grid-container">
-          @for (restaurantEntry of restaurantEntry; track restaurantEntry) {
-            <div class="center grid-item">
-              <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
-            </div>
-          }
-          @if (restaurantEntry && restaurantEntry.length === 0) {
-            <p>No results found.</p>
-          }
-        </div>
       }
-
-      @if (searchMode === 'users') {
-        <div class="spacer grid-container">
-          @for (userEntry of userEntry; track userEntry) {
-            <div class="center grid-item">
-              <app-user-card [userEntry]="userEntry" [menu]="LoggedIn"></app-user-card>
-            </div>
-          }
-          @if (userEntry && userEntry.length === 0) {
-            <p>No results found.</p>
-          }
-        </div>
-      }
-
-      @if (searchMode === 'lists') {
-        <div class="spacer grid-container">
-          @for (listEntry of listEntry; track listEntry) {
-            <div class="center grid-item">
-              <app-list-card [listEntry]="listEntry"></app-list-card>
-            </div>
-          }
-          @if (listEntry && listEntry.length === 0) {
-            <p>No results found.</p>
-          }
-        </div>
-      }
-
-
-      <div class="Pagination">
-        <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
-        <p>{{this.currentPage}}</p>
-        <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
-      </div>
-
     </div>
+    }
+  </div>
+
+  @if (searchMode === 'restaurants') {
+  <div class="spacer grid-container">
+    @for (restaurantEntry of restaurantEntry; track restaurantEntry) {
+    <div class="center grid-item">
+      <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
+    </div>
+    }
+    @if (restaurantEntry && restaurantEntry.length === 0) {
+    <p>No results found.</p>
+    }
+  </div>
+  }
+
+  @if (searchMode === 'users') {
+  <div class="spacer grid-container">
+    @for (userEntry of userEntry; track userEntry) {
+    <div class="center grid-item">
+      <app-user-card [userEntry]="userEntry" [menu]="LoggedIn" (report)="openReportModal($event)"></app-user-card>
+    </div>
+    }
+    @if(selectedUser){
+    <app-report-form [userEntry]="selectedUser" (close)="selectedUser = null"></app-report-form>
+    }
+
+    @if (userEntry && userEntry.length === 0) {
+    <p>No results found.</p>
+    }
+  </div>
+  }
+
+  @if (searchMode === 'lists') {
+  <div class="spacer grid-container">
+    @for (listEntry of listEntry; track listEntry) {
+    <div class="center grid-item">
+      <app-list-card [listEntry]="listEntry"></app-list-card>
+    </div>
+    }
+    @if (listEntry && listEntry.length === 0) {
+    <p>No results found.</p>
+    }
+  </div>
+  }
+
+
+  <div class="Pagination">
+    <button (click)="onPreviousPage()" [disabled]="currentPage === 1">Previous</button>
+    <p>{{this.currentPage}}</p>
+    <button (click)="onNextPage()" [disabled]="currentPage >= maxPages">Next</button>
+  </div>
+
+</div>

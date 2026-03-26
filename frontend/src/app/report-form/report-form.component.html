@@ -1,0 +1,23 @@
+<div class="modal-overlay">
+    <div class="modal">
+        <h2>Report</h2>
+        <form (ngSubmit)="onSubmit()" [formGroup]="form">
+            <h2>Reason why</h2>
+            <select formControlName="reason">
+                @for (validReasons of validReasons; track validReasons.key) {
+                <option [value]="validReasons.value">{{ validReasons.value }}</option>
+                }
+            </select>
+
+            <label for="description">description</label>
+            <textarea placeholder="Type your review..." type="text" class="form-control" rows="3"
+                formControlName="description"></textarea>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-success">Submit</button>
+                <button type="button" class="btn btn-cancel" (click)="closeForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
