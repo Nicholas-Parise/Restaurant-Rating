@@ -3,10 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Subject, combineLatest } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { AuthDataService } from '../shared/auth-data.component';
-import { UserCardComponent } from '../user-card/user-card.component';
-import { UserDataService } from '../shared/user-data.component';
-import { UserEntry } from '../shared/user-entry.model';
+import { AuthDataService } from '../../shared/auth-data.component';
+import { UserCardComponent } from '../../user-card/user-card.component';
+import { UserDataService } from '../../shared/user-data.component';
+import { UserEntry } from '../../shared/user-entry.model';
 
 @Component({
     selector: 'app-friends',

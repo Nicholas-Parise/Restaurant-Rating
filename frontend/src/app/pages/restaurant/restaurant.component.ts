@@ -3,27 +3,27 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 
-import { AuthDataService } from '../shared/auth-data.component';
+import { AuthDataService } from '../../shared/auth-data.component';
 
-import { RestaurantDataService } from '../shared/restaurant-data.component';
-import { RestaurantEntry } from '../shared/restaurant-entry.model';
+import { RestaurantDataService } from '../../shared/restaurant-data.component';
+import { RestaurantEntry } from '../../shared/restaurant-entry.model';
 
-import { TagEntry } from '../shared/tag-entry.model';
-import { TagCardComponent } from "../tag-card/tag-card.component";
+import { TagEntry } from '../../shared/tag-entry.model';
+import { TagCardComponent } from "../../tag-card/tag-card.component";
 
-import { ReviewDataService } from '../shared/review-data.component';
-import { ReviewEntry } from '../shared/review-entry.model';
-import { ReviewCardComponent } from "../review-card/review-card.component";
+import { ReviewDataService } from '../../shared/review-data.component';
+import { ReviewEntry } from '../../shared/review-entry.model';
+import { ReviewCardComponent } from "../../review-card/review-card.component";
 
-import { ReviewFormComponent } from '../review-form/review-form.component';
-import { RatingChartComponent } from '../rating-chart/rating-chart.component';
+import { ReviewFormComponent } from '../../review-form/review-form.component';
+import { RatingChartComponent } from '../../rating-chart/rating-chart.component';
 
-import { ListDataService } from '../shared/list-data.component';
-import { ListEntry } from '../shared/list-entry.model';
+import { ListDataService } from '../../shared/list-data.component';
+import { ListEntry } from '../../shared/list-entry.model';
 
-import { RestaurantMapComponent } from '../restaurant-map/restaurant-map.component';
+import { RestaurantMapComponent } from '../../restaurant-map/restaurant-map.component';
 
-import { UtilService } from '../shared/util.service';
+import { UtilService } from '../../shared/util.service';
 
 @Component({
   selector: 'app-restaurant',

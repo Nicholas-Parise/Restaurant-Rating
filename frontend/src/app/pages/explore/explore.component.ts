@@ -6,19 +6,19 @@ import { Subscription, Subject, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { AuthDataService } from '../shared/auth-data.component';
+import { AuthDataService } from '../../shared/auth-data.component';
 
-import { RestaurantEntry } from '../shared/restaurant-entry.model';
-import { RestaurantDataService } from '../shared/restaurant-data.component';
-import { RestaurantCardComponent } from "../restaurant-card/restaurant-card.component";
+import { RestaurantEntry } from '../../shared/restaurant-entry.model';
+import { RestaurantDataService } from '../../shared/restaurant-data.component';
+import { RestaurantCardComponent } from "../../restaurant-card/restaurant-card.component";
 
-import { UserEntry } from '../shared/user-entry.model';
-import { UserDataService } from '../shared/user-data.component';
-import { UserCardComponent } from '../user-card/user-card.component';
+import { UserEntry } from '../../shared/user-entry.model';
+import { UserDataService } from '../../shared/user-data.component';
+import { UserCardComponent } from '../../user-card/user-card.component';
 
-import { ListEntry } from '../shared/list-entry.model';
-import { ListDataService } from '../shared/list-data.component';
-import { ListCardComponent } from '../list-card/list-card.component';
+import { ListEntry } from '../../shared/list-entry.model';
+import { ListDataService } from '../../shared/list-data.component';
+import { ListCardComponent } from '../../list-card/list-card.component';
 
 @Component({
   selector: 'app-explore',

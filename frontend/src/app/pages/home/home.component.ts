@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { RestaurantEntry } from '../shared/restaurant-entry.model';
-import { RestaurantDataService } from '../shared/restaurant-data.component';
-import { RestaurantCardComponent } from "../restaurant-card/restaurant-card.component";
+import { RestaurantEntry } from '../../shared/restaurant-entry.model';
+import { RestaurantDataService } from '../../shared/restaurant-data.component';
+import { RestaurantCardComponent } from "../../restaurant-card/restaurant-card.component";
 
-import { ListEntry } from '../shared/list-entry.model';
-import { ListDataService } from '../shared/list-data.component';
-import { ListCardComponent } from '../list-card/list-card.component';
+import { ListEntry } from '../../shared/list-entry.model';
+import { ListDataService } from '../../shared/list-data.component';
+import { ListCardComponent } from '../../list-card/list-card.component';
 
 import { Subscription } from 'rxjs';
 

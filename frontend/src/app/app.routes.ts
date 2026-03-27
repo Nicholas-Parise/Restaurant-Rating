@@ -1,18 +1,19 @@
 import { Routes } from '@angular/router';
-import { DiaryComponent } from './diary/diary.component';
-import { ExploreComponent } from './explore/explore.component';
-import { HomeComponent } from './home/home.component';
-import { UserComponent } from './user/user.component';
-import { RestaurantComponent } from './restaurant/restaurant.component';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { FriendsComponent } from './friends/friends.component';
-import { BookmarkedComponent } from './bookmarked/bookmarked.component';
-import { ListsComponent } from './lists/lists.component';
 
-import { AboutComponent } from './about/about.component';
-import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
-import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
+import { DiaryComponent } from './pages/diary/diary.component';
+import { ExploreComponent } from './pages/explore/explore.component';
+import { HomeComponent } from './pages/home/home.component';
+import { UserComponent } from './pages/user/user.component';
+import { RestaurantComponent } from './pages/restaurant/restaurant.component';
+import { LoginComponent } from './pages/login/login.component';
+import { RegisterComponent } from './pages/register/register.component';
+import { FriendsComponent } from './pages/friends/friends.component';
+import { BookmarkedComponent } from './pages/bookmarked/bookmarked.component';
+import { ListsComponent } from './pages/lists/lists.component';
+
+import { AboutComponent } from './pages/about/about.component';
+import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
+import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 
 export const routes: Routes = [
     {path: 'home', component: HomeComponent},

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 
-import { AuthDataService } from '../shared/auth-data.component';
+import { AuthDataService } from '../../shared/auth-data.component';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 
