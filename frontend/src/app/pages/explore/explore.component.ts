@@ -49,18 +49,21 @@ export class ExploreComponent implements OnInit {
   listEntry: ListEntry[] = [];
   listSubscription = new Subscription();
 
-  private searchQuerySubject = new Subject<string>();
-  private searchRadiusSubject = new Subject<number>();
-  private searchPageSubject = new Subject<number>();
-  private combinedSearchSub = new Subscription();
+  private searchTrigger$ = new Subject<{
+    query: string;
+    page: number;
+    radius: number;
+    lat: number | null;
+    lng: number | null;
+  }>();
 
   currentPage: number = 1;
   pageSize: number = 10;
   maxPages: number = 0;
   searchQuery = '';
   nearbyEnabled = false;
-  lat: Number | null = null;
-  lng: Number | null = null;
+  lat: number | null = null;
+  lng: number | null = null;
   searchRadius = 10;
   bounce_time = 0;
 
@@ -71,7 +74,6 @@ export class ExploreComponent implements OnInit {
   ngOnInit(): void {
 
     this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
-      //console.log(restaurantEntry)
       this.restaurantEntry = restaurantEntry;
       this.maxPages = this.restaurantDataService.totalPages;
       console.log(this.maxPages);
@@ -79,7 +81,6 @@ export class ExploreComponent implements OnInit {
 
 
     this.userSubscription = this.userDataService.userSearchSubject.subscribe(userSearchEntry => {
-      //console.log(restaurantEntry)
       this.userEntry = userSearchEntry;
       this.maxPages = this.userDataService.totalPages;
       console.log(this.maxPages);
@@ -89,6 +90,14 @@ export class ExploreComponent implements OnInit {
       this.listEntry = listEntry;
       this.maxPages = this.listDataService.totalPages;
     });
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.searchQuery = params['search'] || '';
+      this.searchMode = params['mode'] || 'restaurants';
+      this.currentPage = +params['page'] || 1;
+      this.nearbyEnabled = params['nearby'] === 'true';
+      this.maxPages = this.currentPage + 1;
+    })
 
 
     this.authDataService.getIsLoggedIn().then(isLoggedIn => {
@@ -100,42 +109,27 @@ export class ExploreComponent implements OnInit {
     });
 
 
-    this.combinedSearchSub = combineLatest([
-      this.searchQuerySubject.pipe(
-        debounceTime(this.bounce_time)
-        // ,distinctUntilChanged()
-      ),
-      this.searchRadiusSubject.pipe(
-        debounceTime(this.bounce_time)
-        // ,distinctUntilChanged()
-      ),
-      this.searchPageSubject.pipe(
-        debounceTime(this.bounce_time)
-        // ,distinctUntilChanged()
+    this.searchTrigger$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged((a, b) =>
+          a.query === b.query &&
+          a.page === b.page &&
+          a.radius === b.radius &&
+          a.lat === b.lat &&
+          a.lng === b.lng
+        )
       )
-    ]).subscribe(([query, radius, page]) => {
-
-      if (this.searchMode == 'restaurants') {
-        this.restaurantDataService.getSearch(query, this.lat, this.lng, radius, page);
-      } else if (this.searchMode == 'users') {
-        this.userDataService.GetSearch(query, page);
-      } else {
-        this.listDataService.GetSearch(query, page, 10);
-      }
-
-      this.updateQueryParams();
-      this.bounce_time = 500.0;
-    });
-
-    this.activatedRoute.queryParams.subscribe(params => {
-
-      this.searchQuery = params['search'] || '';
-      this.searchMode = params['mode'] || 'restaurants';
-      this.currentPage = +params['page'] || 1;
-      this.nearbyEnabled = params['nearby'] === 'true';
-      this.maxPages = this.currentPage + 1;
-    })
-
+      .subscribe(({ query, page, radius, lat, lng }) => {
+        if (this.searchMode === 'restaurants') {
+          this.restaurantDataService.getSearch(query, lat, lng, radius, page);
+        } else if (this.searchMode === 'users') {
+          this.userDataService.GetSearch(query, page);
+        } else {
+          this.listDataService.GetSearch(query, page, 10);
+        }
+        this.updateQueryParams();
+      });
 
     this.onSearchChange(false);
 
@@ -149,31 +143,28 @@ export class ExploreComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.restaurantSubscription.unsubscribe();
-    this.combinedSearchSub.unsubscribe();
-    this.searchPageSubject.unsubscribe();
-    this.searchRadiusSubject.unsubscribe();
+    this.userSubscription.unsubscribe();
+    this.listSubscription.unsubscribe();
+    this.searchTrigger$.complete();
   }
 
 
   onSearchChange(resetPage: boolean = true) {
-    //if (this.searchQuery.length < 2) return;
-    this.searchQuerySubject.next(this.searchQuery);
     if (resetPage) {
       this.currentPage = 1;
-      this.onPageChange();
+      this.triggerSearch();
     }
   }
 
   onRadiusChange(resetPage: boolean = true): void {
-    this.searchRadiusSubject.next(this.searchRadius);
     if (resetPage) {
       this.currentPage = 1;
-      this.onPageChange();
+      this.triggerSearch();
     }
   }
 
   onPageChange(): void {
-    this.searchPageSubject.next(this.currentPage);
+    this.triggerSearch();
   }
 
 
@@ -190,12 +181,12 @@ export class ExploreComponent implements OnInit {
       }
     } else {
       this.lat = null;
-      this.lng = null
+      this.lng = null;
     }
 
     if (resetPage) {
       this.currentPage = 1;
-      this.onRadiusChange();
+      this.triggerSearch();
     }
   }
 
@@ -213,6 +204,17 @@ export class ExploreComponent implements OnInit {
         queryParamsHandling: 'merge',
       }
     );
+  }
+
+
+  triggerSearch() {
+    this.searchTrigger$.next({
+      query: this.searchQuery,
+      page: this.currentPage,
+      radius: this.searchRadius,
+      lat: this.lat,
+      lng: this.lng
+    });
   }
 
 
