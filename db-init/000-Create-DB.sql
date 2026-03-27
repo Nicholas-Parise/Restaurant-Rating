@@ -237,7 +237,7 @@ CREATE TABLE reports (
     id SERIAL PRIMARY KEY,
 
     reporter_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    target_type TEXT NOT NULL CHECK (target_type IN ('review', 'user')),
+    target_type TEXT NOT NULL CHECK (target_type IN ('review', 'user', 'list')),
     target_id BIGINT NOT NULL,
     UNIQUE (reporter_id, target_type, target_id),
 

@@ -16,6 +16,8 @@ import { RestaurantCardComponent } from '../../restaurant-card/restaurant-card.c
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 
+import { ReportModalService } from '../../shared/reportModal.service';
+
 @Component({
     selector: 'app-lists',
     imports: [CommonModule, FormsModule, ListCardComponent, RestaurantCardComponent, RouterLink],
@@ -27,6 +29,7 @@ export class ListsComponent implements OnInit {
 
   constructor(private authDataService: AuthDataService,
     private listDataService: ListDataService,
+    private reportModalService:ReportModalService,
     private route: ActivatedRoute,
     private router: Router) { }
 
@@ -154,6 +157,19 @@ export class ListsComponent implements OnInit {
 
   isOwner(list: ListEntry): boolean {
     return list.owner_username == this.authDataService.getUsername();
+  }
+
+
+  follow(list: ListEntry): void {
+    console.log("TBD DOES NOTHING")
+  }
+
+
+  report(list: ListEntry): void {
+    this.reportModalService.open({
+      type: 'list',
+      data: list
+    });
   }
 
 

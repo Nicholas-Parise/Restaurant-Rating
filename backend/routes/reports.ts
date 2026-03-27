@@ -141,14 +141,14 @@ router.get('/user/:userReportId', authenticate, async (req, res, next) => {
         u.username,
         u.name,
         u.bio,
-        u.picture
+        u.picture,
         COUNT(rep.id) AS report_count
     FROM users u
     LEFT JOIN reports rep 
         ON rep.target_type = 'user' 
         AND rep.target_id = u.id
     WHERE u.id = $1
-    GROUP BY u.username;`, [userReportId]);
+    GROUP BY u.id, u.username;`, [userReportId]);
 
 
     const reports = result.rows;
@@ -288,7 +288,7 @@ router.post('/', authenticate, async (req, res) => {
   const { target_type, target_id, reason, description } = req.body;
 
   // 1. Validate target_type
-  if (!target_type || !['review', 'user'].includes(target_type)) {
+  if (!target_type || !['review', 'user', 'list'].includes(target_type)) {
     return res.status(400).json({ error: 'Invalid target_type' });
   }
 

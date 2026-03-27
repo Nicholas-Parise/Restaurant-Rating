@@ -1,6 +1,8 @@
 import { UserEntry } from "./user-entry.model";
 import { ReviewEntry } from "./review-entry.model";
+import { ListEntry } from "./list-entry.model";
 
 export type ReportTarget =
   | { type: 'user'; data: UserEntry }
-  | { type: 'review'; data: ReviewEntry };
+  | { type: 'review'; data: ReviewEntry }
+  | { type: 'list'; data: ListEntry };

@@ -1,57 +1,64 @@
 <div class="container">
 
   @if (list_id) {
-    @if (listEntry) {
-      <div class="list-details">
-        <h1>{{ listEntry[0].name }}</h1>
-        <p class="owner">By: <a [routerLink]="['/user', listEntry[0].owner_username]">{{ listEntry[0].owner_name ? listEntry[0].owner_name + ' (@' +
+  @if (listEntry) {
+  <div class="list-details">
+    <h1>{{ listEntry[0].name }}</h1>
+    <p class="owner">By: <a [routerLink]="['/user', listEntry[0].owner_username]">{{ listEntry[0].owner_name ?
+        listEntry[0].owner_name + ' (@' +
         listEntry[0].owner_username + ')' : listEntry[0].owner_username }}</a>
-      </p>
-      <p class="description">{{ listEntry[0].description }}</p>
-      <p class="created">Created: {{ listEntry[0].created | date:'MMM d, y' }}</p>
-      @if (LoggedIn && isOwner(listEntry[0])) {
-        <div class="actions">
-          <button class="btn" (click)="openEditListModal(listEntry[0])">Edit List</button>
-          <button class="btn btn-cancel" (click)="openDeleteConfirm(listEntry[0])">Delete List</button>
-        </div>
-      }
+    </p>
+    <p class="description">{{ listEntry[0].description }}</p>
+    <p class="created">Created: {{ listEntry[0].created | date:'MMM d, y' }}</p>
+    @if (LoggedIn && isOwner(listEntry[0])) {
+    <div class="actions">
+      <button class="btn" (click)="openEditListModal(listEntry[0])">Edit List</button>
+      <button class="btn btn-cancel" (click)="openDeleteConfirm(listEntry[0])">Delete List</button>
     </div>
-  }
-  <div class="grid-container">
-    @for (restaurant of restaurantEntry; track restaurant) {
-      <div class="grid-item">
-        <app-restaurant-card [restaurantEntry]="restaurant" [menu]="LoggedIn && isOwner(listEntry[0])" [list]="listEntry[0]"></app-restaurant-card>
-      </div>
+    }@else {
+    <div class="actions">
+      <button class="btn" (click)="follow(listEntry[0])">Follow List</button>
+      <button class="btn btn-cancel" (click)="report(listEntry[0])">Report List</button>
+    </div>
     }
   </div>
-} @else {
-  @if (LoggedIn) {
-    <div class="user-lists">
-      <h1>Your Lists</h1>
-      <button class="btn" (click)="openNewListModal()">+ New List</button>
-      <div class="grid-container">
-        @for (list of userList; track list) {
-          <div class="grid-item">
-            <app-list-card [listEntry]="list"></app-list-card>
-          </div>
-        }
-      </div>
+  }
+  <div class="grid-container">
+    @for (restaurant of restaurantEntry; track restaurant.id) {
+    <div class="grid-item">
+      <app-restaurant-card [restaurantEntry]="restaurant" [menu]="LoggedIn && isOwner(listEntry[0])"
+        [list]="listEntry[0]"></app-restaurant-card>
     </div>
+    }
+  </div>
+  } @else {
+  @if (LoggedIn) {
+  <div class="user-lists">
+    <h1>Your Lists</h1>
+    <button class="btn" (click)="openNewListModal()">+ New List</button>
+    <div class="grid-container">
+      @for (list of userList; track list.id) {
+      <div class="grid-item">
+        <app-list-card [listEntry]="list"></app-list-card>
+      </div>
+      }
+    </div>
+  </div>
   }
   <div class="recommended-lists">
     <h1>Recommended Lists</h1>
     <div class="grid-container">
-      @for (list of listEntry; track list) {
-        <div class="grid-item">
-          <app-list-card [listEntry]="list"></app-list-card>
-        </div>
+      @for (list of listEntry; track list.id) {
+      <div class="grid-item">
+        <app-list-card [listEntry]="list"></app-list-card>
+      </div>
       }
     </div>
   </div>
-}
+  }
 
 
-@if (showNewListModal) {
+  @if (showNewListModal) {
   <div class="modal-overlay">
     <div class="modal">
       <h2>{{ isEditMode ? 'Edit List' : 'Create New List' }}</h2>
@@ -74,22 +81,22 @@
       </form>
     </div>
   </div>
-}
+  }
 
-<!-- Delete Confirm Modal -->
-@if (showDeleteConfirm) {
+  <!-- Delete Confirm Modal -->
+  @if (showDeleteConfirm) {
   <div class="modal-overlay">
     <div class="modal">
       <h2>Delete List</h2>
       <p>Are you sure you want to delete <strong>{{ selectedList?.name }}</strong>? This action cannot be undone.
-    </p>
-    <div class="modal-actions">
-      <button class="btn btn-cancel" (click)="confirmDelete()">Delete</button>
-      <button class="btn" (click)="closeDeleteConfirm()">Cancel</button>
+      </p>
+      <div class="modal-actions">
+        <button class="btn btn-cancel" (click)="confirmDelete()">Delete</button>
+        <button class="btn" (click)="closeDeleteConfirm()">Cancel</button>
+      </div>
     </div>
   </div>
-</div>
-}
+  }
 
 
 

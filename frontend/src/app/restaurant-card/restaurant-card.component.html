@@ -1,29 +1,30 @@
 <div class="cardBody" (click)="navigateToRestaurant($event)" (mouseleave)="closeDropdown()">
-  <h2 class="name">{{restaurantEntry.name}}</h2>
-  <img class="image" [src]="restaurantEntry.pictures" alt=""
-    (error)="onImageError($event)">
 
-    @if (allowMenu) {
-      <div class="menu-wrapper" (click)="$event.stopPropagation()">
-        <button class="menu-button" (click)="toggleMenu()">⋯</button>
-        @if (menuOpen) {
-          <ul class="menu-options">
-            @if (favourite) {
-              <li>
-                <button class="btn" (click)="removeFavourite()">remove</button>
-              </li>
-            }
-            @if (bookmark) {
-              <li>
-                <button class="btn" (click)="removeBookmark()">remove</button>
-              </li>
-            }
-            @if (list) {
-              <li>
-                <button class="btn" (click)="removeList()">remove</button>
-              }
-            </ul>
-          }
-        </div>
+    <h2 class="name">{{restaurantEntry.name}}</h2>
+
+  <img class="image" [src]="restaurantEntry.pictures" alt="" (error)="onImageError($event)">
+
+  @if (allowMenu) {
+  <div class="menu-wrapper" (click)="$event.stopPropagation()">
+    <button class="menu-button" (click)="toggleMenu()">⋯</button>
+    @if (menuOpen) {
+    <ul class="menu-options">
+      @if (favourite) {
+      <li>
+        <button class="btn" (click)="removeFavourite()">remove</button>
+      </li>
       }
-    </div>
+      @if (bookmark) {
+      <li>
+        <button class="btn" (click)="removeBookmark()">remove</button>
+      </li>
+      }
+      @if (list) {
+      <li>
+        <button class="btn" (click)="removeList()">remove</button>
+        }
+    </ul>
+    }
+  </div>
+  }
+</div>

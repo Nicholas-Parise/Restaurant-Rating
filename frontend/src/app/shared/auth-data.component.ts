@@ -16,8 +16,6 @@ export class AuthDataService {
   private baseUrl = environment.apiEndpoint;
 
   private loggedin: boolean | null = null;
-  private username: string;
-  private picture: string;
   private userEntry: UserEntry;
   private loginCheckPromise: Promise<boolean> | null = null;
 
@@ -41,8 +39,6 @@ export class AuthDataService {
           const token = response.token;
           localStorage.setItem('authToken', token);
           this.loggedin = true;
-          this.username = response.username;
-          this.picture = response.picture;
           this.userEntry = response;
         }
       }),
@@ -77,28 +73,12 @@ export class AuthDataService {
     console.log("contacting server");
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-/*
-    try {
-      const response = await this.http.get<any>(`${this.baseUrl}auth/me`, { headers }).toPromise();
-
-      this.loggedin = true;
-      this.username = response.username;
-      this.picture = response.picture;
-      this.userEntry = response;
-      return true;
-    } catch (error) {
-      this.loggedin = false;
-      return false;
-    }
-*/
     this.loginCheckPromise = this.http
       .get<any>(`${this.baseUrl}auth/me`, { headers })
       .toPromise()
       .then(response => {
 
         this.loggedin = true;
-        this.username = response.username;
-        this.picture = response.picture;
         this.userEntry = response;
         return true;
       })
@@ -126,15 +106,19 @@ export class AuthDataService {
 
 
   getUsername(): string {
-    return this.username;
+    return this.userEntry.username;
   }
 
   getPicture(): string {
-    return this.picture;
+    return this.userEntry.picture;
   }
 
   getUserEntry(): UserEntry {
     return this.userEntry;
+  }
+
+  getIsMod(): boolean{
+    return (this.userEntry.permissions == "admin" || this.userEntry.permissions == "moderator");
   }
 
   static getToken(): string | null {

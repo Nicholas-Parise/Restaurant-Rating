@@ -5,30 +5,34 @@
 }
 
 
-.cardBody h2 {
+.cardBody .name {
   font-size: 1.3rem;
-  color: #ffffff; /* brighter title */
+  color: #ffffff;
   margin-bottom: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
 }
 
 .cardBody .owner {
   font-size: 0.9rem;
-  color: #bbbbbb; /* muted gray */
+  color: #bbbbbb;
   margin-bottom: 0.5rem;
 }
 
 .cardBody .description {
   font-size: 1rem;
-  color: #d0d0d0; /* softer gray */
+  color: #d0d0d0; 
   margin-bottom: 0.75rem;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap; /* keep it tidy in preview */
+  white-space: nowrap;
 }
 
 .cardBody .created {
   font-size: 0.8rem;
-  color: #888888; /* subtle date */
+  color: #888888;
   margin-bottom: 1rem;
 }
 

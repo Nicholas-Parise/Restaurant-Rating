@@ -1,5 +1,5 @@
 <div class="cardBody" (click)="navigateToList($event)">
-    <h2>{{ listEntry.name }}</h2>
+    <h2 class="name">{{ listEntry.name }}</h2>
     <p class="owner">By: {{ listEntry.owner_name ? listEntry.owner_name + ' (@' + listEntry.owner_username + ')' : listEntry.owner_username }}</p>
 
     <p class="description">{{ listEntry.description || 'No description provided' }}</p>
