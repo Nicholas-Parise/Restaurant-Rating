@@ -6,10 +6,11 @@ import { Meta } from "@angular/platform-browser"
 import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
 import { FooterComponent } from './footer/footer.component';
 import { ReportFormComponent } from './report-form/report-form.component';
+import { ToastComponent } from './toast/toast.component';
 
 @Component({
     selector: 'app-root',
-    imports: [RouterOutlet, NavbarComponent, HeaderComponent, ProfileMenuComponent, ReportFormComponent, FooterComponent],
+    imports: [RouterOutlet, NavbarComponent, HeaderComponent, ProfileMenuComponent, ReportFormComponent, ToastComponent, FooterComponent],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })

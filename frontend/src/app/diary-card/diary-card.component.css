@@ -81,17 +81,6 @@
     white-space: normal;
 }
 
-.expand-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9rem;
-    line-height: 1;
-    padding: 2px 4px;
-    pointer-events: auto;
-    color: white;
-}
-
 .no-review {
     color: #aaa;
     font-style: italic;

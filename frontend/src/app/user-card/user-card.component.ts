@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { UserDataService } from '../shared/user-data.component';
 import { UserEntry } from '../shared/user-entry.model';
 
-import { ReportModalService } from '../reportModal.service';
+import { ReportModalService } from '../shared/reportModal.service';
 
 @Component({
   selector: 'app-user-card',
@@ -16,7 +16,6 @@ import { ReportModalService } from '../reportModal.service';
 export class UserCardComponent implements OnInit {
   @Input() userEntry = {} as UserEntry;
   @Input() menu: boolean;
-  @Output() report = new EventEmitter<UserEntry>();
 
   menuOpen: boolean = false;
   allowMenu: boolean = false;

@@ -1,10 +1,10 @@
 <div class="comment">
     <div class="comment-pic">
         <p class="signature">
-        <a [routerLink]="['/user', reviewEntry.username]">
-            <img class="image" [src]="reviewEntry.picture || 'assets/placeholder-avatar.png'" alt="Profile Picture"
-                (error)="onImageError($event)">
-        </a>
+            <a [routerLink]="['/user', reviewEntry.username]">
+                <img class="image" [src]="reviewEntry.picture || 'assets/placeholder-avatar.png'" alt="Profile Picture"
+                    (error)="onImageError($event)">
+            </a>
         </p>
     </div>
     <div class="comment-body">
@@ -16,4 +16,17 @@
             <app-stars [inputRating]=reviewEntry.score [static]=true [liked]=reviewEntry.liked></app-stars>
         </div>
     </div>
+    <ul>
+        <li>
+        <button type="button" (click)="expanded = !expanded" class="btn-expand">
+            {{ expanded ? 'See Less' : '…' }}
+        </button>
+        </li>
+        <li>
+        @if (expanded) {
+        <button class="btn btn-cancel" (click)="report()">Report</button>
+        }
+        </li>
+    </ul>
+
 </div>

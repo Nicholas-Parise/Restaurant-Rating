@@ -10,19 +10,18 @@
           <ul class="menu-options">
             @if (favourite) {
               <li>
-                <button class="btn" (click)="removeFavourite()">remove favourite</button>
+                <button class="btn" (click)="removeFavourite()">remove</button>
               </li>
             }
             @if (bookmark) {
               <li>
-                <button class="btn" (click)="removeBookmark()">remove bookmark</button>
+                <button class="btn" (click)="removeBookmark()">remove</button>
               </li>
             }
             @if (list) {
               <li>
-                <button class="btn" (click)="removeList()">remove from list</button>
+                <button class="btn" (click)="removeList()">remove</button>
               }
-              <button class="btn" (click)="removeList()">remove from list</button>
             </ul>
           }
         </div>

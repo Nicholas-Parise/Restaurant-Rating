@@ -23,7 +23,7 @@ import { ListEntry } from '../shared/list-entry.model';
 
 import { RestaurantMapComponent } from '../restaurant-map/restaurant-map.component';
 
-import { UtilService } from '../util.service';
+import { UtilService } from '../shared/util.service';
 
 @Component({
   selector: 'app-restaurant',

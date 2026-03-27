@@ -7,6 +7,8 @@ import { environment } from '../../environments/environment';
 import { ReviewEntry } from './review-entry.model';
 import { ReportEntry } from './report-entry.model';
 
+import { ToastService } from '../shared/toast.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,7 +38,7 @@ export class ReportDataService {
   POST /user/:id/ban → Ban a user 
    */
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private toast:ToastService) { }
 
   private baseUrl = environment.apiEndpoint;
 
@@ -76,23 +78,38 @@ export class ReportDataService {
 
   report(reportEntry: ReportEntry){
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}reports`, {reportEntry}, { headers }).subscribe((jsonData) => {
-      console.log("report sent");
+    this.http.post<{ message: string }>(`${this.baseUrl}reports`, reportEntry, { headers }).subscribe((jsonData) => {
+      console.log(jsonData.message);
+      this.toast.show(jsonData.message,"info");
     })
   }
 
 
-
-
-  friendUser(username: string): void {
+  dismiss(reportEntry: ReportEntry): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}friends/${username}`, {}, { headers }).subscribe((jsonData) => {
-      // this.userEntry = jsonData.user;
-      // this.userSubject.next(this.userEntry);
-      console.log("friend request sent");
+    this.http.post<{ message: string }>(`${this.baseUrl}reports/${reportEntry.target_type}/${reportEntry.target_id}/dismiss`, {}, { headers }).subscribe((jsonData) => {
+      console.log(jsonData.message);
     })
   }
+
+
+  banUser(id: string | number): void {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.post<{ message: string }>(`${this.baseUrl}reports/user/${id}/ban`, {}, { headers }).subscribe((jsonData) => {
+      console.log(jsonData.message);
+    })
+  }
+
+  removeReview(id: string | number): void {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
+
+    this.http.post<{ message: string }>(`${this.baseUrl}reports/review/${id}/ban`, {}, { headers }).subscribe((jsonData) => {
+      console.log(jsonData.message);
+    })
+  }
+
 
 
 

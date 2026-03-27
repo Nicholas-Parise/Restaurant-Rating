@@ -14,6 +14,8 @@ import { Subscription } from 'rxjs';
 import { AuthDataService } from '../shared/auth-data.component';
 import { UserFormComponent } from '../user-form/user-form.component';
 
+import { ReportModalService } from '../shared/reportModal.service';
+
 @Component({
     selector: 'app-user',
     imports: [RestaurantCardComponent, ReviewCardComponent, UserFormComponent],
@@ -49,6 +51,7 @@ export class UserComponent {
     private restaurantDataService: RestaurantDataService,
     private reviewDataService: ReviewDataService,
     private authDataService: AuthDataService,
+    private reportModalService:ReportModalService,
     private route: ActivatedRoute,
     private router: Router) { }
 
@@ -139,6 +142,13 @@ export class UserComponent {
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
     target.src = 'assets/placeholder-avatar.png';
+  }
+
+    reportUser() {
+    this.reportModalService.open({
+      type: 'user',
+      data: this.userEntry
+    });
   }
 
 

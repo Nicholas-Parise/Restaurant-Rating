@@ -1,0 +1,7 @@
+<div class="toast-container">
+  @for (toast of (toasts$ | async); track toast.id) {
+    <div class="toast" [class]="toast.type">
+      {{ toast.message }}
+    </div>
+  }
+</div>

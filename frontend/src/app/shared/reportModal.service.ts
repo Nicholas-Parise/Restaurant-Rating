@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { ReportTarget } from './shared/report-target.model';
+import { ReportTarget } from './report-target.model';
 
 @Injectable({
   providedIn: 'root',

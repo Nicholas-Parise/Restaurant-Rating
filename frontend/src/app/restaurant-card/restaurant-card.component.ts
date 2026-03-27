@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { ListEntry } from '../shared/list-entry.model';
 import { ListDataService } from '../shared/list-data.component';
 
-import { UtilService} from '../util.service';
+import { UtilService} from '../shared/util.service';
 
 @Component({
     selector: 'app-restaurant-card',
@@ -76,9 +76,6 @@ export class RestaurantCardComponent implements OnInit {
 
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
-
-    console.log('test');
-
     target.src = this.util.getPlaceholderImage(this.restaurantEntry.type); 
   }
 

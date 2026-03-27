@@ -4,11 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ReportDataService } from '../shared/report-data.component';
 
 import { ReportEntry } from '../shared/report-entry.model';
-import { UserEntry } from '../shared/user-entry.model';
-import { ReviewEntry } from '../shared/review-entry.model';
 
-import { ReportModalService } from '../reportModal.service';
+import { ReportModalService } from '../shared/reportModal.service';
 import { ReportTarget } from '../shared/report-target.model';
+
 
 @Component({
   selector: 'app-report-form',

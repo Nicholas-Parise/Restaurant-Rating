@@ -41,8 +41,6 @@ export class ReviewDataService {
 
   onAddReviewEntry(singleReviewEntry: ReviewEntry) {
 
-    //localStorage.setItem('authToken', token);
-
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
     this.http.post<{ message: string }>(`${this.baseUrl}reviews`, singleReviewEntry, { headers }).subscribe((jsonData) => {

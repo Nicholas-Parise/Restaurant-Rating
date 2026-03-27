@@ -1,4 +1,4 @@
-.comment{
+.comment {
     margin-bottom: 20px;
     border-bottom: 1px solid #456;
     display: flex;
@@ -6,30 +6,36 @@
     gap: 12px
 }
 
-.comment-body{
+.comment-body {
     flex: 1;
 }
 
-.signature{
+.signature {
     color: gray;
 }
 
-.signature a{
+.signature a {
     color: gray;
-    text-decoration: none;        
+    text-decoration: none;
 }
 
 .image {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid #007bff;
-   flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #007bff;
+    flex-shrink: 0;
 }
 
 .profile-container {
-  position: relative;
-  cursor: pointer;
-  outline: none;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+}
+
+ul li {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }

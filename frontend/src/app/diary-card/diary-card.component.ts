@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReviewEntry } from '../shared/review-entry.model';
 import { StarsComponent } from '../stars/stars.component';
-import { UtilService} from '../util.service';
+import { UtilService} from '../shared/util.service';
 
 @Component({
     selector: '[app-diary-card]',

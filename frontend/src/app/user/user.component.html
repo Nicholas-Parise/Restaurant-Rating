@@ -18,6 +18,10 @@
               <div>
                 <app-user-form [userEntry]="userEntry"></app-user-form>
               </div>
+            }@else{
+              <div>
+                <button class="btn btn-cancel" (click)="reportUser()">Report</button>
+              </div>
             }
           </div>
         </div>

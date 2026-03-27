@@ -255,6 +255,17 @@ html {
     background: #c9302c;
 }
 
+.btn-expand {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 2px 4px;
+    pointer-events: auto;
+    color: white;
+}
+
 
 .arrow{
   transition: transform 0.2s ease;

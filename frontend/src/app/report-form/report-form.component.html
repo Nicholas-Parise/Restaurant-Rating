@@ -1,9 +1,10 @@
 @if (target) {
 <div class="modal-overlay">
     <div class="modal">
-        <h2>Report</h2>
+        <h2>Report {{target.type}}</h2>
+
         <form (ngSubmit)="onSubmit()" [formGroup]="form">
-            <h2>Reason why</h2>
+            <label for="reason">Reason why</label>
             <select formControlName="reason">
                 @for (validReasons of validReasons; track validReasons.key) {
                 <option [value]="validReasons.value">{{ validReasons.value }}</option>
@@ -11,8 +12,9 @@
             </select>
 
             <label for="description">description</label>
-            <textarea placeholder="Type your review..." type="text" class="form-control" rows="3"
+            <textarea placeholder="Type your description..." type="text" class="form-control" rows="3"
                 formControlName="description"></textarea>
+            <span>characters left: {{100-(form.value.description?.length ?? 0)}}</span>
 
             <div class="modal-actions">
                 <button type="submit" class="btn btn-success">Submit</button>
