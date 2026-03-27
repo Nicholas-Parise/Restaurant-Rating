@@ -139,7 +139,7 @@ export class RestaurantComponent implements OnInit {
       this.restaurantId = id;
 
       try {
-        this.restaurantDataService.GetResturauntsById(this.restaurantId);
+        this.restaurantDataService.getById(this.restaurantId);
         this.loadReviews();
       } catch (e) {
         this.router.navigate(['/']);

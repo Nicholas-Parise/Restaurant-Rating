@@ -32,7 +32,7 @@ export class RestaurantDataService {
 
   private baseUrl = environment.apiEndpoint;
 
-  GetResturaunts() {
+  get() {
     this.http.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`${this.baseUrl}restaurants`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.restaurantSubject.next(this.restaurantEntry);
@@ -40,7 +40,7 @@ export class RestaurantDataService {
   }
 
 
-  GetSearch(searchQuery: string, lat: Number | null, lng: Number | null, radius: Number | null, page: Number | null) {
+  getSearch(searchQuery: string, lat: Number | null, lng: Number | null, radius: Number | null, page: Number | null) {
 
     let args = `?q=${searchQuery}&page=${page}`;
     if (lat) {
@@ -56,7 +56,7 @@ export class RestaurantDataService {
     })
   }
 
-  GetResturauntsFast() {
+  getFast() {
     this.http.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`${this.baseUrl}restaurants?amount=0`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.restaurantSubject.next(this.restaurantEntry);
@@ -64,7 +64,7 @@ export class RestaurantDataService {
   }
 
 
-  GetHotResturaunts(){
+  getHot(){
    this.http.get<{ restaurants: RestaurantEntry[], totalRestaurants: Number }>(`${this.baseUrl}restaurants/popular`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.restaurantSubject.next(this.restaurantEntry);
@@ -72,7 +72,7 @@ export class RestaurantDataService {
   }
 
 
-  GetResturauntsById(id: number) {
+  getById(id: number) {
     this.http.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`${this.baseUrl}restaurants/${id}`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.restaurantSubject.next(this.restaurantEntry);

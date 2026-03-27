@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit{
     });
 
 
-    this.restaurantDataService.GetHotResturaunts();
+    this.restaurantDataService.getHot();
     this.listDataService.getRecommended();
   }
 

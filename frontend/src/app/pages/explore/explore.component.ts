@@ -116,7 +116,7 @@ export class ExploreComponent implements OnInit {
     ]).subscribe(([query, radius, page]) => {
 
       if (this.searchMode == 'restaurants') {
-        this.restaurantDataService.GetSearch(query, this.lat, this.lng, radius, page);
+        this.restaurantDataService.getSearch(query, this.lat, this.lng, radius, page);
       } else if (this.searchMode == 'users') {
         this.userDataService.GetSearch(query, page);
       } else {
