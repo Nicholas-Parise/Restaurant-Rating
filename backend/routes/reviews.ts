@@ -6,7 +6,7 @@ import db from "../utils/db";
 import authenticate from "../middleware/authenticate";
 import createNotification from "../middleware/createNotification";
 
-import { isBanned, isMod } from "../utils/util";
+import { getUserPermissions, isBanned, isMod } from "../utils/util";
 
 const router = express.Router();
 
@@ -89,7 +89,7 @@ router.get('/:username', async (req, res, next) => {
       countResult = await db.query(`
       SELECT COUNT(*) AS total 
       FROM reviews 
-      WHERE user_id = $1 AND restaurant_id = $2;`, [userId,restaurantId]);
+      WHERE user_id = $1 AND restaurant_id = $2;`, [userId, restaurantId]);
 
     } else {
       result = await db.query(`
@@ -164,8 +164,14 @@ router.post('/', authenticate, async (req, res) => {
   }
   try {
 
-    if(await isBanned(userId)){
-       return res.status(403).json({ message: "User is banned" });
+    const permission = await getUserPermissions(userId);
+
+    if (!permission) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (isBanned(permission)) {
+      return res.status(403).json({ message: "User is banned" });
     }
 
     const result = await db.query(

@@ -1,7 +1,4 @@
 import express from "express";
-import fs from "fs";
-import * as path from "path";
-
 import db from "../utils/db";
 import authenticate from "../middleware/authenticate";
 import createNotification from "../middleware/createNotification";
@@ -291,7 +288,7 @@ router.post('/', authenticate, async (req, res) => {
   const { target_type, target_id, reason, description } = req.body;
 
   // 1. Validate target_type
-  if (!['review', 'user'].includes(target_type)) {
+  if (!target_type || !['review', 'user'].includes(target_type)) {
     return res.status(400).json({ error: 'Invalid target_type' });
   }
 
