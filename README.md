@@ -1,4 +1,4 @@
-# Restaurant rating app
+# Deglazd
 
 ## Overview
 A spin on letterboxd with a similar design language that emphasizes real reviews and a close knit community. Make an account, leave reviews, see what people you know have given the restaurant and find people who share a similar taste to you! 
@@ -8,11 +8,6 @@ Reviews are dominated by the big restaurant / service review sites like Google r
 
 ### Objective
 Make a service that is simple to use that has the features people actually want while fostering a community of like minded people.
-
-## Possible Names  
-A name has not been decided.  
-
-* I kinda like 'Amandined' it has the word 'dined' in it, and it is the technical term for garnishign with sliced almonds so it has the cooking angle too
 
 ## Tech Stack
 
