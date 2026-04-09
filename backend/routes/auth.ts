@@ -16,6 +16,7 @@ import '../middleware/oauth';
 const router = express.Router();
 
 import * as dotenv from 'dotenv';
+import { isEmail } from "../utils/util";
 dotenv.config();
 
 // localhost:3000/auth/register
@@ -27,10 +28,11 @@ router.post('/register', async (req, res, next) => {
         return res.status(400).json({ message: "email, password and username are required" });
     }
 
-    // Type checking
-    if (email !== undefined && typeof email !== "string") {
-        return res.status(400).json({ error: "email must be a string" });
+    if (email && !isEmail(email)) {
+        return res.status(400).json({ error: "invalid email" });
     }
+
+        // Type checking
     if (password !== undefined && typeof password !== "string") {
         return res.status(400).json({ error: "password must be a string" });
     }

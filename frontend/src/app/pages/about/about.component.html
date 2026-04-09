@@ -17,6 +17,51 @@
         </div>
     </div>
 
+    <h1 class="heading">Contact us</h1>
+
+    <div class="center-div">
+
+        <div class="modal">
+
+            <form (ngSubmit)="onSubmit()" [formGroup]="contactForm">
+
+                <label for="reason">Reason why</label>
+                <select formControlName="reason" type="select">
+                    @for (validReasons of validReasons; track validReasons.key) {
+                    <option [value]="validReasons.key">{{ validReasons.label }}</option>
+                    }
+                </select>
+   
+                <label for="email">Email</label>
+                <input placeholder="Type your email..." type="email" class="form-control-one" rows="1"
+                    formControlName="email">
+                @if (f['email'].touched && f['email'].invalid) {
+                <div class="error">
+                    Enter a valid email
+                </div>
+                }
+
+                <label for="subject">Subject</label>
+                <input placeholder="Type your subject..." type="text" class="form-control-one" rows="1"
+                    formControlName="subject">
+
+                <input type="text" formControlName="website" name="website" style="display:none" tabindex="-1"
+                    autocomplete="off">
+
+
+                <label for="message">Message</label>
+                <textarea placeholder="Type your message..." type="text" class="form-control" rows="3"
+                    formControlName="message"></textarea>
+
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-cancel" (click)="resetForm()">Clear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <h1 class="heading">Attribution</h1>
     ©<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors

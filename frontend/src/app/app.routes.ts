@@ -35,6 +35,7 @@ export const routes: Routes = [
     {path: 'register', component: RegisterComponent},
     {path: 'reports', component: ReportsComponent},
     {path: 'reports/:target_type/:target_id', component: ReportsComponent},
+
     {path: 'about', component: AboutComponent},
     {path: 'privacy-policy', component: PrivacyPolicyComponent},
     {path: 'terms-of-service', component: TermsOfServiceComponent},

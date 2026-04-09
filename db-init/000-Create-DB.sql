@@ -234,36 +234,67 @@ PRIMARY KEY(restaurant_id, list_id)
 
 
 CREATE TABLE reports (
-    id SERIAL PRIMARY KEY,
+id SERIAL PRIMARY KEY,
 
-    reporter_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    target_type TEXT NOT NULL CHECK (target_type IN ('review', 'user', 'list')),
-    target_id BIGINT NOT NULL,
-    UNIQUE (reporter_id, target_type, target_id),
+reporter_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+target_type TEXT NOT NULL CHECK (target_type IN ('review', 'user', 'list')),
+target_id BIGINT NOT NULL,
+UNIQUE (reporter_id, target_type, target_id),
 
-    reason TEXT NOT NULL CHECK (reason IN (
-        'spam',
-        'harassment',
-        'hate',
-        'nudity',
-        'violence',
-        'misinformation',
-        'other'
-    )),
+reason TEXT NOT NULL CHECK (reason IN (
+    'spam',
+    'harassment',
+    'hate',
+    'nudity',
+    'violence',
+    'misinformation',
+    'other'
+)),
 
-    description TEXT,
+description TEXT,
 
-    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN (
-        'pending',
-        'reviewed',
-        'resolved',
-        'dismissed'
-    )),
+status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN (
+    'pending',
+    'reviewed',
+    'resolved',
+    'dismissed'
+)),
 
-    reviewed_by BIGINT REFERENCES users(id),
-    reviewed_at TIMESTAMP,
-    created TIMESTAMP DEFAULT NOW()
+reviewed_by BIGINT REFERENCES users(id),
+reviewed_at TIMESTAMP,
+created TIMESTAMP DEFAULT NOW()
 );
 
 CREATE INDEX idx_reports_target ON reports(target_type, target_id);
 CREATE INDEX idx_reports_status ON reports(status);
+
+
+CREATE TABLE contacts (
+id SERIAL PRIMARY KEY,
+subject TEXT,
+email TEXT NOT NULL,
+message TEXT NOT NULL,
+
+reason TEXT NOT NULL CHECK (reason IN (
+    'general',
+    'account',
+    'bug',
+    'owner',
+    'feature',
+    'report',
+    'billing',
+    'partnership',
+    'other'
+)),
+
+status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN (
+    'pending',
+    'reviewed',
+    'resolved',
+    'dismissed'
+)),
+reviewed_by BIGINT REFERENCES users(id),
+reviewed_at TIMESTAMP,
+created TIMESTAMP DEFAULT NOW()
+)
+CREATE INDEX idx_contacts_status ON contacts(status);

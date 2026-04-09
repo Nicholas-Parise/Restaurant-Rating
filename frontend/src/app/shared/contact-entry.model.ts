@@ -1,0 +1,16 @@
+export interface ContactEntry {
+    id: number,
+    reporter_id: number,
+    reporter: string,
+    reason: string,
+    subject: string,
+    message: string,
+    email: string,
+    website: string,
+    status: string,
+    reviewed_by: number,
+    reviewed_at: Date,
+    created: Date,
+    contact_count: number,
+    last_contact_at: Date,
+}

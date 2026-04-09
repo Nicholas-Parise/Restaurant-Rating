@@ -15,6 +15,7 @@ import bookmarkRoutes from './routes/bookmarks';
 import favouriteRoutes from './routes/favourites';
 
 import reportRoutes from './routes/reports'
+import contactRoutes from './routes/contacts'
 
 import sitemap from './routes/sitemap';
 
@@ -63,6 +64,7 @@ app.use('/bookmarks',bookmarkRoutes);
 app.use('/favourites',favouriteRoutes);
 app.use('/lists',listRoutes);
 app.use('/reports',reportRoutes);
+app.use('/contacts',contactRoutes);
 
 app.use('/uploads', express.static('uploads'));
 
