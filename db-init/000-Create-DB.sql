@@ -296,5 +296,5 @@ status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN (
 reviewed_by BIGINT REFERENCES users(id),
 reviewed_at TIMESTAMP,
 created TIMESTAMP DEFAULT NOW()
-)
+);
 CREATE INDEX idx_contacts_status ON contacts(status);
