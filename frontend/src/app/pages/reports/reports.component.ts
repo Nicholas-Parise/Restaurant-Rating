@@ -1,18 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthDataService } from '../../shared/auth-data.component';
-
-import { ReportDataService } from '../../shared/report-data.component';
-import { ReportEntry } from '../../shared/report-entry.model';
+import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { RouterLink } from '@angular/router';
+
+import { AuthDataService } from '../../shared/auth-data.component';
+import { ReportDataService } from '../../shared/report-data.component';
+
+import { ReportEntry } from '../../shared/report-entry.model';
 import { ReviewEntry } from '../../shared/review-entry.model';
 import { UserEntry } from '../../shared/user-entry.model';
 
+import { ReportCardComponent } from '../../report-card/report-card.component';
+import { ReportCaseCardComponent } from '../../report-case-card/report-case-card.component';
+import { ReviewCardComponent } from '../../review-card/review-card.component';
+
 @Component({
   selector: 'app-reports',
-  imports: [],
+  imports: [CommonModule, RouterLink, ReportCaseCardComponent, ReportCardComponent,ReviewCardComponent],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.css',
+   standalone: true
 })
 export class ReportsComponent implements OnInit {
 
@@ -24,13 +32,17 @@ export class ReportsComponent implements OnInit {
   LoggedIn: boolean = false;
 
   private reportSubscription = new Subscription();
-  private reports: ReportEntry[];
+  reports: ReportEntry[];
 
-  private reviews: ReviewEntry | null;
-  private users: UserEntry | null;
+  reviews: ReviewEntry | null;
+  users: UserEntry | null;
 
   target_type: string | null;
   target_id: string | number | null;
+
+  ngOnDestroy(): void {
+    this.reportSubscription.unsubscribe();
+  }
 
   ngOnInit(): void {
 
@@ -63,4 +75,31 @@ export class ReportsComponent implements OnInit {
       });
     });
   }
+
+
+dismiss(report:ReportEntry):void{
+  this.reportDataService.dismiss(report);
+  this.router.navigate(['/reports']);
+}
+
+
+ban(users: UserEntry):void{
+  this.reportDataService.banUser(users.id);
+  this.router.navigate(['/reports']);
+}
+
+
+remove(review:ReviewEntry):void{
+  this.reportDataService.removeReview(review.id);
+  this.router.navigate(['/reports']);
+}
+
+
+
+
+
+
+
+
+
 }

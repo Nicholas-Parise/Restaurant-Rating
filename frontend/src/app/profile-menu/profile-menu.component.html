@@ -30,8 +30,9 @@
   </div>
 
   @if (userEntry && (userEntry.permissions == 'moderator' || userEntry.permissions == 'admin')) {
-  <div class="button-row">
+  <div class="button-row thirds">
     <button routerLink='/reports' (click)="closePanel()">reports</button>
+        <button routerLink='/contacts' (click)="closePanel()">contacts</button>
   </div>
   }
 

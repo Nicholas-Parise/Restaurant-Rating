@@ -63,11 +63,9 @@ router.get('/:contactId', authenticate, async (req, res, next) => {
     SELECT 
         c.*
     FROM contacts c
-    JOIN users u ON rep.reporter_id = u.id
     WHERE c.id = $1;`, [contactId]);
 
-
-    const result2 = await db.query(`
+    await db.query(`
     UPDATE contacts
       SET status = 'reviewed',
           reviewed_by = $1,
@@ -75,9 +73,9 @@ router.get('/:contactId', authenticate, async (req, res, next) => {
       WHERE id = $2;`, [userId, contactId]);
 
 
-    const reports = result.rows;
+    const contacts = result.rows;
 
-    res.status(200).json({ reports });
+    res.status(200).json({ contacts });
   } catch (error) {
     console.error("Error fetching reports:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
@@ -148,12 +146,9 @@ router.post('/:id/resolve', authenticate, async (req, res, next) => {
 
 
 
-router.post('/', authenticate, async (req, res) => {
-  const userId = req.user.userId; // Get user ID from authenticated token
+router.post('/', async (req, res) => {
   const { subject, message, reason, email, website } = req.body;
-
-  console.log(req.body);
-
+  
   if (email && !isEmail(email)) {
     return res.status(400).json({ error: "invalid email" });
   }

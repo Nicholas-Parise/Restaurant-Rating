@@ -18,10 +18,10 @@ export class ReportDataService {
   reportEntry: ReportEntry[];
   reportSubject = new Subject<ReportEntry[]>();
 
-  userEntry: UserEntry;
+  userEntry: UserEntry | null;
   userSubject = new Subject<UserEntry>();
 
-  reviewEntry: ReviewEntry;
+  reviewEntry: ReviewEntry | null;
   reviewSubject = new Subject<ReviewEntry>();
 
   totalReports: number = 0;
@@ -43,6 +43,10 @@ export class ReportDataService {
   private baseUrl = environment.apiEndpoint;
 
   get() {
+
+    this.reviewEntry = null;
+    this.userEntry = null;
+
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
     this.http.get<{ reports: ReportEntry[] }>(`${this.baseUrl}reports`, { headers })
@@ -105,7 +109,7 @@ export class ReportDataService {
   removeReview(id: string | number): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.http.post<{ message: string }>(`${this.baseUrl}reports/review/${id}/ban`, {}, { headers }).subscribe((jsonData) => {
+    this.http.post<{ message: string }>(`${this.baseUrl}reports/review/${id}/remove`, {}, { headers }).subscribe((jsonData) => {
       console.log(jsonData.message);
     })
   }

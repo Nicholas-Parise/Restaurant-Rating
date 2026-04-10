@@ -1,0 +1,41 @@
+<div class="container">
+
+    @if (contact_id && contacts) {
+    <div class="list-details">
+        <h1>{{ contacts[0].subject || 'No Subject' }}</h1>
+
+        <p class="owner">
+            By: {{ contacts[0].reporter }}
+            <span class="email">({{ contacts[0].email }})</span>
+        </p>
+        <p class="description">{{ contacts[0].message }}</p>
+        <div class="status" [ngClass]="contacts[0].status">
+            {{ contacts[0].status }}
+        </div>
+
+        <p class="created">Created: {{ contacts[0].created | date:'MMM d, y' }}</p>
+        <p class="created">Reviewed: {{ contacts[0].reviewed_at | date:'MMM d, y' }}</p>
+
+        <div class="actions">
+            <button class="btn" (click)="resolve(contacts[0])">Resolve message</button>
+            <button class="btn btn-cancel" (click)="dismiss(contacts[0])">Dismiss message</button>
+        </div>
+    </div>
+
+    } @else if (contacts.length > 0) {
+    <h1>contact messages</h1>
+    <div class="grid-container">
+        @for (contacts of contacts; track contacts.id) {
+        <div class="grid-item">
+            <app-contacts-card [contactEntry]="contacts"></app-contacts-card>
+        </div>
+        }
+    </div>
+    }@else {
+    <h1>No contact messages</h1>
+    }
+
+
+
+
+</div>

@@ -1,0 +1,23 @@
+<div class="cardBody" (click)="openReport()">
+
+  <h2 class="name">
+    {{ reportEntry.target_type | titlecase }} #{{ reportEntry.target_id }}
+  </h2>
+
+  <p class="reportCount">
+    {{ reportEntry.report_count }} reports
+  </p>
+
+  <p class="lastReported">
+    Last reported: {{ reportEntry.last_reported_at | date:'MMM d, y' }}
+  </p>
+
+  <div class="targetType" [ngClass]="reportEntry.target_type">
+    {{ reportEntry.target_type }}
+  </div>
+
+  <div class="reason" [ngClass]="reportEntry.reason">
+    {{ reportEntry.reason }}
+  </div>
+
+</div>

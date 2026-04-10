@@ -25,15 +25,16 @@ router.get('/', authenticate, async (req, res, next) => {
       return res.status(403).json({ message: "User lacks permissions" });
     }
 
-
+    // TODO add average reason so it is easier to know what to expect
     const result = await db.query(`
       SELECT 
         target_type,
         target_id,
         COUNT(*) AS report_count,
-        MAX(created) AS last_reported_at
+        MAX(created) AS last_reported_at,
+        MODE() WITHIN GROUP (ORDER BY reason) AS reason
       FROM reports
-      WHERE status = 'pending'
+      WHERE (status = 'pending' or status = 'reviewed')
       GROUP BY target_type, target_id
       ORDER BY report_count DESC, last_reported_at DESC
       LIMIT 50;`);
@@ -80,11 +81,17 @@ router.get('/review/:reviewId', authenticate, async (req, res, next) => {
 
     const result2 = await db.query(
       `SELECT 
-        r.id,
-        r.description,
-        r.score,
-        r.created,
-        u.username,
+        r.id, 
+        r.restaurant_id, 
+        r.liked, 
+        r.visited, 
+        r.score, 
+        r.description, 
+        r.updated, 
+        r.created, 
+        u.name, 
+        u.username, 
+        u.picture,
         COUNT(rep.id) AS report_count
     FROM reviews r
     JOIN users u ON r.user_id = u.id
@@ -92,7 +99,7 @@ router.get('/review/:reviewId', authenticate, async (req, res, next) => {
         ON rep.target_type = 'review' 
         AND rep.target_id = r.id
     WHERE r.id = $1
-    GROUP BY r.id, u.username;`, [reviewId]);
+    GROUP BY r.id, u.id;`, [reviewId]);
 
 
     const reports = result.rows;
@@ -148,7 +155,7 @@ router.get('/user/:userReportId', authenticate, async (req, res, next) => {
         ON rep.target_type = 'user' 
         AND rep.target_id = u.id
     WHERE u.id = $1
-    GROUP BY u.id, u.username;`, [userReportId]);
+    GROUP BY u.id, u.id;`, [userReportId]);
 
 
     const reports = result.rows;

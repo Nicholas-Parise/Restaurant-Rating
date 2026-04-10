@@ -1,0 +1,75 @@
+.cardBody {
+  min-width: 250px;
+  max-width: 250px;
+  cursor: pointer;
+  position: relative;
+}
+
+.cardBody .name {
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin-bottom: 0.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardBody .reason {
+  font-size: 0.9rem;
+  color: #bbbbbb;
+  margin-bottom: 0.4rem;
+}
+
+.cardBody .reporter {
+  font-size: 0.85rem;
+  color: #cccccc;
+  margin-bottom: 0.5rem;
+}
+
+.cardBody .email {
+  color: #888;
+}
+
+.cardBody .description {
+  font-size: 0.95rem;
+  color: #d0d0d0;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardBody .created {
+  font-size: 0.8rem;
+  color: #888888;
+}
+
+.status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.75rem;
+  padding: 3px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.status.pending {
+  background: #ff9800;
+  color: white;
+}
+
+.status.reviewed {
+  background: #2196f3;
+  color: white;
+}
+
+.status.resolved {
+  background: #4caf50;
+  color: white;
+}
+
+.status.dismissed {
+  background: #777;
+  color: white;
+}

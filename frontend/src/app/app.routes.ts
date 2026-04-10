@@ -11,6 +11,7 @@ import { FriendsComponent } from './pages/friends/friends.component';
 import { BookmarkedComponent } from './pages/bookmarked/bookmarked.component';
 import { ListsComponent } from './pages/lists/lists.component';
 import { ReportsComponent } from './pages/reports/reports.component';
+import { ContactsComponent } from './pages/contacts/contacts.component';
 
 import { AboutComponent } from './pages/about/about.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
@@ -35,6 +36,8 @@ export const routes: Routes = [
     {path: 'register', component: RegisterComponent},
     {path: 'reports', component: ReportsComponent},
     {path: 'reports/:target_type/:target_id', component: ReportsComponent},
+    {path: 'contacts', component: ContactsComponent},
+    {path: 'contacts/:contact_id', component: ContactsComponent},
 
     {path: 'about', component: AboutComponent},
     {path: 'privacy-policy', component: PrivacyPolicyComponent},

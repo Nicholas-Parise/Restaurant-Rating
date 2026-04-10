@@ -1,7 +1,6 @@
 <div class="container">
 
-  @if (list_id) {
-  @if (listEntry) {
+  @if (list_id && listEntry) {
   <div class="list-details">
     <h1>{{ listEntry[0].name }}</h1>
     <p class="owner">By: <a [routerLink]="['/user', listEntry[0].owner_username]">{{ listEntry[0].owner_name ?
@@ -22,7 +21,7 @@
     </div>
     }
   </div>
-  }
+  
   <div class="grid-container">
     @for (restaurant of restaurantEntry; track restaurant.id) {
     <div class="grid-item">

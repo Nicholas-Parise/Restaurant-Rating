@@ -1,0 +1,19 @@
+<div class="cardBody">
+
+  <h2 class="reason" [ngClass]="reportEntry.reason">
+    {{ reportEntry.reason }}
+  </h2>
+
+  <p class="reporter">
+    reported by: {{ reportEntry.reporter }}
+  </p>
+
+  <p class="description">
+    {{ reportEntry.description || 'No description provided' }}
+  </p>
+
+  <p class="created">
+    {{ reportEntry.created | date:'MMM d, y' }}
+  </p>
+
+</div>

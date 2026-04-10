@@ -1,0 +1,24 @@
+<div class="cardBody" [routerLink]="['/contacts', contactEntry.id]">
+
+  <h2 class="name">{{ contactEntry.subject || 'No Subject' }}</h2>
+
+  <p class="reason">Reason: {{ contactEntry.reason }}</p>
+
+  <p class="reporter">
+    By: {{ contactEntry.reporter }} 
+    <span class="email">({{ contactEntry.email }})</span>
+  </p>
+
+  <p class="description">
+    {{ contactEntry.message || 'No message provided' }}
+  </p>
+
+  <p class="created">
+    {{ contactEntry.created | date:'MMM d, y' }}
+  </p>
+
+  <div class="status" [ngClass]="contactEntry.status">
+    {{ contactEntry.status }}
+  </div>
+
+</div>

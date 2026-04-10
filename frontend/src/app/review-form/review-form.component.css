@@ -53,6 +53,14 @@ form input[type="number"] {
   color: white;
 }
 
+select{
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  background: white;
+  color: #2e2e40;
+}
+
 
 .icon-label {
   display: inline-flex;

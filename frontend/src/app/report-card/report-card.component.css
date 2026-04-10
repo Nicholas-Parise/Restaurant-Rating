@@ -1,0 +1,40 @@
+.cardBody {
+  min-width: 250px;
+  max-width: 250px;
+}
+
+.reason {
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+  text-transform: capitalize;
+}
+
+/* reason colors */
+.reason.spam { color: #f1c40f; }
+.reason.harassment { color: #ff9800; }
+.reason.hate { color: #e53935; }
+.reason.nudity { color: #e91e63; }
+.reason.violence { color: #b71c1c; }
+.reason.misinformation { color: #9c27b0; }
+.reason.other { color: #9e9e9e; }
+
+.reporter {
+  font-size: 0.9rem;
+  color: #bbbbbb;
+  margin-bottom: 0.5rem;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: #d0d0d0;
+  margin-bottom: 0.75rem;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.created {
+  font-size: 0.8rem;
+  color: #888888;
+}

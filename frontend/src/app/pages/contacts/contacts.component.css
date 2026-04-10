@@ -23,7 +23,7 @@
   font-size: 0.9rem;
   color: #666;
   margin-bottom: 5px;
-  cursor:pointer;
+  
 }
 
 .list-details a{
@@ -63,4 +63,24 @@ button:disabled {
   button {
     width: 100%;
   }
+}
+
+.status.pending {
+  background: #ff9800;
+  color: white;
+}
+
+.status.reviewed {
+  background: #2196f3;
+  color: white;
+}
+
+.status.resolved {
+  background: #4caf50;
+  color: white;
+}
+
+.status.dismissed {
+  background: #777;
+  color: white;
 }

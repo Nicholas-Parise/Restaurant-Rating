@@ -14,7 +14,7 @@ export class ListDataService {
 
   listSubject = new Subject<ListEntry[]>();
   listEntry: ListEntry[] = [];
-  restaurantEntry: RestaurantEntry[] = [];
+  restaurantEntry: RestaurantEntry[] = [] ;
   totalLists:number = 0;
   totalPages:number = 0;
 
@@ -38,6 +38,9 @@ export class ListDataService {
 
   // get authenticated user lists
   getLists() {
+
+    this.restaurantEntry = [];
+
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
     this.http.get<{ lists: ListEntry[], totalLists: number }>(`${this.baseUrl}lists`, { headers }).subscribe((jsonData) => {
@@ -114,8 +117,11 @@ export class ListDataService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
     this.http.delete<{ message: string }>(`${this.baseUrl}lists/${list_id}/${restaurant_id}`, { headers }).subscribe((jsonData) => {
+      if(this.restaurantEntry){
       this.restaurantEntry = this.restaurantEntry.filter(res => res.id !== restaurant_id);
+      }
       this.listSubject.next(this.listEntry);
+      
     });
   }
 

@@ -46,19 +46,4 @@ export class NavbarComponent implements OnInit {
   toggleNav() {
     this.navOpen = !this.navOpen;
   }
-
-  toggleDropdown() {
-    this.dropdownOpen = !this.dropdownOpen;
-  }
-
-  closeDropdown() {
-    setTimeout(() => this.dropdownOpen = false, 150);
-  }
-
-  signOut() {
-    this.authDataService.signOut();
-    this.router.navigate(['/login']);
-  }
-
-
 }

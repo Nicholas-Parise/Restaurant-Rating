@@ -1,4 +1,57 @@
 <div class="container">
-    <p>reports works!</p>
-    <p>TBD</p>
+
+    @if (users && reports) {
+
+    <div class="list-details">
+        <h1 class="owner" [routerLink]="['/user', users.username]">{{ users.name ?
+            users.name + ' (@' +
+            users.username + ')' : users.username }}
+        </h1>
+
+        <img class="image" [src]="users.picture || 'assets/placeholder-avatar.png'" alt="Profile Picture">
+
+        <p class="description">{{ users.bio ? users.bio : "No Bio" }}</p>
+        <div class="actions">
+            <button class="btn" (click)="dismiss(reports[0])">Dismiss</button>
+            <button class="btn btn-cancel" (click)="ban(users)">Ban user</button>
+        </div>
+    </div>
+    @for (reports of reports; track reports.id) {
+    <div class="grid-item">
+        <app-report-card [reportEntry]="reports"></app-report-card>
+    </div>
+    }
+
+
+    } @else if(reviews && reports){
+
+    <div class="list-details">
+
+        <app-review-card [reviewEntry]="reviews"></app-review-card>
+        
+        <div class="actions">
+            <button class="btn" (click)="dismiss(reports[0])">Dismiss</button>
+            <button class="btn btn-cancel" (click)="remove(reviews)">remove review</button>
+        </div>
+    </div>
+
+    @for (reports of reports; track reports.id) {
+    <div class="grid-item">
+        <app-report-card [reportEntry]="reports"></app-report-card>
+    </div>
+    }
+
+    }@else if(reports){
+    <h1>All Reports</h1>
+    <div class="grid-container">
+        @for (reports of reports; track reports.id) {
+        <div class="grid-item">
+            <app-report-case-card [reportEntry]="reports"></app-report-case-card>
+        </div>
+        }
+    </div>
+    @if(reports.length < 1){ <h2>No Reports</h2>}
+        } @else {
+        <h1>Loading</h1>
+        }
 </div>

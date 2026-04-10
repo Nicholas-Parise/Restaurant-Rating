@@ -1,5 +1,4 @@
-<nav class="navbar"
-  (mouseleave)="closeDropdown()">
+<nav class="navbar">
   <div class="hamburger" (click)="toggleNav()">&#9776;</div>
 
   <ul class="nav-links" [class.open]="navOpen">
@@ -17,16 +16,8 @@
     <!-- Show profile menu if logged in -->
     @if (loggedIn) {
       <div class="profile-container" tabindex="0"
-        (click)="toggleNotifications.emit()"
-        (blur)="closeDropdown()">
+        (click)="toggleNotifications.emit()">
         <img [src]="picture || 'assets/placeholder-avatar.png'" (error)="onImageError($event)" class="profile-pic" alt="Profile Picture" />
-        @if (dropdownOpen) {
-          <div class="dropdown-menu">
-            <a routerLink="user">Profile</a>
-            <a routerLink="user/friends">Friends</a>
-            <a (click)="signOut()">Sign Out</a>
-          </div>
-        }
       </div>
     }
   </div>
