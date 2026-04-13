@@ -12,8 +12,8 @@ router.get('/', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
 
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
+    const page = Number(req.query.page) || 1;
+    const pageSize = Number(req.query.pageSize) || 10;
     const offset = (page - 1) * pageSize;
 
     const result = await db.query(
@@ -46,8 +46,8 @@ router.get('/', authenticate, async (req, res, next) => {
 router.get('/recommended', async (req, res, next) => {
   try {
 
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
+    const page = Number(req.query.page) || 1;
+    const pageSize = Number(req.query.pageSize) || 10;
     const offset = (page - 1) * pageSize;
 
     const result = await db.query(
@@ -83,8 +83,8 @@ router.get('/users/:username', async (req, res, next) => {
 
     const username: string = req.params.username;
 
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
+    const page = Number(req.query.page) || 1;
+    const pageSize = Number(req.query.pageSize) || 10;
     const offset = (page - 1) * pageSize;
 
     if (!username) {
@@ -123,8 +123,8 @@ router.get('/users/:username', async (req, res, next) => {
 
 router.get('/search', async (req, res, next) => {
 
-  const page = parseInt(req.query.page) || 1;
-  let pageSize = parseInt(req.query.pageSize) || 10;
+  const page = Number(req.query.page) || 1;
+  let pageSize = Number(req.query.pageSize) || 10;
   const searchTerm = req.query.q;
   const offset = (page - 1) * pageSize;
 
@@ -170,7 +170,7 @@ router.get('/search', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
 
-    const list_id: number = req.params.id;
+    const list_id = req.params.id;
 
     const result = await db.query(
       `SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username

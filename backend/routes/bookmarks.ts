@@ -11,7 +11,7 @@ const router = express.Router();
 router.get('/', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
-    const restaurant = parseInt(req.query.restaurant);
+    const restaurant = req.query.restaurant;
 
     let result;
 
@@ -48,8 +48,8 @@ router.get('/:username', async (req, res, next) => {
   try {
 
     const username = req.params.username;
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
+    const page = Number(req.query.page) || 1;
+    const pageSize = Number(req.query.pageSize) || 10;
     const offset = (page - 1) * pageSize;
 
     if (!username) {

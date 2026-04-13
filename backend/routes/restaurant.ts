@@ -9,9 +9,9 @@ const router = express.Router();
 // localhost:3000/restaurants?page=1&pageSize=10?amount=0
 router.get('/', async (req, res, next) => {
 
-  const page = parseInt(req.query.page) || 1;
-  let pageSize = parseInt(req.query.pageSize) || 10;
-  const amount = parseInt(req.query.amount) || 1;
+  const page = Number(req.query.page) || 1;
+  let pageSize = Number(req.query.pageSize) || 10;
+  const amount = Number(req.query.amount) || 1;
   const offset = (page - 1) * pageSize;
   let result;
 
@@ -61,12 +61,12 @@ router.get('/', async (req, res, next) => {
 router.get('/search', async (req, res, next) => {
 
   const searchTerm = req.query.q;
-  const lat = parseFloat(req.query.lat);
-  const lng = parseFloat(req.query.lng);
-  const radiusInMeters = parseInt(req.query.rad) * 1000 || 10000;
+  const lat = Number(req.query.lat);
+  const lng = Number(req.query.lng);
+  const radiusInMeters = Number(req.query.rad) * 1000 || 10000;
 
-  const page = parseInt(req.query.page) || 1;
-  let pageSize = parseInt(req.query.pageSize) || 10;
+  const page = Number(req.query.page) || 1;
+  let pageSize = Number(req.query.pageSize) || 10;
   const offset = (page - 1) * pageSize;
 
   var result;

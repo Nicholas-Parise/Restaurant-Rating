@@ -19,8 +19,8 @@ router.get('/', authenticate, async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
+  const page = Number(req.query.page) || 1;
+  const pageSize = Number(req.query.pageSize) || 10;
   const offset = (page - 1) * pageSize;
 
   try {
@@ -55,9 +55,9 @@ router.get('/:username', async (req, res, next) => {
 
   const username = req.params.username;
 
-  const restaurantId = parseInt(req.query.restaurant) || null;
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
+  const restaurantId = req.query.restaurant || null;
+  const page = Number(req.query.page) || 1;
+  const pageSize = Number(req.query.pageSize) || 10;
   const offset = (page - 1) * pageSize;
 
   try {
@@ -122,9 +122,9 @@ router.get('/:username', async (req, res, next) => {
 
 // localhost:3000/reviews/restaurants/0?page=1&pageSize=10
 router.get('/restaurants/:restaurantId', async (req, res, next) => {
-  const restaurantId = parseInt(req.params.restaurantId);
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
+  const restaurantId = req.params.restaurantId;
+  const page = Number(req.query.page) || 1;
+  const pageSize = Number(req.query.pageSize) || 10;
   const offset = (page - 1) * pageSize;
 
   try {

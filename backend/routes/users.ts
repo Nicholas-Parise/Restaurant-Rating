@@ -228,8 +228,8 @@ router.delete('/', authenticate, async (req, res) => {
 router.get('/recent', async (req, res, next) => {
   try {
     const username = req.query.username;
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
+    const page = Number(req.query.page) || 1;
+    const pageSize = Number(req.query.pageSize) || 10;
     const offset = (page - 1) * pageSize;
 
 
@@ -268,8 +268,8 @@ router.get('/recent', async (req, res, next) => {
 
 router.get('/search', async (req, res, next) => {
 
-  const page = parseInt(req.query.page) || 1;
-  var pageSize = parseInt(req.query.pageSize) || 10;
+  const page = Number(req.query.page) || 1;
+  var pageSize = Number(req.query.pageSize) || 10;
   const searchTerm = req.query.q;
   const offset = (page - 1) * pageSize;
   var result;

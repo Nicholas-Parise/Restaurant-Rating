@@ -8,8 +8,8 @@ const router = express.Router();
 // get all your notifications
 router.get('/', authenticate, async (req, res, next) => {
   const userId = req.user.userId; // Get user ID from authenticated token
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
+  const page = Number(req.query.page) || 1;
+  const pageSize = Number(req.query.pageSize) || 10;
   const offset = (page - 1) * pageSize;
   
   try {
