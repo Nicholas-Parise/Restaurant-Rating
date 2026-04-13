@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { UserEntry } from './user-entry.model';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
-import { AuthDataService } from './auth-data.component';
-import { environment } from '../../environments/environment';
+
+import { ToastService } from '../shared/toast.service';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,23 +23,17 @@ export class UserDataService {
   totalusers: number = 0;
   totalPages: number = 0;
 
-
-  constructor(private http: HttpClient) { }
-
-  private baseUrl = environment.apiEndpoint;
+  constructor(private api: ApiService,private toast: ToastService) {}
 
   GetUserById(username: string) {
-    this.http.get<{ user: UserEntry, totalReviews: Number }>(`${this.baseUrl}users/${username}`).subscribe((jsonData) => {
+    this.api.get<{ user: UserEntry, totalReviews: Number }>(`users/${username}`).subscribe((jsonData) => {
       this.userEntry = jsonData.user;
       this.userSubject.next(this.userEntry);
     })
   }
 
   GetUser() {
-
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.get<{ user: UserEntry, totalReviews: Number  }>(`${this.baseUrl}users`, { headers })
+    this.api.get<{ user: UserEntry, totalReviews: Number  }>(`users`)
       .subscribe((jsonData) => {
         this.userEntry = jsonData.user;
         this.userSubject.next(this.userEntry);
@@ -48,10 +42,7 @@ export class UserDataService {
 
 
   editUser(singleUserEntry: any) {
-
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.put<{ user: UserEntry, message: string }>(`${this.baseUrl}users`, singleUserEntry, { headers }).subscribe((jsonData) => {
+    this.api.put<{ user: UserEntry, message: string }>(`users`, singleUserEntry).subscribe((jsonData) => {
       this.userEntry = jsonData.user;
       this.userSubject.next(this.userEntry);
     })
@@ -62,14 +53,7 @@ export class UserDataService {
 
 
   deleteAccount(password: string) {
-
-    const options = {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`),
-      body: {
-        password
-      },
-    };
-    this.http.delete<{ message: string }>(`${this.baseUrl}users`, options).subscribe((jsonData) => {
+    this.api.delete<{ message: string }>(`users`, password).subscribe((jsonData) => {
       console.log("Delete account");
     })
 
@@ -78,9 +62,7 @@ export class UserDataService {
 
 
   friendUser(username: string): void {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}friends/${username}`, {}, { headers }).subscribe((jsonData) => {
+    this.api.post<{ user: UserEntry[], message: string }>(`friends/${username}`, {}).subscribe((jsonData) => {
       // this.userEntry = jsonData.user;
       // this.userSubject.next(this.userEntry);
       console.log("friend request sent");
@@ -88,41 +70,33 @@ export class UserDataService {
   }
 
   acceptFriendUser(username: string): void {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}friends/${username}/accept`, {}, { headers }).subscribe((jsonData) => {
+    this.api.post<{ user: UserEntry[], message: string }>(`friends/${username}/accept`, {}).subscribe((jsonData) => {
       console.log("Accepted friend request");
     })
   }
 
   denyFriendUser(username: string): void {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.post<{ user: UserEntry[], message: string }>(`${this.baseUrl}friends/${username}/deny`, {}, { headers }).subscribe((jsonData) => {
+    this.api.post<{ user: UserEntry[], message: string }>(`friends/${username}/deny`, {}).subscribe((jsonData) => {
       console.log("denied friend request");
     })
   }
 
   removeFriendUser(username: string): void {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.delete<{ user: UserEntry[], message: string }>(`${this.baseUrl}friends/${username}`, { headers }).subscribe((jsonData) => {
+    this.api.delete<{ user: UserEntry[], message: string }>(`friends/${username}`).subscribe((jsonData) => {
       console.log("removed friend");
     })
   }
 
 
   GetFriends() {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}friends`, { headers }).subscribe((jsonData) => {
+    this.api.get<{ user: UserEntry[], totalReviews: Number }>(`friends`).subscribe((jsonData) => {
       this.friendEntry = jsonData.user;
       this.friendSubject.next(this.friendEntry);
     })
   }
 
   GetFriendsById(username: string) {
-    this.http.get<{ user: UserEntry[], totalReviews: Number }>(`${this.baseUrl}friends/${username}`).subscribe((jsonData) => {
+    this.api.get<{ user: UserEntry[], totalReviews: Number }>(`friends/${username}`).subscribe((jsonData) => {
       this.friendEntry = jsonData.user;
       this.friendSubject.next(this.friendEntry);
     })
@@ -131,9 +105,7 @@ export class UserDataService {
 
 
   uploadProfilePicture(data: FormData) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.post<{ imageUrl: string, message: string }>(`${this.baseUrl}users/upload`, data, { headers }).subscribe((jsonData) => {
+    this.api.post<{ imageUrl: string, message: string }>(`users/upload`, data).subscribe((jsonData) => {
       console.log(jsonData);
 
       console.log(this.userEntry);
@@ -147,7 +119,7 @@ export class UserDataService {
 
     let args = `?q=${searchQuery}&page=${page}`;
 
-    this.http.get<{ users: UserEntry[], totalusers: number, pageSize: number }>(`${this.baseUrl}users/search${args}`).subscribe((jsonData) => {
+    this.api.get<{ users: UserEntry[], totalusers: number, pageSize: number }>(`users/search${args}`).subscribe((jsonData) => {
       this.userSearchEntry = jsonData.users;
       this.totalusers = jsonData.totalusers;
       this.totalPages = Math.ceil(this.totalusers / jsonData.pageSize);

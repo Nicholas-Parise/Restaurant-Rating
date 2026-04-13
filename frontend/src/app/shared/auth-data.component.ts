@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { throwError, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserEntry } from './user-entry.model';
-import { environment } from '../../environments/environment';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +10,7 @@ import { environment } from '../../environments/environment';
 
 export class AuthDataService {
 
-  constructor(private http: HttpClient) { }
-
-  private baseUrl = environment.apiEndpoint;
+  constructor(private api: ApiService) {}
 
   private loggedin: boolean | null = null;
   private userEntry: UserEntry;
@@ -23,7 +20,7 @@ export class AuthDataService {
 
     var sendData = { "username": username, "password": password, "email": email };
 
-    return this.http.post<any>(`${this.baseUrl}auth/register`, sendData).pipe(
+    return this.api.post<any>(`auth/register`, sendData).pipe(
       catchError((error) => {
         return throwError(() => error);
       })
@@ -33,7 +30,7 @@ export class AuthDataService {
   PostLogin(password: String, email: String): Observable<any> {
     const sendData = { "password": password, "email": email };
 
-    return this.http.post<any>(`${this.baseUrl}auth/login`, sendData).pipe(
+    return this.api.post<any>(`auth/login`, sendData).pipe(
       tap(response => {
         if (response.token) {
           const token = response.token;
@@ -50,9 +47,7 @@ export class AuthDataService {
 
 
   signOut(): void {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.post<{ message: string }>(`${this.baseUrl}auth/logout`, {}, { headers }).subscribe((jsonData) => {
+    this.api.post<{ message: string }>(`auth/logout`, null).subscribe((jsonData) => {
       console.log(jsonData);
     })
     localStorage.removeItem("authToken");
@@ -66,15 +61,13 @@ export class AuthDataService {
       return this.loggedin;
     }
 
-
     if(this.loginCheckPromise){
       return this.loginCheckPromise;
     }
     console.log("contacting server");
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
 
-    this.loginCheckPromise = this.http
-      .get<any>(`${this.baseUrl}auth/me`, { headers })
+    this.loginCheckPromise = this.api
+      .get<any>(`auth/me`)
       .toPromise()
       .then(response => {
 
@@ -97,7 +90,7 @@ export class AuthDataService {
 
   getIsValidUsername(username: null | string) {
 
-    return this.http.get<{ message: string }>(`${this.baseUrl}auth/username/${username}`).pipe(
+    return this.api.get<{ message: string }>(`auth/username/${username}`).pipe(
       catchError((error) => {
         return throwError(() => error);
       })

@@ -29,6 +29,12 @@
 
     <button type="submit" [disabled]="loginForm.invalid">Login</button>
     <div>Dont have an account? <a [routerLink]="['/register']">make one!</a></div>
+
+    <button class="google-btn" (click)="googleButton()">
+      <img class="google" src="assets/google-icon.svg">
+      &nbsp; Login with google</button>  
+
   </form>
+
 
 </div>

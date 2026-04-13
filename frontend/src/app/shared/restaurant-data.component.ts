@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { RestaurantEntry } from './restaurant-entry.model';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
-import { AuthDataService } from './auth-data.component';
-import { environment } from '../../environments/environment';
+
+import { ToastService } from '../shared/toast.service';
+import { ApiService } from './api.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -28,12 +29,10 @@ export class RestaurantDataService {
   totalRestaurants = 0;
   totalPages = 0;
 
-  constructor(private http: HttpClient) { }
-
-  private baseUrl = environment.apiEndpoint;
+  constructor(private api: ApiService,private toast: ToastService) {}
 
   get() {
-    this.http.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`${this.baseUrl}restaurants`).subscribe((jsonData) => {
+    this.api.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`restaurants`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.restaurantSubject.next(this.restaurantEntry);
     })
@@ -47,7 +46,7 @@ export class RestaurantDataService {
       args = `?q=${searchQuery}&lat=${lat}&lng=${lng}&rad=${radius}&page=${page}`
     }
 
-    this.http.get<{ restaurants: RestaurantEntry[], totalRestaurants: number, pageSize: number }>(`${this.baseUrl}restaurants/search${args}`).subscribe((jsonData) => {
+    this.api.get<{ restaurants: RestaurantEntry[], totalRestaurants: number, pageSize: number }>(`restaurants/search${args}`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.totalRestaurants = jsonData.totalRestaurants;
       this.totalPages = Math.ceil(this.totalRestaurants / jsonData.pageSize);
@@ -57,7 +56,7 @@ export class RestaurantDataService {
   }
 
   getFast() {
-    this.http.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`${this.baseUrl}restaurants?amount=0`).subscribe((jsonData) => {
+    this.api.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`restaurants?amount=0`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.restaurantSubject.next(this.restaurantEntry);
     })
@@ -65,7 +64,7 @@ export class RestaurantDataService {
 
 
   getHot(){
-   this.http.get<{ restaurants: RestaurantEntry[], totalRestaurants: Number }>(`${this.baseUrl}restaurants/popular`).subscribe((jsonData) => {
+   this.api.get<{ restaurants: RestaurantEntry[], totalRestaurants: Number }>(`restaurants/popular`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.restaurantSubject.next(this.restaurantEntry);
     })
@@ -73,7 +72,7 @@ export class RestaurantDataService {
 
 
   getById(id: number) {
-    this.http.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`${this.baseUrl}restaurants/${id}`).subscribe((jsonData) => {
+    this.api.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`restaurants/${id}`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.restaurantSubject.next(this.restaurantEntry);
     })
@@ -81,7 +80,7 @@ export class RestaurantDataService {
 
   GetRecentResturaunts(username:string) {
 
-    this.http.get<{ recents: RestaurantEntry[], totalRecents: number }>(`${this.baseUrl}users/recent?username=${username}`).subscribe((jsonData) => {
+    this.api.get<{ recents: RestaurantEntry[], totalRecents: number }>(`users/recent?username=${username}`).subscribe((jsonData) => {
       this.recentEntry = jsonData.recents;
       this.recentSubject.next(this.recentEntry);
     })
@@ -90,7 +89,7 @@ export class RestaurantDataService {
 
   GetFavouriteResturaunts(username:string) {
 
-    this.http.get<{ favourites: RestaurantEntry[], totalFavourites: number }>(`${this.baseUrl}favourites/${username}`).subscribe((jsonData) => {
+    this.api.get<{ favourites: RestaurantEntry[], totalFavourites: number }>(`favourites/${username}`).subscribe((jsonData) => {
       this.favouriteEntry = jsonData.favourites;
       this.favouriteSubject.next(this.favouriteEntry);
     })
@@ -98,22 +97,14 @@ export class RestaurantDataService {
 
 
   addFavourite(restaurantId: number) {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${AuthDataService.getToken()}`
-    });
-
-    this.http.post<{ message: string }>(`${this.baseUrl}favourites/${restaurantId}`, {}, { headers }).subscribe((jsonData) => {
+    this.api.post<{ message: string }>(`favourites/${restaurantId}`, null).subscribe((jsonData) => {
       //this.restaurantEntry = jsonData.restaurants;
       //this.restaurantSubject.next(this.restaurantEntry);
     })
   }
 
   removeFavourite(restaurantId: number) {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${AuthDataService.getToken()}`
-    });
-
-    this.http.delete<{ message: string }>(`${this.baseUrl}favourites/${restaurantId}`, { headers }).subscribe((jsonData) => {
+    this.api.delete<{ message: string }>(`favourites/${restaurantId}`).subscribe((jsonData) => {
       //console.log(this.favouriteEntry);
       this.favouriteEntry = this.favouriteEntry.filter(res => res.id !== restaurantId);
       this.favouriteSubject.next(this.favouriteEntry);
@@ -122,11 +113,7 @@ export class RestaurantDataService {
 
 
   GetBookmarkResturaunts(restaurantId: number|null) {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${AuthDataService.getToken()}`
-    });
-
-    this.http.get<{ bookmarked: RestaurantEntry[], totalBookmarked: number }>(`${this.baseUrl}bookmarks?restaurant=${restaurantId}`, { headers }).subscribe((jsonData) => {
+    this.api.get<{ bookmarked: RestaurantEntry[], totalBookmarked: number }>(`bookmarks?restaurant=${restaurantId}`).subscribe((jsonData) => {
       this.bookmarkEntry = jsonData.bookmarked;
       this.totalBookmarks = jsonData.totalBookmarked;
       this.bookmarkSubject.next(this.bookmarkEntry);
@@ -135,11 +122,7 @@ export class RestaurantDataService {
 
 
     GetBookmark(username: string, page: Number) {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${AuthDataService.getToken()}`
-    });
-
-    this.http.get<{ bookmarked: RestaurantEntry[], totalBookmarked: number }>(`${this.baseUrl}bookmarks/${username}?page=${page}`, { headers }).subscribe((jsonData) => {
+    this.api.get<{ bookmarked: RestaurantEntry[], totalBookmarked: number }>(`bookmarks/${username}?page=${page}`).subscribe((jsonData) => {
       this.bookmarkEntry = jsonData.bookmarked;
       this.totalBookmarks = jsonData.totalBookmarked;
       this.bookmarkSubject.next(this.bookmarkEntry);
@@ -148,22 +131,14 @@ export class RestaurantDataService {
 
 
   addBookmark(restaurantId: number) {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${AuthDataService.getToken()}`
-    });
-
-    this.http.post<{ message: string }>(`${this.baseUrl}bookmarks/${restaurantId}`, {}, { headers }).subscribe((jsonData) => {
+    this.api.post<{ message: string }>(`bookmarks/${restaurantId}`, null).subscribe((jsonData) => {
       //this.restaurantEntry = jsonData.restaurants;
       //this.restaurantSubject.next(this.restaurantEntry);
     })
   }
 
   removeBookmark(restaurantId: number) {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${AuthDataService.getToken()}`
-    });
-
-    this.http.delete<{ message: string }>(`${this.baseUrl}bookmarks/${restaurantId}`, { headers }).subscribe((jsonData) => {
+    this.api.delete<{ message: string }>(`bookmarks/${restaurantId}`).subscribe((jsonData) => {
      this.bookmarkEntry = this.bookmarkEntry.filter(res => res.id !== restaurantId);
       this.bookmarkSubject.next(this.bookmarkEntry);
     })

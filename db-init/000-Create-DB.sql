@@ -127,7 +127,8 @@ id SERIAL PRIMARY KEY,
 location_id INTEGER REFERENCES locations (id), 
 username TEXT UNIQUE NOT NULL,
 email TEXT UNIQUE NOT NULL,
-password TEXT NOT NULL,
+password TEXT,
+
 name TEXT,
 picture TEXT,
 bio TEXT,
@@ -135,13 +136,16 @@ pro BOOLEAN,
 setup BOOLEAN,
 notifications BOOLEAN,
 permissions TEXT CHECK (permissions IN ('banned','user', 'moderator', 'admin')) DEFAULT 'user',
-google_id TEXT UNIQUE,
+
 provider TEXT,
+google_id TEXT UNIQUE,
+
 stripe_customer_id TEXT,
 stripe_subscription_id TEXT,
 subscription_status TEXT,
 subscription_plan TEXT,
 subscription_ends TIMESTAMP,
+
 created TIMESTAMP DEFAULT NOW(),
 updated TIMESTAMP
 );

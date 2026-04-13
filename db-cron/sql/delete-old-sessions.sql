@@ -1,0 +1,1 @@
+DELETE FROM sessions WHERE created >= NOW() - INTERVAL '7 days';

@@ -64,3 +64,14 @@ button {
     background-color: #0056b3;
   }
 }
+
+.google-btn{
+background-color: #4d6279;
+align-items: center;
+justify-content: center;
+display: flex;
+}
+
+.google{
+  width: 2rem;
+}

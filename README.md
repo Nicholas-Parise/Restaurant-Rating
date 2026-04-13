@@ -15,3 +15,12 @@ Make a service that is simple to use that has the features people actually want 
 **Server:** Node, Express, PostgreSQL   
 **Services:** Stripe, Mailgun, Google Oauth  
 **Data:** Open Street Maps database  
+
+## Developing
+
+Add the following to hosts file to ease development:
+
+```bash
+127.0.0.1  local.deglazd.com
+127.0.0.1  api.local.deglazd.com
+```

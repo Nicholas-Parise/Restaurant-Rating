@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
-import { AuthDataService } from './auth-data.component';
+
+import { ToastService } from './toast.service';
+import { ApiService } from './api.service';
 import { ListEntry } from './list-entry.model';
 import { RestaurantEntry } from './restaurant-entry.model';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -22,13 +22,11 @@ export class ListDataService {
   userListEntry: ListEntry[] = [];
   totalUserLists:number = 0;
 
-  constructor(private http: HttpClient) { }
-
-  private baseUrl = environment.apiEndpoint;
+  constructor(private api: ApiService,private toast: ToastService) {}
 
   getListById(list_id: number | string) {
 
-    this.http.get<{ lists: ListEntry[], restaurants: RestaurantEntry[] }>(`${this.baseUrl}lists/${list_id}`).subscribe((jsonData) => {
+    this.api.get<{ lists: ListEntry[], restaurants: RestaurantEntry[] }>(`lists/${list_id}`).subscribe((jsonData) => {
       this.listEntry = jsonData.lists;
       this.restaurantEntry = jsonData.restaurants;
       this.listSubject.next(this.listEntry);
@@ -41,9 +39,7 @@ export class ListDataService {
 
     this.restaurantEntry = [];
 
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.get<{ lists: ListEntry[], totalLists: number }>(`${this.baseUrl}lists`, { headers }).subscribe((jsonData) => {
+    this.api.get<{ lists: ListEntry[], totalLists: number }>(`lists`).subscribe((jsonData) => {
       this.userListEntry = jsonData.lists;
       this.totalUserLists = jsonData.totalLists;
       this.userListSubject.next(this.userListEntry);
@@ -51,7 +47,7 @@ export class ListDataService {
   }
 
   getListsByUsername(username: string) {
-    this.http.get<{ lists: ListEntry[], totalLists: number }>(`${this.baseUrl}lists/users/${username}`).subscribe((jsonData) => {
+    this.api.get<{ lists: ListEntry[], totalLists: number }>(`lists/users/${username}`).subscribe((jsonData) => {
       this.userListEntry = jsonData.lists;
       this.totalUserLists = jsonData.totalLists;
       this.userListSubject.next(this.userListEntry);
@@ -59,7 +55,7 @@ export class ListDataService {
   }
 
   getRecommended() {
-    this.http.get<{ lists: ListEntry[], totalLists: number }>(`${this.baseUrl}lists/recommended`).subscribe((jsonData) => {
+    this.api.get<{ lists: ListEntry[], totalLists: number }>(`lists/recommended`).subscribe((jsonData) => {
       this.listEntry = jsonData.lists;
       this.totalLists = jsonData.totalLists;
       this.listSubject.next(this.listEntry);
@@ -69,7 +65,7 @@ export class ListDataService {
 
   GetSearch(searchQuery: string, page: number | null, pageSize: number | null) {
 
-    this.http.get<{ lists: ListEntry[], totalLists: number, pageSize: number }>(`${this.baseUrl}lists/search?q=${searchQuery}&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
+    this.api.get<{ lists: ListEntry[], totalLists: number, pageSize: number }>(`lists/search?q=${searchQuery}&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
       this.listEntry = jsonData.lists;
       this.totalLists = jsonData.totalLists;
       this.totalPages = Math.ceil(this.totalLists / jsonData.pageSize);
@@ -79,18 +75,14 @@ export class ListDataService {
 
 
   createList(singleListEntry: ListEntry) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.post<{ message: string, list: ListEntry }>(`${this.baseUrl}lists`, singleListEntry, { headers }).subscribe((jsonData) => {
+    this.api.post<{ message: string, list: ListEntry }>(`lists`, singleListEntry).subscribe((jsonData) => {
       this.userListEntry.push(jsonData.list);
       this.userListSubject.next(this.userListEntry);
     });
   }
 
   editList(singleListEntry: ListEntry, list_id: number) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.put<{ message: string, list: ListEntry }>(`${this.baseUrl}lists/${list_id}`, singleListEntry, { headers }).subscribe((jsonData) => {
+    this.api.put<{ message: string, list: ListEntry }>(`lists/${list_id}`, singleListEntry).subscribe((jsonData) => {
       this.listEntry[0].name = jsonData.list.name;
       this.listEntry[0].description = jsonData.list.description;
       this.listSubject.next(this.listEntry);
@@ -98,25 +90,19 @@ export class ListDataService {
   }
 
   deleteList(list_id: number) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.delete<{ message: string }>(`${this.baseUrl}lists/${list_id}`, { headers }).subscribe((jsonData) => {
+    this.api.delete<{ message: string }>(`lists/${list_id}`).subscribe((jsonData) => {
       this.listEntry = this.listEntry.filter(list => list.id !== list_id);
       this.listSubject.next(this.listEntry);
     });
   }
 
   addToList(restaurant_id: number, list_id: number) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.post<{ message: string }>(`${this.baseUrl}lists/${list_id}/${restaurant_id}`, {}, { headers }).subscribe((jsonData) => {
+    this.api.post<{ message: string }>(`lists/${list_id}/${restaurant_id}`, null).subscribe((jsonData) => {
     });
   }
 
   removeFromList(restaurant_id: number, list_id: number) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.delete<{ message: string }>(`${this.baseUrl}lists/${list_id}/${restaurant_id}`, { headers }).subscribe((jsonData) => {
+    this.api.delete<{ message: string }>(`lists/${list_id}/${restaurant_id}`).subscribe((jsonData) => {
       if(this.restaurantEntry){
       this.restaurantEntry = this.restaurantEntry.filter(res => res.id !== restaurant_id);
       }
@@ -124,7 +110,5 @@ export class ListDataService {
       
     });
   }
-
-
 
 }

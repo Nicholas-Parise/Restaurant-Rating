@@ -1,4 +1,5 @@
 export const environment = {
     production: false,
-    apiEndpoint: 'http://localhost:3000/'
+    apiEndpoint: 'http://api.local.deglazd.com:3000/',
+    authMode: 'cookie'
 };

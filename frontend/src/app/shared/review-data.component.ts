@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ReviewEntry } from './review-entry.model';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
-import { AuthDataService } from './auth-data.component';
-import { environment } from '../../environments/environment';
+
+import { ToastService } from '../shared/toast.service';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,16 +21,12 @@ export class ReviewDataService {
   totalUserReviews = 0;
   totalUserPages = 0;
 
-  constructor(private http: HttpClient) { }
-
-  private baseUrl = environment.apiEndpoint;
+  constructor(private api: ApiService,private toast: ToastService) {}
 
   // get authenticated user reviews
   GetReviews(page: number, pageSize: number) {
 
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.get<{ reviews: ReviewEntry[], totalReviews: number }>(`${this.baseUrl}reviews/?page=${page}&pageSize=${pageSize}`, { headers }).subscribe((jsonData) => {
+    this.api.get<{ reviews: ReviewEntry[], totalReviews: number }>(`reviews/?page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
       this.userReviewEntry = jsonData.reviews;
       this.totalUserReviews = jsonData.totalReviews;
       this.totalUserPages = Math.ceil(this.totalUserReviews / pageSize);
@@ -41,9 +37,7 @@ export class ReviewDataService {
 
   onAddReviewEntry(singleReviewEntry: ReviewEntry) {
 
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.post<{ message: string }>(`${this.baseUrl}reviews`, singleReviewEntry, { headers }).subscribe((jsonData) => {
+    this.api.post<{ message: string }>(`reviews`, singleReviewEntry).subscribe((jsonData) => {
       this.getRestauranReviews(singleReviewEntry.restaurant_id, 0, 10);
     })
 
@@ -53,7 +47,7 @@ export class ReviewDataService {
 
 
   getRestauranReviews(restaurantId: number, page: number, pageSize: number) {
-    this.http.get<{ reviews: ReviewEntry[], totalReviews: number }>(`${this.baseUrl}reviews/restaurants/${restaurantId}?page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
+    this.api.get<{ reviews: ReviewEntry[], totalReviews: number }>(`reviews/restaurants/${restaurantId}?page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
       this.reviewEntry = jsonData.reviews;
       this.totalReviews = jsonData.totalReviews;
       this.totalPages = Math.ceil(this.totalReviews / pageSize);
@@ -63,7 +57,7 @@ export class ReviewDataService {
 
 
   getUserReviews(username: string, page: number, pageSize: number) {
-    this.http.get<{ reviews: ReviewEntry[], totalReviews: number }>(`${this.baseUrl}reviews/${username}?page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
+    this.api.get<{ reviews: ReviewEntry[], totalReviews: number }>(`reviews/${username}?page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
       this.userReviewEntry = jsonData.reviews;
       this.totalUserReviews = jsonData.totalReviews;
       this.totalUserPages = Math.ceil(this.totalUserReviews / pageSize);
@@ -73,7 +67,7 @@ export class ReviewDataService {
 
   // get the reviews from a user for a rest
   getRestaurantUserReviews(restaurantId: number, username: string, page: number, pageSize: number) {
-    this.http.get<{ reviews: ReviewEntry[], totalReviews: number }>(`${this.baseUrl}reviews/${username}?restaurant=${restaurantId}&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
+    this.api.get<{ reviews: ReviewEntry[], totalReviews: number }>(`reviews/${username}?restaurant=${restaurantId}&page=${page}&pageSize=${pageSize}`).subscribe((jsonData) => {
       this.userReviewEntry = jsonData.reviews;
       this.totalUserReviews = jsonData.totalReviews;
       this.totalUserPages = Math.ceil(this.totalUserReviews / pageSize);

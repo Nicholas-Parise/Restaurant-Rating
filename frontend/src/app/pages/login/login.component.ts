@@ -5,10 +5,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthDataService } from '../../shared/auth-data.component';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
+import { NgOptimizedImage } from "@angular/common";
+
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-login',
-    imports: [ReactiveFormsModule, RouterLink],
+    imports: [ReactiveFormsModule, RouterLink, NgOptimizedImage],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
     standalone: true
@@ -56,5 +59,13 @@ export class LoginComponent {
     });
   }
 
+
+  googleButton():void{
+    this.router.navigate(['/google']);
+
+    
+
+    window.location.href = `${environment.apiEndpoint}auth/google`;
+  }
 
 }

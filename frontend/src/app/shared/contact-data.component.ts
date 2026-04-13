@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
-import { AuthDataService } from './auth-data.component';
-import { environment } from '../../environments/environment';
 import { ToastService } from './toast.service';
+import { ApiService } from './api.service';
 
 import { ContactEntry } from './contact-entry.model';
 
@@ -19,13 +17,10 @@ export class ContactDataService {
   totalReports: number = 0;
   totalPages: number = 0;
 
-  constructor(private http: HttpClient, private toast: ToastService) { }
-
-  private baseUrl = environment.apiEndpoint;
+  constructor(private api: ApiService,private toast: ToastService) {}
 
   contact(contactEntry: ContactEntry) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-    this.http.post<{ message: string }>(`${this.baseUrl}contacts`, contactEntry, { headers }).subscribe((jsonData) => {
+    this.api.post<{ message: string }>(`contacts`, contactEntry).subscribe((jsonData) => {
       console.log(jsonData.message);
       this.toast.show(jsonData.message, "info");
     })
@@ -33,9 +28,7 @@ export class ContactDataService {
 
 
   get() {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.get<{ contacts: ContactEntry[] }>(`${this.baseUrl}contacts`, { headers })
+    this.api.get<{ contacts: ContactEntry[] }>(`contacts`)
       .subscribe((jsonData) => {
         this.contactEntry = jsonData.contacts;
         this.contactSubject.next(this.contactEntry);
@@ -44,9 +37,7 @@ export class ContactDataService {
 
 
   getContact(contactId: string | number) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.get<{ contacts: ContactEntry[] }>(`${this.baseUrl}contacts/${contactId}`, { headers })
+    this.api.get<{ contacts: ContactEntry[] }>(`contacts/${contactId}`)
       .subscribe((jsonData) => {
         this.contactEntry = jsonData.contacts;
         this.contactSubject.next(this.contactEntry);
@@ -56,9 +47,7 @@ export class ContactDataService {
 
 
   dismiss(contactId: string | number) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.post<{ message: string }>(`${this.baseUrl}contacts/${contactId}/dismiss`, null, { headers })
+    this.api.post<{ message: string }>(`contacts/${contactId}/dismiss`, null)
       .subscribe((jsonData) => {
         console.log(jsonData.message);
         this.toast.show(jsonData.message, "info");
@@ -67,17 +56,11 @@ export class ContactDataService {
 
 
   resolve(contactId: string | number) {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${AuthDataService.getToken()}`);
-
-    this.http.post<{ message: string }>(`${this.baseUrl}contacts/${contactId}/resolve`, null, { headers })
+    this.api.post<{ message: string }>(`contacts/${contactId}/resolve`, null)
       .subscribe((jsonData) => {
         console.log(jsonData.message);
         this.toast.show(jsonData.message, "info");
       })
   }
-
-
-
-
 
 }
