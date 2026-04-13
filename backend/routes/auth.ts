@@ -85,7 +85,7 @@ router.post('/login', async (req, res, next) => {
 
     const { email, password } = req.body;
 
-    const isProd = process.env.STATUS === "PRD";
+    const isProd = process.env.STATUS === "PROD";
 
     if (!email || !password) {
         return res.status(400).json({ message: "email and password are required" });
@@ -332,7 +332,7 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 // Callback route Google redirects to after auth, returns token
 router.get('/google/callback', passport.authenticate('google', { session: false }), async (req, res) => {
     
-    const isProd = process.env.STATUS === "PRD";
+    const isProd = process.env.STATUS === "PROD";
 
     try {
     const user = req.user;

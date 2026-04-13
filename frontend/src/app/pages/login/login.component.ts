@@ -5,13 +5,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthDataService } from '../../shared/auth-data.component';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
-import { NgOptimizedImage } from "@angular/common";
 
 import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-login',
-    imports: [ReactiveFormsModule, RouterLink, NgOptimizedImage],
+    imports: [ReactiveFormsModule, RouterLink],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
     standalone: true
