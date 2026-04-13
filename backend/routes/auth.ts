@@ -12,6 +12,7 @@ import createNotification from "../middleware/createNotification";
 import sendEmail from "../middleware/sendEmail";
 
 import '../middleware/oauth';
+import authenticate from "../middleware/authenticate";
 
 const router = express.Router();
 
@@ -84,6 +85,8 @@ router.post('/login', async (req, res, next) => {
 
     const { email, password } = req.body;
 
+    const isProd = process.env.STATUS === "PRD";
+
     if (!email || !password) {
         return res.status(400).json({ message: "email and password are required" });
     }
@@ -110,7 +113,15 @@ router.post('/login', async (req, res, next) => {
 
         const returnUser = user.rows[0];
 
-        delete returnUser[password];
+        delete returnUser["password"];
+
+        res.cookie('session', token, {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: 'lax',
+            domain: '.deglazd.com',
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
 
         return res.status(200).json({ message: "Login successful", token, ...returnUser });
     } catch (error) {
@@ -122,9 +133,9 @@ router.post('/login', async (req, res, next) => {
 
 // localhost:3000/auth/logout
 // log user out and invalidate token
-router.post('/logout', async (req, res, next) => {
+router.post('/logout', authenticate, async (req, res, next) => {
 
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = req.token;
 
     if (!token) {
         return res.status(401).json({ message: "No token provided" });
@@ -142,22 +153,12 @@ router.post('/logout', async (req, res, next) => {
 
 // localhost:3000/auth/me
 // get user info 
-router.get('/me', async (req, res, next) => {
+router.get('/me', authenticate, async (req, res, next) => {
 
-    const token = req.headers.authorization?.split(" ")[1];
-
-    if (!token) {
-        return res.status(401).json({ message: "No token provided" });
-    }
+    const userId = req.user.userId; // Get user ID from authenticated token
 
     try {
-        const session = await db.query("SELECT user_id FROM sessions WHERE token = $1", [token]);
-
-        if (session.rows.length === 0) {
-            return res.status(401).json({ message: "Invalid token" });
-        }
-
-        const user = await db.query("SELECT id, name, username, email, picture, bio, setup, permissions, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1", [session.rows[0].user_id]);
+        const user = await db.query("SELECT id, name, username, email, picture, bio, setup, permissions, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1", [userId]);
 
         if (user.rows.length === 0) { // If a user gets removed but the token is still active 
             return res.status(404).json({ message: "User not found" });
@@ -240,7 +241,7 @@ router.post('/forgot-password', async (req, res, next) => {
         }
 
         if (userCheck.rows[0].google_id) {
-            //    return res.status(404).json({ message: "Oauth users cannot change their password." });
+            return res.status(404).json({ message: "Oauth users cannot change their password." });
         }
 
         const userId = userCheck.rows[0].id;
@@ -330,8 +331,11 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 
 // Callback route Google redirects to after auth, returns token
 router.get('/google/callback', passport.authenticate('google', { session: false }), async (req, res) => {
-    const user = req.user;
+    
+    const isProd = process.env.STATUS === "PRD";
 
+    try {
+    const user = req.user;
 
     const token = jwt.sign(
         { userId: user.id, email: user.email, name: user.name },
@@ -340,9 +344,22 @@ router.get('/google/callback', passport.authenticate('google', { session: false 
 
     await db.query("INSERT INTO sessions (user_id, token) VALUES ($1, $2)", [user.id, token]);
 
+    res.cookie('session', token, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: 'lax',
+        domain: '.deglazd.com',
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
     //    res.status(200).json({ message: "oauth successful", token });
     return res.redirect(`${process.env.FRONTEND_URL}/oauth-success?token=${token}`);
+    } catch (err) {
+      console.error('OAuth callback error:', err);
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth`);
+    }
 });
+
 
 
 async function forgotEmail(to: string, first_name: string, reset_link: string, resetToken, expiry_time) {

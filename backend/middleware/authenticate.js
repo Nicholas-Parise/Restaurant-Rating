@@ -11,17 +11,23 @@ require("dotenv").config(); // Load environment variables
 
 const authenticate = async (req, res, next) => {
     
-     //console.log('AUTH middleware hit, headers:', req.headers.authorization);
-    
-    const tempToken = req.header("Authorization");
+    const cookieToken = req.cookies?.session;
 
-    if (!tempToken) {
+    const authHeader  = req.header("Authorization");
+    const bearerToken =
+      authHeader?.startsWith("Bearer ")
+        ? authHeader.replace("Bearer ", "")
+        : null;
+
+    const token = cookieToken || bearerToken;
+
+    if (!token) {
         return res.status(401).json({ message: "Access denied. No token provided." });
     }
 
-    const token = tempToken.replace("Bearer ", "");
-
     try {
+
+
         // Find the user associated with the token
         const session = await db.query("SELECT user_id FROM sessions WHERE token = $1;", [token]);
 
@@ -31,7 +37,7 @@ const authenticate = async (req, res, next) => {
         
         const decoded = jwt.verify(token, process.env.SECRET_KEY); // Remove "Bearer " prefix if present
         req.user = decoded; // Attach user info to the request
-        
+        req.token = token;
         next(); // Continue to the next middleware or route handler
     } catch (error) {
 

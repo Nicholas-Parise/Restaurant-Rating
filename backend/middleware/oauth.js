@@ -18,35 +18,33 @@ passport.use(new GoogleStrategy({
             const email = profile.emails[0].value;
             const googleId = profile.id;
             const name = profile.name;
+            const picture = profile.picture || "/assets/placeholder-avatar.png";
 
-            // Check if user exists, depending on their 
-            let result = await db.query('SELECT * FROM users WHERE google_id = $1 OR email = $2', [googleId, email]);
+            // Check if user exists by google ID
+            const auth_google = await db.query('SELECT * FROM users WHERE google_id = $1;', [googleId]);
+
+            if (auth_google.rows.length > 0) {
+                // they exist so return
+                const user = auth_google.rows[0];
+                return done(null, user);
+            }
 
             let user;
-            if (result.rows.length > 0) {
-                user = result.rows[0];
-                // if Google ID changes update it
-                if (!user.google_id) {
-                    await db.query('UPDATE users SET google_id = $1 WHERE id = $2', [googleId, user.id]);
-                }
+            const auth_email = await db.query('SELECT * FROM users WHERE email = $1;', [email]);
+
+            if (auth_email.rows.length > 0) {
+                // link google account to user
+                user = auth_email.rows[0];
+                 await db.query("UPDATE users SET google_id = $1 WHERE id = $2;", [googleId, user.id]);
+
             } else {
-                // Create user
-               /*
-                const insertResult = await db.query(
-                    'INSERT INTO users (email, name, google_id) VALUES ($1, $2, $3) RETURNING *',
-                    [email, name, googleId]
-                );
-                */
+                // Create new user
+                const newUser = await db.query(
+                    `INSERT INTO users (email, name, google_id, picture, notifications, pro) 
+                VALUES ($1, $2, $3, $4, true, false) RETURNING *;`,
+                    [email, name, googleId, picture]);
 
-                const picture = "/assets/placeholder-avatar.png";
-                const password = "Oauth-User";
-
-                const result = await db.query(
-                    `INSERT INTO users (email, password, name, google_id, picture, notifications, pro) 
-                    VALUES ($1, $2, $3, $4, $5, true, false) RETURNING id, name, email, notifications`,
-                    [email, password, name, googleId, picture]);
-
-                user = result.rows[0];
+                user = newUser.rows[0];
             }
 
             done(null, user);

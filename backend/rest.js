@@ -19,14 +19,15 @@ import contactRoutes from './routes/contacts'
 
 import sitemap from './routes/sitemap';
 
-
 const responseFormatter = require('./middleware/responseFormatter');
+const cookieParser = require("cookie-parser");
 
 const cors = require('cors');
 const app = express();
 
 // Middleware
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 /*
 // CORS HEADERS
@@ -42,6 +43,7 @@ app.use((req,res,next)=>{
 app.use(cors({
   origin: [
     'http://localhost:4200',
+    'http://local.deglazd.com:4200',
     'https://www.deglazd.com',
     'https://deglazd.com'
   ],
