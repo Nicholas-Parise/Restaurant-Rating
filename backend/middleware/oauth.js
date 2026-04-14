@@ -41,14 +41,19 @@ passport.use(new GoogleStrategy({
                 // Create new user
                 // make sure temp username doesn't exist
                 let username;
-                let exists = true;
+                let result;
 
-                while (exists) {
+                for (let i = 0; i < 500; i++) {
                     username = generateUsername(email);
-                    exists = await db.query(
+                    result = await db.query(
                         "SELECT 1 FROM users WHERE username=$1",
                         [username]
                     );
+                    if (result.rowCount === 0) break;
+                }
+
+                if (result.rowCount > 0) {
+                    throw new Error("Failed to generate unique username");
                 }
 
                 const newUser = await db.query(
