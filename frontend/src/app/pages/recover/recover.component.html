@@ -1,14 +1,14 @@
 <div class="container">
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
-    <h2>Register</h2>
+  <form [formGroup]="recoverForm" (ngSubmit)="onSubmit()" class="register-form">
+    <h2>Reset Password</h2>
     <div>
-      <label>Username</label>
-      <input type="text" formControlName="username" (input)="usernameCheck()" />
-      @if (f['username'].touched && f['username'].invalid) {
-      <div class="error">Username is required</div>
+      <label>Reset Code</label>
+      <input type="text" formControlName="otc" />
+      @if (f['otc'].touched && f['otc'].invalid) {
+      <div class="error">Reset Code is required</div>
       }
-      @if (invalidUserErrorMessage) {
-      <div class="error">{{ invalidUserErrorMessage }}</div>
+      @if (invalidOTC) {
+      <div class="error">{{ invalidOTC }}</div>
       }
     </div>
 
@@ -48,17 +48,8 @@
     </div>
     }
 
-    <button type="submit" class="btn" [class.btn-disabled]="registerForm.invalid || invalidUserErrorMessage"
-      [disabled]="registerForm.invalid">Register</button>
-    
-    <label>Have an account? <a [routerLink]="['/login']">Login!</a></label>
-    <label>Forgot your password? <a [routerLink]="['/forgot']">recover</a></label>
-    <hr>
-
-    <button class="btn google-btn" (click)="googleButton()">
-    <img class="google" src="assets/google-icon.svg">
-    &nbsp; Login with google</button>
-
+    <button type="submit" class="btn" [class.btn-disabled]="recoverForm.invalid || invalidOTC"
+      [disabled]="recoverForm.invalid">Reset Password</button>
 
   </form>
 </div>

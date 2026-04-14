@@ -4,6 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { AuthDataService } from '../../shared/auth-data.component';
 import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-register',
@@ -20,7 +23,7 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void { }
 
-  constructor(private fb: FormBuilder, private auth: AuthDataService) {
+  constructor(private fb: FormBuilder, private auth: AuthDataService, private router:Router) {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -54,7 +57,7 @@ export class RegisterComponent implements OnInit {
     this.auth.PostRegister(userData.username, userData.password, userData.email).subscribe({
       next: (response) => {
         console.log('register success:', response);
-        // Navigate or show success
+        this.router.navigate(['/login']);
       },
       error: (error) => {
         console.error('Register failed:', error);
@@ -83,8 +86,10 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-
-
+  googleButton():void{
+    this.router.navigate(['/google']);
+    window.location.href = `${environment.apiEndpoint}auth/google`;
+  }
 
 
 }

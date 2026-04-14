@@ -61,7 +61,8 @@ export class UserDataService {
 
 
   deleteAccount(password: string) {
-    this.api.delete<{ message: string }>(`users`, password).subscribe((jsonData) => {
+    const sendData = { "password": password };
+    this.api.post<{ message: string }>(`users/delete`, sendData).subscribe((jsonData) => {
       console.log("Delete account");
     })
 

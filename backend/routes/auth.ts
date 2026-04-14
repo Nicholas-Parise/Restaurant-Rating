@@ -16,6 +16,7 @@ import authenticate from "../middleware/authenticate";
 
 const router = express.Router();
 
+
 import * as dotenv from 'dotenv';
 import { isEmail } from "../utils/util";
 dotenv.config();
@@ -61,7 +62,7 @@ router.post('/register', async (req, res, next) => {
         if (result.rows[0].notifications) {
             await createNotification([result.rows[0].id], "Welcome to Deglazd!", "Hello from the Deglazd team! we are so excited to welcome you to this platform.", "/home");
             // Emails are not needed right now. TODO 
-            //await welcomeEmail(email, name);
+            await welcomeEmail(email, username);
         }
 
         res.status(201).json({ message: "User registered successfully", user: result.rows[0] });
@@ -254,7 +255,7 @@ router.post('/forgot-password', async (req, res, next) => {
 
         const url = process.env.FRONTEND_URL;
 
-        const resetLink = `${url}forgot?token=${resetToken}`;
+        const resetLink = `${url}/recover/${resetToken}`;
 
         await forgotEmail(email, user_name, resetLink, resetToken, 1);
 
@@ -273,10 +274,10 @@ router.post('/forgot-password', async (req, res, next) => {
 // localhost:3000/auth/reset-password
 // given one time code, email and password reset password
 router.post("/reset-password", async (req, res) => {
-    const { email, otc, newPassword } = req.body;
+    const { email, otc, password } = req.body;
 
-    if (!email || !otc || !newPassword) {
-        return res.status(401).json({ message: "email, otc and newPassword required" });
+    if (!email || !otc || !password) {
+        return res.status(401).json({ message: "email, otc and password required" });
     }
 
     try {
@@ -308,7 +309,7 @@ router.post("/reset-password", async (req, res) => {
         }
 
         // Hash new password
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         // Update password
         await db.query("UPDATE users SET password = $1 WHERE id = $2", [hashedPassword, user_id]);
@@ -369,7 +370,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false 
 async function forgotEmail(to: string, first_name: string, reset_link: string, resetToken, expiry_time) {
 
     try {
-        const filePath: string = path.join(__dirname, './emailtemplates/ForgetPassword.html');
+        const filePath = path.join(process.cwd(), 'emailtemplates','ForgetPassword.html');
         let htmlTemplate: string = fs.readFileSync(filePath, 'utf8');
 
         const currentYear: number = new Date().getFullYear();
@@ -394,7 +395,8 @@ async function forgotEmail(to: string, first_name: string, reset_link: string, r
 async function welcomeEmail(to: string, first_name: string) {
 
     try {
-        const filePath: string = path.join(__dirname, './emailtemplates/CreateAccount.html');
+        const filePath = path.join(process.cwd(), 'emailtemplates','CreateAccount.html');
+
         let htmlTemplate: string = fs.readFileSync(filePath, 'utf8');
 
         const currentYear: number = new Date().getFullYear();

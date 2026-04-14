@@ -18,8 +18,10 @@
   "include": [
     "middleware/**/*",
     "routes/**/*",
-    "util/**/*",
+    "utils/**/*",
     "types/**/*",
+    "emailtemplates/**/*",
+    "*.html",
     "*.ts",
     "*.js", 
     "utils/db.js",

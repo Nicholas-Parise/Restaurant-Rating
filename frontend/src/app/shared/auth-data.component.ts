@@ -45,6 +45,28 @@ export class AuthDataService {
     );
   }
 
+    forgot(email: String): Observable<any> {
+    const sendData = { "email": email };
+    return this.api.post<any>(`auth/forgot-password`, sendData).pipe(
+      tap(response => {}),
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
+    reset(sendData: any): Observable<any> {
+    return this.api.post<any>(`auth/reset-password`, sendData).pipe(
+      tap(response => {}),
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
+
+
+
 
   signOut(): void {
     this.api.post<{ message: string }>(`auth/logout`, null).subscribe((jsonData) => {

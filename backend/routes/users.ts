@@ -211,7 +211,7 @@ router.put('/complete', authenticate, async (req, res) => {
 
 // localhost:3000/users
 // Delete logged-in user's account
-router.delete('/', authenticate, async (req, res) => {
+router.post('/delete', authenticate, async (req, res) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const { password } = req.body;
@@ -221,28 +221,13 @@ router.delete('/', authenticate, async (req, res) => {
     }
 
     // Get the user's stored hashed password
-    const userResult = await db.query("SELECT password,(google_id IS NOT NULL) AS oauth, pro, stripe_subscription_id FROM users WHERE id = $1", [userId]);
+    const userResult = await db.query("SELECT password, pro, stripe_subscription_id,picture FROM users WHERE id = $1", [userId]);
 
     const user = userResult.rows[0];
 
     if (userResult.rows.length === 0) {
       return res.status(404).json({ message: "user not found" });
     }
-
-    if (user.oauth) {
-      // TODO add proper workflow for authenticating an oauth delete
-
-      // remove their autopayment
-      if (user.pro) {
-        if (user.stripe_subscription_id) {
-          await stripe.subscriptions.cancel(user.stripe_subscription_id);
-        }
-      }
-      await deleteImage(userId);
-      await db.query("DELETE FROM users WHERE id = $1", [userId]);
-      return res.status(200).json({ message: "OAuth account deleted successfully" });
-    }
-
 
     const hashedPassword = user.password;
 
@@ -253,7 +238,7 @@ router.delete('/', authenticate, async (req, res) => {
     }
 
     // Delete the users profile picture
-    await deleteImage(userId);
+    await deleteImage(user.picture);
 
     // remove their autopayment
     if (user.pro) {

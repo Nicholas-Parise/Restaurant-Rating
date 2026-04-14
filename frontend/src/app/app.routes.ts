@@ -14,6 +14,8 @@ import { ReportsComponent } from './pages/reports/reports.component';
 import { ContactsComponent } from './pages/contacts/contacts.component';
 
 import { CompleteProfileComponent } from './pages/complete-profile/complete-profile.component';
+import { ForgotComponent } from './pages/forgot/forgot.component';
+import { RecoverComponent } from './pages/recover/recover.component';
 
 import { AboutComponent } from './pages/about/about.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
@@ -44,5 +46,10 @@ export const routes: Routes = [
     {path: 'about', component: AboutComponent},
     {path: 'privacy-policy', component: PrivacyPolicyComponent},
     {path: 'terms-of-service', component: TermsOfServiceComponent},
+    {path: 'forgot', component: ForgotComponent},
+
+    {path: 'recover', component: RecoverComponent},
+    {path: 'recover/:recover_id', component: RecoverComponent},
+    
     {path: '**', component: HomeComponent, pathMatch: 'full'}
 ];

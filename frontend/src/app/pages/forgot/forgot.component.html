@@ -1,0 +1,22 @@
+<div class="container">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="register-form">
+    <h2>Forgot Password</h2>
+    <div>
+    <p>enter your email to receive a recovery code</p>
+      <label>Email</label>
+      <input type="email" formControlName="email" />
+      @if (f['email'].touched && f['email'].invalid) {
+      <div class="error">
+        Enter a valid email
+      </div>
+      }
+    </div>
+
+    @if (errorMessage) {
+    <div class="error-message">
+      {{ errorMessage }}
+    </div>
+    }
+    <button class="btn" type="submit" [disabled]="loginForm.invalid">Recover</button>
+  </form>
+</div>
