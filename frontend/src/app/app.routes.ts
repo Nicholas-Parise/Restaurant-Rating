@@ -13,6 +13,8 @@ import { ListsComponent } from './pages/lists/lists.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { ContactsComponent } from './pages/contacts/contacts.component';
 
+import { CompleteProfileComponent } from './pages/complete-profile/complete-profile.component';
+
 import { AboutComponent } from './pages/about/about.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
@@ -38,7 +40,7 @@ export const routes: Routes = [
     {path: 'reports/:target_type/:target_id', component: ReportsComponent},
     {path: 'contacts', component: ContactsComponent},
     {path: 'contacts/:contact_id', component: ContactsComponent},
-
+    {path: 'complete-profile', component: CompleteProfileComponent},
     {path: 'about', component: AboutComponent},
     {path: 'privacy-policy', component: PrivacyPolicyComponent},
     {path: 'terms-of-service', component: TermsOfServiceComponent},

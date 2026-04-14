@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserEntry } from './user-entry.model';
-import { Subject } from 'rxjs';
+import { catchError, Observable, Subject, throwError } from 'rxjs';
 
 import { ToastService } from '../shared/toast.service';
 import { ApiService } from './api.service';
@@ -23,7 +23,7 @@ export class UserDataService {
   totalusers: number = 0;
   totalPages: number = 0;
 
-  constructor(private api: ApiService,private toast: ToastService) {}
+  constructor(private api: ApiService, private toast: ToastService) { }
 
   GetUserById(username: string) {
     this.api.get<{ user: UserEntry, totalReviews: Number }>(`users/${username}`).subscribe((jsonData) => {
@@ -33,7 +33,7 @@ export class UserDataService {
   }
 
   GetUser() {
-    this.api.get<{ user: UserEntry, totalReviews: Number  }>(`users`)
+    this.api.get<{ user: UserEntry, totalReviews: Number }>(`users`)
       .subscribe((jsonData) => {
         this.userEntry = jsonData.user;
         this.userSubject.next(this.userEntry);
@@ -49,6 +49,14 @@ export class UserDataService {
 
     //this.userEntry.push(singleUserEntry);
     //this.userSubject.next(this.userEntry);
+  }
+
+  completeAccount(singleUserEntry: any): Observable<any> {
+    return this.api.put<{ user: UserEntry, message: string }>(`users/complete`, singleUserEntry).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
   }
 
 
