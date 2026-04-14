@@ -255,6 +255,16 @@ html {
     background: #c9302c;
 }
 
+.btn-disabled{
+ background: #3b423d;
+ cursor:not-allowed;
+}
+
+.btn-disabled:hover {
+  background: #3b423d;
+}
+
+
 .btn-expand {
     background: none;
     border: none;

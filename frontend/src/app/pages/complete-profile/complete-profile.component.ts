@@ -1,10 +1,13 @@
 import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 import { UserEntry } from '../../shared/user-entry.model';
 import { UserDataService } from '../../shared/user-data.component';
-import { FormsModule } from '@angular/forms';
+import { AuthDataService } from '../../shared/auth-data.component';
+
+
 
 @Component({
   selector: 'app-complete-profile',
@@ -26,15 +29,17 @@ export class CompleteProfileComponent {
   password: string;
   password_confirm: string;
 
-  email:string|null;
+  email: string | null;
   name: string | null;
   bio: string | null;
   notifications: boolean;
 
-   error: string | null = null;
+  error: string | null = null;
+  invalidUserErrorMessage: string | null = null;
   loading: boolean = false;
+  isDisabled: boolean = false;
 
-  constructor(private userDataService: UserDataService, private router: Router) { }
+  constructor(private userDataService: UserDataService, private router: Router, private auth: AuthDataService) { }
 
   selectedFile: File | null = null;
   previewUrl: string | ArrayBuffer | null = null;
@@ -81,7 +86,7 @@ export class CompleteProfileComponent {
         this.currentTab = 'profile';
         this.loading = false;
       },
-      error: (err:any) => {
+      error: (err: any) => {
         this.error = err?.error?.message || 'Failed to update account';
         this.loading = false;
       }
@@ -98,5 +103,27 @@ export class CompleteProfileComponent {
     }
     this.router.navigate(['/home']);
   }
+
+  usernameCheck() {
+
+    if (this.username && this.username.length < 5) {
+      this.invalidUserErrorMessage = "Username must be atleast 5 characters";
+      return;
+    }
+
+    this.auth.getIsValidUsername(this.username).subscribe({
+      next: (response) => {
+        this.invalidUserErrorMessage = null;
+        this.isDisabled = false;
+      },
+      error: (error) => {
+        this.invalidUserErrorMessage = error?.error?.message || 'Username must be unique';
+        this.isDisabled = true;
+      }
+    });
+  }
+
+
+
 
 }

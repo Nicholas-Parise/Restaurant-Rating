@@ -1,14 +1,14 @@
-<div class="register-container">
+<div class="container">
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
     <h2>Register</h2>
     <div>
       <label>Username</label>
       <input type="text" formControlName="username" (input)="usernameCheck()" />
       @if (f['username'].touched && f['username'].invalid) {
-        <div class="error">Username is required</div>
+      <div class="error">Username is required</div>
       }
       @if (invalidUserErrorMessage) {
-        <div class="error">{{ invalidUserErrorMessage }}</div>
+      <div class="error">{{ invalidUserErrorMessage }}</div>
       }
     </div>
 
@@ -16,9 +16,9 @@
       <label>Email</label>
       <input type="email" formControlName="email" />
       @if (f['email'].touched && f['email'].invalid) {
-        <div class="error">
-          Enter a valid email
-        </div>
+      <div class="error">
+        Enter a valid email
+      </div>
       }
     </div>
 
@@ -26,9 +26,9 @@
       <label>Password</label>
       <input type="password" formControlName="password" />
       @if (f['password'].touched && f['password'].invalid) {
-        <div class="error">
-          Password is required (min 6 chars)
-        </div>
+      <div class="error">
+        Password is required (min 6 chars)
+      </div>
       }
     </div>
 
@@ -36,19 +36,22 @@
       <label>Confirm Password</label>
       <input type="password" formControlName="confirmPassword" />
       @if (f['confirmPassword'].touched && f['confirmPassword'].invalid || passwordMismatch) {
-        <div class="error">
-          {{ passwordMismatch ? 'Passwords do not match' : 'Confirm your password' }}
-        </div>
+      <div class="error">
+        {{ passwordMismatch ? 'Passwords do not match' : 'Confirm your password' }}
+      </div>
       }
     </div>
 
     @if (errorMessage) {
-      <div class="error-message">
-        {{ errorMessage }}
-      </div>
+    <div class="error-message">
+      {{ errorMessage }}
+    </div>
     }
 
-    <button type="submit" [disabled]="registerForm.invalid">Register</button>
+    <button type="submit" class="btn" [class.btn-disabled]="registerForm.invalid || invalidUserErrorMessage"
+      [disabled]="registerForm.invalid">Register</button>
+    <hr>
     <div>Have an account? <a [routerLink]="['/login']">Login!</a></div>
+
   </form>
 </div>

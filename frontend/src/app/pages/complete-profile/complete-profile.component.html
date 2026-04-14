@@ -7,11 +7,14 @@
             <section>
                 <label>
                     Set username
-                    <input type="text" [(ngModel)]="username" name="username" required #usernameCtrl="ngModel" />
+                    <input type="text" [(ngModel)]="username" name="username" required #usernameCtrl="ngModel" (input)="usernameCheck()" />
                     @if (usernameCtrl.invalid && usernameCtrl.touched) {
                     <div class="error">
                         Username required.
                     </div>
+                    }
+                      @if (invalidUserErrorMessage) {
+                    <div class="error-message">{{ invalidUserErrorMessage }}</div>
                     }
                 </label>
 
@@ -26,6 +29,8 @@
                         Password required.
                     </div>
                     }
+                  
+
                 </label>
                 <label>
                     Password
@@ -39,7 +44,7 @@
                 </label>
             </section>
             <div class="modal-actions">
-                <button class="btn btn-success" type="button" (click)="submitAccount()">
+                <button class="btn btn-success" [class.btn-disabled]="isDisabled" [disabled]="isDisabled" type="button" (click)="submitAccount()">
                     Continue
                 </button>
             </div>

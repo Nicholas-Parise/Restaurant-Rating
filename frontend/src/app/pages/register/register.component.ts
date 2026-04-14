@@ -81,7 +81,6 @@ export class RegisterComponent implements OnInit {
         this.invalidUserErrorMessage = error?.error?.message || 'Username must be unique';
       }
     });
-
   }
 
 

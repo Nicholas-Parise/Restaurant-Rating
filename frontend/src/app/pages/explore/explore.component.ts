@@ -55,6 +55,7 @@ export class ExploreComponent implements OnInit {
     radius: number;
     lat: number | null;
     lng: number | null;
+    searchMode: string;
   }>();
 
   currentPage: number = 1;
@@ -117,7 +118,8 @@ export class ExploreComponent implements OnInit {
           a.page === b.page &&
           a.radius === b.radius &&
           a.lat === b.lat &&
-          a.lng === b.lng
+          a.lng === b.lng &&
+          a.searchMode === b.searchMode
         )
       )
       .subscribe(({ query, page, radius, lat, lng }) => {
@@ -213,7 +215,8 @@ export class ExploreComponent implements OnInit {
       page: this.currentPage,
       radius: this.searchRadius,
       lat: this.lat,
-      lng: this.lng
+      lng: this.lng,
+      searchMode: this.searchMode
     });
   }
 

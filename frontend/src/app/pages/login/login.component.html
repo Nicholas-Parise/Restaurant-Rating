@@ -1,13 +1,13 @@
-<div class="register-container">
+<div class="container">
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="register-form">
     <h2>Login</h2>
     <div>
       <label>Email</label>
       <input type="email" formControlName="email" />
       @if (f['email'].touched && f['email'].invalid) {
-        <div class="error">
-          Enter a valid email
-        </div>
+      <div class="error">
+        Enter a valid email
+      </div>
       }
     </div>
 
@@ -15,24 +15,26 @@
       <label>Password</label>
       <input type="password" formControlName="password" />
       @if (f['password'].touched && f['password'].invalid) {
-        <div class="error">
-          Password is required (min 6 chars)
-        </div>
+      <div class="error">
+        Password is required (min 6 chars)
+      </div>
       }
     </div>
 
     @if (errorMessage) {
-      <div class="error-message">
-        {{ errorMessage }}
-      </div>
+    <div class="error-message">
+      {{ errorMessage }}
+    </div>
     }
 
-    <button type="submit" [disabled]="loginForm.invalid">Login</button>
-    <div>Dont have an account? <a [routerLink]="['/register']">make one!</a></div>
+    <button class="btn" type="submit" [disabled]="loginForm.invalid">Login</button>
 
-    <button class="google-btn" (click)="googleButton()">
+    <button class="btn google-btn" (click)="googleButton()">
       <img class="google" src="assets/google-icon.svg">
-      &nbsp; Login with google</button>  
+      &nbsp; Login with google</button>
+
+    <hr>
+    <div>Dont have an account? <a [routerLink]="['/register']">make one!</a></div>
 
   </form>
 
