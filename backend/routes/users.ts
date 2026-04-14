@@ -48,7 +48,7 @@ router.get('/', authenticate, async (req, res, next) => {
 router.put('/', authenticate, async (req, res) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
-    var { email, name, password, newPassword, bio, notifications, setup } = req.body;
+    var { email, name, password, newPassword, bio, notifications } = req.body;
     let newHashedPassword: string | null = null;
     let newEmail: string | null = null;
 
@@ -81,9 +81,6 @@ router.put('/', authenticate, async (req, res) => {
     if (notifications !== undefined && typeof notifications !== "boolean") {
       return res.status(400).json({ error: "notifications must be a boolean" });
     }
-    if (setup !== undefined && typeof setup !== "boolean") {
-      return res.status(400).json({ error: "setup must be a boolean" });
-    }
 
     if (email && !isEmail(email)) {
       return res.status(400).json({ error: "wrong email format expected: a@a.a" });
@@ -103,10 +100,6 @@ router.put('/', authenticate, async (req, res) => {
 
       if (userResult.rows.length === 0) {
         return res.status(404).json({ message: "user not found" });
-      }
-
-      if (userResult.rows.oauth) {
-        return res.status(403).json({ message: "email and/or password cannot be changed with an oauth user" });
       }
 
       const hashedPassword = userResult.rows[0].password;
@@ -133,10 +126,9 @@ router.put('/', authenticate, async (req, res) => {
               email = COALESCE($3, email),
               bio = COALESCE($4, bio),
               notifications = COALESCE($5, notifications),
-              setup = COALESCE($6, setup),
               updated = NOW()
-          WHERE id = $7
-          RETURNING id, email, name, picture, bio, notifications, setup, created, updated;`, [name, newHashedPassword, newEmail, bio, notifications, setup, userId]);
+          WHERE id = $6
+          RETURNING id, email, name, picture, bio, notifications, created, updated;`, [name, newHashedPassword, newEmail, bio, notifications, userId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
@@ -156,6 +148,65 @@ router.put('/', authenticate, async (req, res) => {
     res.status(500).json({ message: "Error updating user profile" });
   }
 });
+
+
+router.put('/complete', authenticate, async (req, res) => {
+  try {
+    const userId = req.user.userId; // Get user ID from authenticated token
+    var { username, password } = req.body;
+    let newHashedPassword: string | null = null;
+
+    // Type checking
+    if (username !== undefined && typeof username !== "string") {
+      return res.status(400).json({ error: "username must be a string" });
+    }
+ 
+    if (password !== undefined && typeof password !== "string") {
+      return res.status(400).json({ error: "password must be a string" });
+    }
+  
+      // Make sure user is still in setup mode
+      const userResult = await db.query("SELECT id,setup FROM users WHERE id = $1", [userId]);
+
+      if (userResult.rows.length === 0) {
+        return res.status(404).json({ message: "user not found" });
+      }
+
+      if (userResult.rows[0].setup) {
+        return res.status(403).json({ message: "this can only be done once." });
+      }
+      
+    newHashedPassword = await bcrypt.hash(password, 10); // make new password
+
+    const result = await db.query(`
+          UPDATE users 
+          SET 
+            username = $1,
+            password = $2,
+            setup = TRUE,
+            updated = NOW()
+          WHERE id = $3
+          RETURNING id, username, email, name, picture, bio, notifications, created, updated;`, [username, newHashedPassword, userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "Profile updated", user: result.rows[0] });
+
+  } catch (error: any) {
+
+    // Handle duplicate email error
+    // error code 23505 means unique constraint violated.
+    if (error.code === "23505") {
+      return res.status(409).json({ message: "Email is already in use" });
+    }
+
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Error updating user profile" });
+  }
+});
+
 
 
 // localhost:3000/users

@@ -33,7 +33,7 @@ router.post('/register', async (req, res, next) => {
         return res.status(400).json({ error: "invalid email" });
     }
 
-        // Type checking
+    // Type checking
     if (password !== undefined && typeof password !== "string") {
         return res.status(400).json({ error: "password must be a string" });
     }
@@ -189,7 +189,7 @@ router.get('/username/:username', async (req, res, next) => {
         if (!(user.rows.length === 0)) {
             return res.status(401).json({ message: "username exists" });
         }
- 
+
         if (banned.Banned.some(item => item === username)) {
             return res.status(401).json({ message: "invalid username" });
         }
@@ -331,32 +331,36 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 
 // Callback route Google redirects to after auth, returns token
 router.get('/google/callback', passport.authenticate('google', { session: false }), async (req, res) => {
-    
+
     const isProd = process.env.STATUS === "PROD";
 
     try {
-    const user = req.user;
+        const user = req.user;
 
-    const token = jwt.sign(
-        { userId: user.id, email: user.email, name: user.name },
-        process.env.SECRET_KEY,
-        { expiresIn: "7d" });
+        const token = jwt.sign(
+            { userId: user.id, email: user.email, name: user.name },
+            process.env.SECRET_KEY,
+            { expiresIn: "7d" });
 
-    await db.query("INSERT INTO sessions (user_id, token) VALUES ($1, $2)", [user.id, token]);
+        await db.query("INSERT INTO sessions (user_id, token) VALUES ($1, $2)", [user.id, token]);
 
-    res.cookie('session', token, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: 'lax',
-        domain: '.deglazd.com',
-        maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+        res.cookie('session', token, {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: 'lax',
+            domain: '.deglazd.com',
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
 
-    //    res.status(200).json({ message: "oauth successful", token });
-    return res.redirect(`${process.env.FRONTEND_URL}/oauth-success?token=${token}`);
+        if (!user.setup) {
+            return res.redirect(`${process.env.FRONTEND_URL}/complete-profile`);
+        } else {
+            return res.redirect(`${process.env.FRONTEND_URL}/home`);
+        }
+
     } catch (err) {
-      console.error('OAuth callback error:', err);
-      return res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth`);
+        console.error('OAuth callback error:', err);
+        return res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth`);
     }
 });
 

@@ -39,10 +39,22 @@ passport.use(new GoogleStrategy({
 
             } else {
                 // Create new user
+                // make sure temp username doesn't exist
+                let username;
+                let exists = true;
+
+                while (exists) {
+                    username = generateUsername(email);
+                    exists = await db.query(
+                        "SELECT 1 FROM users WHERE username=$1",
+                        [username]
+                    );
+                }
+
                 const newUser = await db.query(
-                    `INSERT INTO users (email, name, google_id, picture, notifications, pro) 
-                VALUES ($1, $2, $3, $4, true, false) RETURNING *;`,
-                    [email, name, googleId, picture]);
+                    `INSERT INTO users (email, name, google_id, picture, username, notifications, pro) 
+                VALUES ($1, $2, $3, $4, $5, true, false) RETURNING *;`,
+                    [email, name, googleId, picture, username]);
 
                 user = newUser.rows[0];
             }
@@ -52,3 +64,10 @@ passport.use(new GoogleStrategy({
             done(err);
         }
     }));
+
+
+function generateUsername(email) {
+  const base = email.split("@")[0].replace(/[^a-z0-9]/gi, "");
+  const rand = Math.floor(Math.random() * 10000);
+  return `${base}_${rand}`;
+}

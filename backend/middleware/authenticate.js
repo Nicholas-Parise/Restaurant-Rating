@@ -27,7 +27,6 @@ const authenticate = async (req, res, next) => {
 
     try {
 
-
         // Find the user associated with the token
         const session = await db.query("SELECT user_id FROM sessions WHERE token = $1;", [token]);
 

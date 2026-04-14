@@ -133,7 +133,7 @@ name TEXT,
 picture TEXT,
 bio TEXT,
 pro BOOLEAN,
-setup BOOLEAN,
+setup BOOLEAN DEFAULT FALSE,
 notifications BOOLEAN,
 permissions TEXT CHECK (permissions IN ('banned','user', 'moderator', 'admin')) DEFAULT 'user',
 
