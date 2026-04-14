@@ -1,33 +1,34 @@
 require("dotenv").config();
+const { convert } = require('html-to-text');
 
-const formData = require('form-data');
-const Mailgun = require('mailgun.js');
-const mailgun = new Mailgun(formData);
+const { SESv2Client, SendEmailCommand } = require("@aws-sdk/client-sesv2");
 
-const mg = mailgun.client({
-  username: "api",
-  key: process.env.MAILGUN_API_KEY
+const sesClient = new SESv2Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
 });
+
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  SES: { sesClient, SendEmailCommand },
+});
+
 
 const sendEmail = async (to, subject, text, html) => {
 
-  const data = {
+  const finalText = text || convert(html);
+
+  await transporter.sendMail({
     from: "Deglazd Support Team <support@mail.deglazd.com>",
     to,
     subject,
-    html: html || text,
-  };
+    text: finalText,
+    html,
+  });
 
-  const res = await mg.messages().create(process.env.MAILGUN_DOMAIN, data);
-
-  console.log(res);
-
-  // if it doesn't send it will throw error
-  /*
-  console.log(data); // logs response data
-} catch (error) {
-  console.log(error); //logs any error
-}
-  */
 };
 module.exports = sendEmail;

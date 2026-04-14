@@ -160,22 +160,22 @@ router.put('/complete', authenticate, async (req, res) => {
     if (username !== undefined && typeof username !== "string") {
       return res.status(400).json({ error: "username must be a string" });
     }
- 
+
     if (password !== undefined && typeof password !== "string") {
       return res.status(400).json({ error: "password must be a string" });
     }
-  
-      // Make sure user is still in setup mode
-      const userResult = await db.query("SELECT id,setup FROM users WHERE id = $1", [userId]);
 
-      if (userResult.rows.length === 0) {
-        return res.status(404).json({ message: "user not found" });
-      }
+    // Make sure user is still in setup mode
+    const userResult = await db.query("SELECT id,setup FROM users WHERE id = $1", [userId]);
 
-      if (userResult.rows[0].setup) {
-        return res.status(403).json({ message: "this can only be done once." });
-      }
-      
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ message: "user not found" });
+    }
+
+    if (userResult.rows[0].setup) {
+      return res.status(403).json({ message: "this can only be done once." });
+    }
+
     newHashedPassword = await bcrypt.hash(password, 10); // make new password
 
     const result = await db.query(`
@@ -331,12 +331,20 @@ router.get('/search', async (req, res, next) => {
 
   try {
     if (!searchTerm) {
-      return res.status(400).json({ message: "search is required" });
-    }
-    console.log(searchTerm);
 
-    result = await db.query(
-      `SELECT *, COUNT(*) OVER() AS total_count 
+      result = await db.query(`
+        WITH count_estimate AS (
+          SELECT reltuples::bigint AS total_count
+          FROM pg_class
+          WHERE oid = 'users'::regclass
+        )
+        SELECT u.id, u.username, u.name, u.picture, c.total_count
+        FROM users u, count_estimate c
+        LIMIT $1 OFFSET $2;`, [pageSize, offset]);
+    } else {
+
+      result = await db.query(
+        `SELECT *, COUNT(*) OVER() AS total_count 
           FROM (
           SELECT id, username, name, picture, GREATEST(similarity(username, $1), similarity(name, $1)) AS sim
           FROM users
@@ -344,6 +352,7 @@ router.get('/search', async (req, res, next) => {
           ) sub
           ORDER BY sim DESC
           LIMIT $2 OFFSET $3;`, [searchTerm, pageSize, offset]);
+    }
 
     const users = result.rows;
 

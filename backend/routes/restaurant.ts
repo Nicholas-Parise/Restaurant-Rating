@@ -77,13 +77,7 @@ router.get('/search', async (req, res, next) => {
 
   try {
     if (searchTerm) {
-      console.log(searchTerm);
-      // search
-
       if (lat && lng) {
-
-        console.log("running1");
-
         result = await db.query(`
         SELECT *, COUNT(*) OVER() AS total_count 
         FROM (
@@ -104,12 +98,7 @@ router.get('/search', async (req, res, next) => {
         ORDER BY dist ASC, sim DESC
         LIMIT $5 OFFSET $6;
       `, [lng, lat, radiusInMeters, searchTerm, pageSize, offset]);
-
-
       } else {
-
-        console.log("running2");
-
         result = await db.query(
           `SELECT *, COUNT(*) OVER() AS total_count 
           FROM (
@@ -119,15 +108,12 @@ router.get('/search', async (req, res, next) => {
           ) sub
           ORDER BY sim DESC
           LIMIT $2 OFFSET $3;`, [searchTerm, pageSize, offset]);
-
+          console.log(result.query);
       }
 
     } else {
 
       if (lat && lng) {
-
-        console.log("running3");
-
         result = await db.query(`
         SELECT *, COUNT(*) OVER() AS total_count 
           FROM (
@@ -149,16 +135,16 @@ router.get('/search', async (req, res, next) => {
       `, [lng, lat, radiusInMeters, pageSize, offset]);
 
       } else {
-
-        console.log("running4");
-
-        result = await db.query(`
-          SELECT *, COUNT(*) OVER() AS total_count 
-          FROM (
-          SELECT id, name, pictures, type, slug
-          FROM restaurants
-          ) sub 
+          result = await db.query(`
+          WITH count_estimate AS (
+            SELECT reltuples::bigint AS total_count
+            FROM pg_class
+            WHERE oid = 'restaurants'::regclass
+          )
+          SELECT r.id, r.name, r.pictures, r.type, r.slug, c.total_count
+          FROM restaurants r, count_estimate c
           LIMIT $1 OFFSET $2;`, [pageSize, offset]);
+
 
       }
     }
@@ -166,7 +152,7 @@ router.get('/search', async (req, res, next) => {
 
     const totalRestaurants = restaurants[0]?.total_count ?? 0;
 
-    res.json({
+    return res.json({
       restaurants,
       totalRestaurants,
       page,

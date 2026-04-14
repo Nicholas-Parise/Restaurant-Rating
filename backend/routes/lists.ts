@@ -132,13 +132,25 @@ router.get('/search', async (req, res, next) => {
     pageSize = 100;
   }
 
+  let result;
+
   try {
     if (!searchTerm) {
-      return res.status(400).json({ message: "query is required" });
-    }
-    console.log(searchTerm);
 
-    const result = await db.query(
+      result = await db.query(`
+        WITH count_estimate AS (
+          SELECT reltuples::bigint AS total_count
+          FROM pg_class
+          WHERE oid = 'lists'::regclass
+        )
+        SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username, c.total_count
+        FROM count_estimate c, lists li
+        JOIN users u ON u.id = li.user_id
+        LIMIT $1 OFFSET $2;`, [pageSize, offset]);
+
+    }else{
+
+    result = await db.query(
       `SELECT *, COUNT(*) OVER() AS total_count 
           FROM (
             SELECT li.id, li.name, li.description, li.created, u.name AS owner_name, u.username AS owner_username, GREATEST(similarity(li.name, $1), similarity(li.description, $1)) AS sim
@@ -148,6 +160,7 @@ router.get('/search', async (req, res, next) => {
           ) sub
           ORDER BY sim DESC
           LIMIT $2 OFFSET $3;`, [searchTerm, pageSize, offset]);
+    }
 
     const lists = result.rows;
     const totalLists = lists[0]?.total_count ?? 0;
