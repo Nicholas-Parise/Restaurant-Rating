@@ -10,7 +10,10 @@
   <div class="nav-right">
     <!-- Show login if not logged in -->
     @if (!loggedIn) {
+      <ul class="nav-login">
       <a routerLink="login" class="login-link">Login</a>
+      <a routerLink="register" class="login-link">Register</a>
+      </ul>
     }
 
     <!-- Show profile menu if logged in -->

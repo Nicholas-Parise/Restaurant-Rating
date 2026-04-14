@@ -44,14 +44,11 @@ input {
 
 button {
   width: 100%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
 }
 
-.google-btn{
-background-color: #4d6279;
-align-items: center;
-justify-content: center;
-display: flex;
-}
 
 .google{
   width: 2rem;

@@ -29,9 +29,10 @@
 
     <button class="btn" type="submit" [disabled]="loginForm.invalid">Login</button>
     <label>Dont have an account? <a [routerLink]="['/register']">make one!</a></label>
+        <label>Forgot your password? <a [routerLink]="['/forgot']">recover</a></label>
     <hr>
 
-    <button class="btn google-btn" (click)="googleButton()">
+    <button class="btn btn-google" (click)="googleButton()">
       <img class="google" src="assets/google-icon.svg">
       &nbsp; Login with google</button>
 

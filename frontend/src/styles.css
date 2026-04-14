@@ -253,7 +253,17 @@ html {
 .btn-cancel:hover{
   /*background:rgb(204, 32, 32);*/
     background: #c9302c;
+  }
+
+
+.btn-google{
+  background-color: #28425e;
 }
+
+.btn-google:hover {
+  background: #1c2b3a;
+}
+
 
 .btn-disabled{
  background: #3b423d;

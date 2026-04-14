@@ -52,10 +52,9 @@
       [disabled]="registerForm.invalid">Register</button>
     
     <label>Have an account? <a [routerLink]="['/login']">Login!</a></label>
-    <label>Forgot your password? <a [routerLink]="['/forgot']">recover</a></label>
     <hr>
 
-    <button class="btn google-btn" (click)="googleButton()">
+    <button class="btn btn-google" (click)="googleButton()">
     <img class="google" src="assets/google-icon.svg">
     &nbsp; Login with google</button>
 
