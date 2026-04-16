@@ -7,18 +7,33 @@ const router = express.Router();
 
 router.post('/ses', async (req, res) => {
   
-  console.log(req.body);
+  console.log("HEADERS:", req.headers);
+  console.log("BODY:", req.body);
+  console.log("everything:",req);
 
-  const snsMessage = req.body;
+   let snsMessage;
+
+  // Handle different payload formats
+  if (typeof req.body === "string") {
+    snsMessage = JSON.parse(req.body);
+  } else {
+    snsMessage = req.body;
+  }
+
+  if (!snsMessage) {
+    console.error("Empty SNS payload");
+    return res.sendStatus(400);
+  }
+  try {
 
   if (snsMessage.Type === "SubscriptionConfirmation") {
-    await fetch(snsMessage.SubscribeURL);
-    return res.sendStatus(200);
+      await fetch(snsMessage.SubscribeURL);
+      return res.sendStatus(200);
   }
 
   const message = JSON.parse(snsMessage.Message);
 
-  try {
+
     if (message.notificationType === "Bounce") {
       const bounced = message.bounce.bouncedRecipients;
 

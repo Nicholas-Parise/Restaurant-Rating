@@ -29,6 +29,7 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(express.text({ type: "text/plain" }));
 app.use(cookieParser());
 
 /*
