@@ -136,7 +136,6 @@ pro BOOLEAN,
 setup BOOLEAN DEFAULT FALSE,
 notifications BOOLEAN,
 permissions TEXT CHECK (permissions IN ('banned','user', 'moderator', 'admin')) DEFAULT 'user',
-email_status TEXT CHECK (email_status IN ('active', 'bounced', 'complained')) DEFAULT 'active',
 
 provider TEXT,
 google_id TEXT UNIQUE,
@@ -303,3 +302,12 @@ reviewed_at TIMESTAMP,
 created TIMESTAMP DEFAULT NOW()
 );
 CREATE INDEX idx_contacts_status ON contacts(status);
+
+
+CREATE TABLE email_suppression (
+email TEXT PRIMARY KEY,
+status TEXT CHECK (status IN ('bounced', 'complained','temporary')),
+retry_count INTEGER DEFAULT 0,
+updated TIMESTAMP DEFAULT NOW()
+);
+CREATE INDEX idx_email_suppression_status ON email_suppression(status);

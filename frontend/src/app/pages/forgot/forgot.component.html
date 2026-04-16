@@ -2,7 +2,8 @@
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="register-form">
     <h2>Forgot Password</h2>
     <div>
-    <p>enter your email to receive a recovery code</p>
+      <p>Enter your email to receive a recovery code</p>
+      <p>Check spam folder if not recieved</p>
       <label>Email</label>
       <input type="email" formControlName="email" />
       @if (f['email'].touched && f['email'].invalid) {

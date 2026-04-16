@@ -265,7 +265,7 @@ router.post('/forgot-password', async (req, res, next) => {
     } catch (error) {
         await db.query("ROLLBACK"); // if we can't send an email we want to Rollback
         console.error(error);
-        return res.status(500).json({ message: "Server error" });
+        return res.status(500).json({ message: "Email could not be sent" });
     }
 });
 
@@ -366,10 +366,9 @@ router.get('/google/callback', passport.authenticate('google', { session: false 
 });
 
 
-
+// Can throw error
 async function forgotEmail(to: string, first_name: string, reset_link: string, resetToken, expiry_time) {
 
-    try {
         const filePath = path.join(process.cwd(), 'emailtemplates','ForgetPassword.html');
         let htmlTemplate: string = fs.readFileSync(filePath, 'utf8');
 
@@ -383,15 +382,9 @@ async function forgotEmail(to: string, first_name: string, reset_link: string, r
             .replace(/{{current_year}}/g, currentYear.toString());
 
         await sendEmail(to, "Password Reset Request", null, htmlTemplate);
-
-    } catch (error) {
-        // Handle potential errors (e.g., file not found)
-        console.error('Error reading file:', error);
-    }
-
 }
 
-
+// will NOT throw error
 async function welcomeEmail(to: string, first_name: string) {
 
     try {
