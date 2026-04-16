@@ -34,10 +34,11 @@ router.post('/ses', async (req, res) => {
   const message = JSON.parse(snsMessage.Message);
 
 
-    if (message.notificationType === "Bounce") {
-      const bounced = message.bounce.bouncedRecipients;
+    if (message.eventType === "Bounce" || message.notificationType === "Bounce") {
+      const bounced = message.bounce?.bouncedRecipients || [];
 
       for (const r of bounced) {
+        console.log("Bounced:", r.emailAddress);
         await db.query(
           "UPDATE users SET email_status='bounced' WHERE email=$1",
           [r.emailAddress]
@@ -45,10 +46,11 @@ router.post('/ses', async (req, res) => {
       }
     }
 
-    if (message.notificationType === "Complaint") {
-      const complained = message.complaint.complainedRecipients;
+    if (message.eventType === "Complaint" || message.notificationType === "Complaint") {
+      const complained = message.complaint?.complainedRecipients || [];
 
       for (const r of complained) {
+        console.log("Complained:", r.emailAddress);
         await db.query(
           "UPDATE users SET email_status='complained' WHERE email=$1",
           [r.emailAddress]
