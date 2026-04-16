@@ -17,6 +17,7 @@
         </div>
     </div>
     <ul>
+
         <li>
         <button type="button" (click)="expanded = !expanded" class="btn-expand">
             {{ expanded ? 'See Less' : '…' }}
@@ -24,9 +25,15 @@
         </li>
         <li>
         @if (expanded) {
-        <button class="btn btn-cancel" (click)="report()">Report</button>
+            @if(showReport){
+            <button class="btn btn-cancel" (click)="report()">Report</button>
+            }
+            @if(showGoTo){
+            <button class="btn btn-success" (click)="goTo()">Go To</button>
+            }
         }
         </li>
+    
     </ul>
 
 </div>

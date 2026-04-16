@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ReviewEntry } from '../shared/review-entry.model';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { StarsComponent } from '../stars/stars.component';
 import { ReportModalService } from '../shared/reportModal.service';
 
@@ -14,8 +14,11 @@ import { ReportModalService } from '../shared/reportModal.service';
 export class ReviewCardComponent implements OnInit{
 
 @Input() reviewEntry : ReviewEntry;
+@Input() options: boolean = true;
+@Input() showGoTo:boolean = true;
+@Input() showReport:boolean = true;
 
-  constructor(private reportModalService:ReportModalService){}
+  constructor(private reportModalService:ReportModalService, private router:Router){}
 
   expanded: boolean = false;
 
@@ -35,6 +38,12 @@ export class ReviewCardComponent implements OnInit{
       data: this.reviewEntry
     });
   }
+
+
+  goTo(){
+    this.router.navigate(['/restaurant', this.reviewEntry.slug + '-' + this.reviewEntry.restaurant_id]);
+  }
+
 
 
 }

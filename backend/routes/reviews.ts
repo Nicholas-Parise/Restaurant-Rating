@@ -25,7 +25,7 @@ router.get('/', authenticate, async (req, res, next) => {
 
   try {
     const result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username 
+      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture 
       FROM reviews r 
       LEFT JOIN users u ON r.user_id = u.id
       WHERE r.user_id = $1
