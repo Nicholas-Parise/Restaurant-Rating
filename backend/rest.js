@@ -18,6 +18,7 @@ import reportRoutes from './routes/reports'
 import contactRoutes from './routes/contacts'
 
 import sitemap from './routes/sitemap';
+import webhooks from './routes/webhooks'
 
 const responseFormatter = require('./middleware/responseFormatter');
 const cookieParser = require("cookie-parser");
@@ -27,6 +28,7 @@ const app = express();
 
 // Middleware
 app.use(bodyParser.json());
+app.use(express.json());
 app.use(cookieParser());
 
 /*
@@ -71,6 +73,8 @@ app.use('/contacts',contactRoutes);
 app.use('/uploads', express.static('uploads'));
 
 app.use('/sitemap.xml',sitemap);
+app.use('/webhooks',webhooks);
+
 
 app.get("/health", (req, res) => {
   res.status(200).send("OK");

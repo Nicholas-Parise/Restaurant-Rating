@@ -136,6 +136,7 @@ pro BOOLEAN,
 setup BOOLEAN DEFAULT FALSE,
 notifications BOOLEAN,
 permissions TEXT CHECK (permissions IN ('banned','user', 'moderator', 'admin')) DEFAULT 'user',
+email_status TEXT CHECK (email_status IN ('active', 'bounced', 'complained')) DEFAULT 'active',
 
 provider TEXT,
 google_id TEXT UNIQUE,
