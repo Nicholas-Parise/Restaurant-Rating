@@ -1,5 +1,7 @@
 User-agent: *
 Disallow: /register
 Disallow: /login
+Disallow: /recover
+Disallow: /forgot
 Sitemap: https://www.deglazd.com/sitemap-static.xml
 Sitemap: https://api.deglazd.com/sitemap.xml
