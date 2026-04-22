@@ -38,13 +38,17 @@ export class RestaurantEntry{
         public lunch : boolean,
         public dinner : boolean,
         public facebook : string,
+        public instagram : string,
+        public twitter : string,
         public indoor_seating : boolean,
         public updated : string,
 
-        public score_histogram: string,
+        public score_histogram: any,
 
         public categories: TagEntry[],
 
+        public lat: number,
+        public lon: number,
         public housenumber: string,
         public addr : string,
         public city : string,

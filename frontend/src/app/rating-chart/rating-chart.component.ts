@@ -1,11 +1,7 @@
 import { Component, Input, ViewChild } from '@angular/core';
 
 import { BaseChartDirective } from 'ng2-charts';
-/*
-import { ChartConfiguration, ChartOptions, ChartType, ChartDataset, Chart } from 'chart.js';
-import { CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-*/
+
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js';
 Chart.register(...registerables);
 
@@ -91,7 +87,7 @@ export class RatingChartComponent {
       const weightedSum = Object.entries(this.histogram).reduce((sum: number, [stars, count]: [string, any]) => {
         return sum + (parseInt(stars) * (count as number));
       }, 0);
-      this.average = (weightedSum / totalRatings).toFixed(1);
+      this.average = totalRatings ? (weightedSum / totalRatings).toFixed(1) : '0.0';
 
 
     }

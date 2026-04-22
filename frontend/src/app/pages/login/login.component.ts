@@ -60,7 +60,6 @@ export class LoginComponent {
 
 
   googleButton():void{
-    this.router.navigate(['/google']);
     window.location.href = `${environment.apiEndpoint}auth/google`;
   }
 

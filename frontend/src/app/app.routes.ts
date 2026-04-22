@@ -20,36 +20,46 @@ import { RecoverComponent } from './pages/recover/recover.component';
 import { AboutComponent } from './pages/about/about.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
+import { RestaurantResolver } from './shared/RestaurantResolver.service';
 
 export const routes: Routes = [
-    {path: 'home', component: HomeComponent},
-    {path: 'Explore', component: ExploreComponent},
-    {path: 'user/diary', component: DiaryComponent},
-    {path: 'user/:username/diary', component: DiaryComponent},
-    {path: 'List', component: ListsComponent},
-    {path: 'List/:id', component: ListsComponent},
-    {path: 'restaurant/:slug', component: RestaurantComponent},
-    {path: 'restaurant', component: RestaurantComponent},
-    {path: 'user/friends', component: FriendsComponent},
-    {path: 'user/:username/friends', component: FriendsComponent},
-    {path: 'user/bookmarked', component: BookmarkedComponent},
-    {path: 'user/:username/bookmarked', component: BookmarkedComponent},
-    {path: 'user/:username', component: UserComponent},
-    {path: 'user', component: UserComponent},
-    {path: 'login', component: LoginComponent},
-    {path: 'register', component: RegisterComponent},
-    {path: 'reports', component: ReportsComponent},
-    {path: 'reports/:target_type/:target_id', component: ReportsComponent},
-    {path: 'contacts', component: ContactsComponent},
-    {path: 'contacts/:contact_id', component: ContactsComponent},
-    {path: 'complete-profile', component: CompleteProfileComponent},
-    {path: 'about', component: AboutComponent},
-    {path: 'privacy-policy', component: PrivacyPolicyComponent},
-    {path: 'terms-of-service', component: TermsOfServiceComponent},
-    {path: 'forgot', component: ForgotComponent},
+    { path: 'home', component: HomeComponent },
+    { path: 'Explore', component: ExploreComponent },
+    { path: 'user/diary', component: DiaryComponent },
+    { path: 'user/:username/diary', component: DiaryComponent },
+    { path: 'List', component: ListsComponent },
+    { path: 'List/:id', component: ListsComponent },
 
-    {path: 'recover', component: RecoverComponent},
-    {path: 'recover/:recover_id', component: RecoverComponent},
-    
-    {path: '**', component: HomeComponent, pathMatch: 'full'}
+    //{path: 'restaurant/:slug', component: RestaurantComponent},
+
+    {
+        path: 'restaurant/:slug',
+        component: RestaurantComponent,
+        resolve: {
+            restaurantData: RestaurantResolver
+        }
+    },
+
+    { path: 'user/friends', component: FriendsComponent },
+    { path: 'user/:username/friends', component: FriendsComponent },
+    { path: 'user/bookmarked', component: BookmarkedComponent },
+    { path: 'user/:username/bookmarked', component: BookmarkedComponent },
+    { path: 'user/:username', component: UserComponent },
+    { path: 'user', component: UserComponent },
+    { path: 'login', component: LoginComponent },
+    { path: 'register', component: RegisterComponent },
+    { path: 'reports', component: ReportsComponent },
+    { path: 'reports/:target_type/:target_id', component: ReportsComponent },
+    { path: 'contacts', component: ContactsComponent },
+    { path: 'contacts/:contact_id', component: ContactsComponent },
+    { path: 'complete-profile', component: CompleteProfileComponent },
+    { path: 'about', component: AboutComponent },
+    { path: 'privacy-policy', component: PrivacyPolicyComponent },
+    { path: 'terms-of-service', component: TermsOfServiceComponent },
+    { path: 'forgot', component: ForgotComponent },
+
+    { path: 'recover', component: RecoverComponent },
+    { path: 'recover/:recover_id', component: RecoverComponent },
+
+    { path: '**', component: HomeComponent, pathMatch: 'full' }
 ];

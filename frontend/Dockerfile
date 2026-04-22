@@ -9,11 +9,24 @@ COPY . .
 
 RUN npm run build-prod
 
-FROM nginx:alpine
+FROM node:20 AS runtime
 
-RUN rm -rf /usr/share/nginx/html/*
+WORKDIR /app
 
-COPY --from=build /app/dist/restaurant-rating/browser /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package*.json ./
 
-EXPOSE 80
+RUN npm install --omit=dev
+
+EXPOSE 4000
+
+CMD ["node", "dist/restaurant-rating/server/server.mjs"]
+
+#FROM nginx:alpine
+
+#RUN rm -rf /usr/share/nginx/html/*
+
+#COPY --from=build /app/dist/restaurant-rating/browser /usr/share/nginx/html
+#COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+#EXPOSE 80

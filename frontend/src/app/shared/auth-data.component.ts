@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { throwError, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserEntry } from './user-entry.model';
@@ -136,9 +136,7 @@ export class AuthDataService {
     return (this.userEntry.permissions == "admin" || this.userEntry.permissions == "moderator");
   }
 
-  static getToken(): string | null {
-    return localStorage.getItem('authToken');
-  }
+
 
 
 }

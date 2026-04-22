@@ -4,8 +4,7 @@
     <h2>{{restaurantEntry?.name}}</h2>
     <div class="grid-container">
       <div class="grid-item">
-        <img class="image" [src]="restaurantEntry?.pictures" alt=""
-          (error)="onImageError($event)">
+        <img class="image" [src]="restaurantEntry?.pictures" alt="" (error)="onImageError($event)">
       </div>
       <div class="grid-item">
         <p>{{ restaurantEntry?.description }}</p>
@@ -44,13 +43,13 @@
         </a>
         }
 
-         @if (restaurantEntry?.instagram) {
+        @if (restaurantEntry?.instagram) {
         <a target="_blank" [href]="restaurantEntry?.instagram">
           <i [ngClass]="restaurantEntry?.instagram ? 'fa-brands fa-instagram text-blue pointer': ''" title="instagram">
           </i>
         </a>
         }
-        
+
         @if (restaurantEntry?.twitter) {
         <a target="_blank" [href]="restaurantEntry?.twitter">
           <i [ngClass]="restaurantEntry?.twitter ? 'fa-brands fa-twitter text-blue pointer': ''" title="twitter">
@@ -59,52 +58,57 @@
         }
 
 
-        
+
         <p>address:
           <a target="_blank" href="{{getMapsLink()}}">
-          @if (restaurantEntry?.housenumber) {
-          <span>{{ restaurantEntry.housenumber }} </span>
-          } @else {
-          <span>{{ restaurantEntry.name }} </span>
-          }
-          @if (restaurantEntry?.addr) {
-          <span>{{ restaurantEntry.addr }} </span>
-          }
-          @if (restaurantEntry?.city) {
-          <span>
-            {{ restaurantEntry.city }}@if (restaurantEntry.province || restaurantEntry.country) {
-            <span>,</span>
+            @if (restaurantEntry?.housenumber) {
+            <span>{{ restaurantEntry.housenumber }} </span>
+            } @else {
+            <span>{{ restaurantEntry.name }} </span>
             }
-          </span>
-          }
-          @if (restaurantEntry?.province) {
-          <span>
-            {{ restaurantEntry.province }}@if (restaurantEntry.country) {
-            <span>,</span>
+            @if (restaurantEntry?.addr) {
+            <span>{{ restaurantEntry.addr }} </span>
             }
-          </span>
-          }
-          @if (restaurantEntry?.country) {
-          <span>{{ restaurantEntry.country }}</span>
-          }
-</a>
+            @if (restaurantEntry?.city) {
+            <span>
+              {{ restaurantEntry.city }}@if (restaurantEntry.province || restaurantEntry.country) {
+              <span>,</span>
+              }
+            </span>
+            }
+            @if (restaurantEntry?.province) {
+            <span>
+              {{ restaurantEntry.province }}@if (restaurantEntry.country) {
+              <span>,</span>
+              }
+            </span>
+            }
+            @if (restaurantEntry?.country) {
+            <span>{{ restaurantEntry.country }}</span>
+            }
+          </a>
         </p>
-      
-        <app-restaurant-map
-        [lat]="restaurantEntry.lat"
-        [lon]="restaurantEntry.lon"
-        [name]="restaurantEntry.name">
-      </app-restaurant-map>
-
+        @if (isBrowser) {
+        <app-restaurant-map [lat]="restaurantEntry.lat" [lon]="restaurantEntry.lon" [name]="restaurantEntry.name">
+        </app-restaurant-map>
+        } @else {
+        <div>
+          Map loading...
+        </div>
+        }
       </div>
       <div class="grid-item">
         <div class="actionsPanel">
           <app-review-form [bookmarked]="bookmarked" [restaurantEntry]="restaurantEntry"
             [reviewEntry]="userReviewEntry ? userReviewEntry[0] : null" [userList]="userList"></app-review-form>
-          @if (restaurantEntry) {
+          @defer (when isBrowser) {
           <div>
             <h3>Ratings</h3>
             <app-rating-chart [histogram]="restaurantEntry.score_histogram"></app-rating-chart>
+          </div>
+          }@placeholder {
+          <div class="chart-placeholder">
+            Loading chart...
           </div>
           }
         </div>
@@ -122,27 +126,29 @@
             title="Visa"></i>
         </li>
         <li>
-          <i class="fab fa-cc-mastercard" [ngClass]="restaurantEntry?.mastercard ? 'text-white' : 'text-grey strikethrough'"
-            title="MasterCard"></i>
+          <i class="fab fa-cc-mastercard"
+            [ngClass]="restaurantEntry?.mastercard ? 'text-white' : 'text-grey strikethrough'" title="MasterCard"></i>
         </li>
         <li>
           <i class="fas fa-truck" [ngClass]="restaurantEntry?.delivery ? 'text-white' : 'text-grey strikethrough'"
             title="Delivery"></i>
         </li>
         <li>
-          <i class="fas fa-bag-shopping" [ngClass]="restaurantEntry?.takeaway ? 'text-white' : 'text-grey strikethrough'"
-            title="Takeaway"></i>
+          <i class="fas fa-bag-shopping"
+            [ngClass]="restaurantEntry?.takeaway ? 'text-white' : 'text-grey strikethrough'" title="Takeaway"></i>
         </li>
         <li>
           <i class="fas fa-leaf" [ngClass]="restaurantEntry?.vegetarian ? 'text-green' : 'text-grey strikethrough'"
             title="Vegetarian"></i>
         </li>
         <li>
-          <i class="fas fa-wheelchair" [ngClass]="restaurantEntry?.wheelchair ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-wheelchair"
+            [ngClass]="restaurantEntry?.wheelchair ? 'text-white' : 'text-grey strikethrough'"
             title="Wheelchair Accessible"></i>
         </li>
         <li>
-          <i class="fas fa-snowflake" [ngClass]="restaurantEntry?.air_conditioning ? 'text-blue' : 'text-grey strikethrough'"
+          <i class="fas fa-snowflake"
+            [ngClass]="restaurantEntry?.air_conditioning ? 'text-blue' : 'text-grey strikethrough'"
             title="Air Conditioning"></i>
         </li>
         <li>
@@ -150,7 +156,8 @@
             title="Wi-Fi"></i>
         </li>
         <li>
-          <i class="fas fa-chair" [ngClass]="restaurantEntry?.outdoor_seating ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-chair"
+            [ngClass]="restaurantEntry?.outdoor_seating ? 'text-white' : 'text-grey strikethrough'"
             title="Outdoor Seating"></i>
         </li>
         <li>

@@ -1,6 +1,6 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 import { AuthDataService } from '../../shared/auth-data.component';
@@ -39,8 +39,9 @@ export class RestaurantComponent implements OnInit {
 
   util = inject(UtilService)
 
-  restaurantEntry: any;
-  restaurantSubscription = new Subscription();
+  isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  restaurantEntry: RestaurantEntry;
 
   bookmarkEntry: RestaurantEntry[];
   bookmarkSubscription = new Subscription();
@@ -57,7 +58,6 @@ export class RestaurantComponent implements OnInit {
   userListSubscription = new Subscription();
   userList: ListEntry[];
 
-  restaurantId: number;
   currentPage: number = 1;
   pageSize: number = 10;
   maxPages: number = 0;
@@ -72,15 +72,11 @@ export class RestaurantComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.reviewSubscription.unsubscribe();
-    this.restaurantSubscription.unsubscribe();
     this.userReviewSubscription.unsubscribe();
     this.bookmarkSubscription.unsubscribe();
   }
 
   ngOnInit(): void {
-
-    //this.reviewDataService.getRestauranReviews(this.restaurantId, this.currentPage, this.pageSize);
-    //this.reviewDataService.GetReviews();
 
     this.reviewSubscription = this.reviewDataService.reviewSubject.subscribe(reviewEntry => {
       this.reviewEntry = reviewEntry;
@@ -90,21 +86,6 @@ export class RestaurantComponent implements OnInit {
     this.userReviewSubscription = this.reviewDataService.userReviewSubject.subscribe(userReviewEntry => {
       this.userReviewEntry = userReviewEntry;
       this.maxPages = this.reviewDataService.totalUserPages;
-    });
-
-    this.restaurantSubscription = this.restaurantDataService.restaurantSubject.subscribe(restaurantEntry => {
-      //console.log(restaurantEntry)
-
-      this.restaurantEntry = restaurantEntry;
-
-      const correctSlug = `${this.restaurantEntry.slug}-${this.restaurantEntry.id}`;
-      const currentSlug = this.route.snapshot.params['slug'];
-
-      if (currentSlug !== correctSlug) {
-        this.router.navigate(['/restaurant', correctSlug], { replaceUrl: true });
-        return;
-      }
-
     });
 
     this.bookmarkSubscription = this.restaurantDataService.bookmarkSubject.subscribe(bookmarkEntry => {
@@ -119,32 +100,26 @@ export class RestaurantComponent implements OnInit {
     });
 
 
-    this.route.params.subscribe(params => {
+    const data = this.route.snapshot.data['restaurantData'];
+    if (!data || !data.restaurant) {
+      this.router.navigate(['/']);
+      return;
+    }
 
-      const slug = params['slug'];
+    this.restaurantEntry = data.restaurant;
+    this.reviewEntry = data.reviews;
 
-      if (!slug) {
-        this.router.navigate(['/']);
-        return;
-      }
+    const correctSlug = `${this.restaurantEntry.slug}-${this.restaurantEntry.id}`;
+    const currentSlug = this.route.snapshot.params['slug'];
 
-      const parts = slug.split('-');
-      const id = parts[parts.length - 1];
+    if (currentSlug !== correctSlug) {
+    this.router.navigate(['/restaurant', correctSlug], { replaceUrl: true });
+      return;
+    }
 
-      if (!id || isNaN(+id)) {
-        this.router.navigate(['/']);
-        return;
-      }
-
-      this.restaurantId = id;
-
-      try {
-        this.restaurantDataService.getById(this.restaurantId);
-        this.loadReviews();
-      } catch (e) {
-        this.router.navigate(['/']);
-      }
-    });
+    if (this.isBrowser) {
+      this.loadUserContent();
+    }
 
   }
 
@@ -153,16 +128,20 @@ export class RestaurantComponent implements OnInit {
   }
 
   loadReviews(): void {
-    this.reviewDataService.getRestauranReviews(this.restaurantId, this.currentPage, this.pageSize);
+    this.reviewDataService.getRestauranReviews(this.restaurantEntry.id, this.currentPage, this.pageSize);
+  }
 
+
+  loadUserContent(): void {
     this.authDataService.getIsLoggedIn().then(isLoggedIn => {
       if (isLoggedIn) {
-        this.reviewDataService.getRestaurantUserReviews(this.restaurantId, this.authDataService.getUsername(), this.currentPage, this.pageSize);
-        this.restaurantDataService.GetBookmarkResturaunts(this.restaurantId);
+        this.reviewDataService.getRestaurantUserReviews(this.restaurantEntry.id, this.authDataService.getUsername(), this.currentPage, this.pageSize);
+        this.restaurantDataService.GetBookmarkResturaunts(this.restaurantEntry.id);
         this.listDataService.getLists();
       }
     });
   }
+
 
 
   getSingleReview(): ReviewEntry | null {
@@ -204,11 +183,11 @@ export class RestaurantComponent implements OnInit {
 
     const encodedAddress = encodeURIComponent(address);
     const encodedName = encodeURIComponent(this.restaurantEntry.name)
-
-    if (/iPhone|iPad|Mac/.test(navigator.userAgent)) {
-      return `https://maps.apple.com/?ll=${coords}&q=${encodedAddress}`;
+    if (this.isBrowser) {
+      if (/iPhone|iPad|Mac/.test(navigator.userAgent)) {
+        return `https://maps.apple.com/?ll=${coords}&q=${encodedAddress}`;
+      }
     }
-
     //return `https://www.google.com/maps/search/?api=1&query=${coords}%20(${encodedAddress})`;
     return `https://www.google.com/maps/search/?api=1&query=${encodedName}%2C${encodedAddress}`;
   }

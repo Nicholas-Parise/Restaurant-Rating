@@ -59,6 +59,8 @@ services:
       - uploads:/app/uploads
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/fooddb
+    expose:
+      - "3000"
 
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
@@ -80,6 +82,10 @@ services:
     restart: always
     volumes:
       - uploads:/usr/share/nginx/html/uploads
+    environment:
+      - INTERNAL_API_URL=http://backend:3000
+    expose:
+      - "4000"
 
     labels:
       - "traefik.enable=true"
@@ -88,7 +94,7 @@ services:
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
 
-      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      - "traefik.http.services.frontend.loadbalancer.server.port=4000"
 
   db-cron:
     build: ./db-cron

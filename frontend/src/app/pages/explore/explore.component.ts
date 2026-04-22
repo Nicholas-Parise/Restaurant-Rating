@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { inject, NgModule, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Component, Input, OnInit } from '@angular/core';
 
@@ -19,6 +19,7 @@ import { UserCardComponent } from '../../user-card/user-card.component';
 import { ListEntry } from '../../shared/list-entry.model';
 import { ListDataService } from '../../shared/list-data.component';
 import { ListCardComponent } from '../../list-card/list-card.component';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-explore',
@@ -38,6 +39,8 @@ export class ExploreComponent implements OnInit {
     private listDataService: ListDataService
   ) { }
 
+  isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  
   searchMode: 'restaurants' | 'users' | 'lists' = 'restaurants';
 
   restaurantEntry: RestaurantEntry[] = [];
@@ -174,7 +177,7 @@ export class ExploreComponent implements OnInit {
 
     this.nearbyEnabled = enabled;
 
-    if (this.nearbyEnabled) {
+    if (this.nearbyEnabled && this.isBrowser) {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
           this.lat = position.coords.latitude;
