@@ -83,7 +83,7 @@ services:
     volumes:
       - uploads:/usr/share/nginx/html/uploads
     environment:
-      - INTERNAL_API_URL=http://backend:3000
+      - INTERNAL_API_URL=http://backend:3000/
     expose:
       - "4000"
 
