@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { ContactEntry } from '../../shared/contact-entry.model';
-import { ContactDataService } from '../../shared/contact-data.component';
+import { ContactEntry } from '../../_shared/contact-entry.model';
+import { ContactDataService } from '../../_shared/contact-data.component';
 
 @Component({
     selector: 'app-about',

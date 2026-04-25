@@ -3,27 +3,27 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Subscription } from 'rxjs';
 
-import { AuthDataService } from '../../shared/auth-data.component';
+import { AuthDataService } from '../../_shared/auth-data.component';
 
-import { RestaurantDataService } from '../../shared/restaurant-data.component';
-import { RestaurantEntry } from '../../shared/restaurant-entry.model';
+import { RestaurantDataService } from '../../_shared/restaurant-data.component';
+import { RestaurantEntry } from '../../_shared/restaurant-entry.model';
 
-import { TagEntry } from '../../shared/tag-entry.model';
+import { TagEntry } from '../../_shared/tag-entry.model';
 import { TagCardComponent } from "../../tag-card/tag-card.component";
 
-import { ReviewDataService } from '../../shared/review-data.component';
-import { ReviewEntry } from '../../shared/review-entry.model';
+import { ReviewDataService } from '../../_shared/review-data.component';
+import { ReviewEntry } from '../../_shared/review-entry.model';
 import { ReviewCardComponent } from "../../review-card/review-card.component";
 
 import { ReviewFormComponent } from '../../review-form/review-form.component';
 import { RatingChartComponent } from '../../rating-chart/rating-chart.component';
 
-import { ListDataService } from '../../shared/list-data.component';
-import { ListEntry } from '../../shared/list-entry.model';
+import { ListDataService } from '../../_shared/list-data.component';
+import { ListEntry } from '../../_shared/list-entry.model';
 
 import { RestaurantMapComponent } from '../../restaurant-map/restaurant-map.component';
 
-import { UtilService } from '../../shared/util.service';
+import { UtilService } from '../../_shared/util.service';
 
 @Component({
   selector: 'app-restaurant',
@@ -110,6 +110,11 @@ export class RestaurantComponent implements OnInit {
     this.restaurantEntry = data.restaurant;
     this.reviewEntry = data.reviews;
 
+    if (!this.restaurantEntry.pictures) {
+      this.restaurantEntry.pictures = this.util.getPlaceholderImage(this.restaurantEntry.type);
+    }
+    this.mapLink = this.getMapsLink();
+
     const correctSlug = `${this.restaurantEntry.slug}-${this.restaurantEntry.id}`;
     const currentSlug = this.route.snapshot.params['slug'];
 
@@ -117,7 +122,6 @@ export class RestaurantComponent implements OnInit {
     this.router.navigate(['/restaurant', correctSlug], { replaceUrl: true });
       return;
     }
-    this.mapLink = this.getMapsLink();
 
     if (this.isBrowser) {
       this.loadUserContent();

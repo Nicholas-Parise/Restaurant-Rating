@@ -1,15 +1,15 @@
 import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { RestaurantEntry } from '../shared/restaurant-entry.model';
-import { ReviewEntry } from '../shared/review-entry.model';
-import { ReviewDataService } from '../shared/review-data.component';
+import { RestaurantEntry } from '../_shared/restaurant-entry.model';
+import { ReviewEntry } from '../_shared/review-entry.model';
+import { ReviewDataService } from '../_shared/review-data.component';
 
 import { StarsComponent } from '../stars/stars.component';
-import { RestaurantDataService } from '../shared/restaurant-data.component';
+import { RestaurantDataService } from '../_shared/restaurant-data.component';
 import { FormsModule } from '@angular/forms';
 
-import { ListEntry } from '../shared/list-entry.model';
-import { ListDataService } from '../shared/list-data.component';
+import { ListEntry } from '../_shared/list-entry.model';
+import { ListDataService } from '../_shared/list-data.component';
 
 @Component({
     selector: 'app-review-form',

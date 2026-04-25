@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AuthDataService } from '../../shared/auth-data.component';
-import { ReviewEntry } from '../../shared/review-entry.model';
-import { ReviewDataService } from '../../shared/review-data.component';
+import { AuthDataService } from '../../_shared/auth-data.component';
+import { ReviewEntry } from '../../_shared/review-entry.model';
+import { ReviewDataService } from '../../_shared/review-data.component';
 import { DiaryCardComponent } from '../../diary-card/diary-card.component';
 
 

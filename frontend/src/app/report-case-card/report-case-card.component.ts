@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import { ReportEntry } from '../shared/report-entry.model';
+import { ReportEntry } from '../_shared/report-entry.model';
 
 @Component({
   selector: 'app-report-case-card',

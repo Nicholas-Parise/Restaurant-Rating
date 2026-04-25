@@ -3,9 +3,9 @@ import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { UserEntry } from '../../shared/user-entry.model';
-import { UserDataService } from '../../shared/user-data.component';
-import { AuthDataService } from '../../shared/auth-data.component';
+import { UserEntry } from '../../_shared/user-entry.model';
+import { UserDataService } from '../../_shared/user-data.component';
+import { AuthDataService } from '../../_shared/auth-data.component';
 
 
 

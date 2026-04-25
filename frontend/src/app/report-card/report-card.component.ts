@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReportEntry } from '../shared/report-entry.model';
+import { ReportEntry } from '../_shared/report-entry.model';
 
 @Component({
   selector: 'app-report-card',

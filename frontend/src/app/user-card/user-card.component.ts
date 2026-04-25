@@ -1,10 +1,10 @@
 import { Component, Input, SimpleChanges, OnInit, Output, EventEmitter } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { UserDataService } from '../shared/user-data.component';
-import { UserEntry } from '../shared/user-entry.model';
+import { UserDataService } from '../_shared/user-data.component';
+import { UserEntry } from '../_shared/user-entry.model';
 
-import { ReportModalService } from '../shared/reportModal.service';
+import { ReportModalService } from '../_shared/reportModal.service';
 
 @Component({
   selector: 'app-user-card',

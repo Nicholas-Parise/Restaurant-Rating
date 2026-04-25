@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ListEntry } from '../shared/list-entry.model';
+import { ListEntry } from '../_shared/list-entry.model';
 import { Router } from '@angular/router';
 
 @Component({

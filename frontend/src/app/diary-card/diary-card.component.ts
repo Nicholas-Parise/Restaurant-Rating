@@ -1,9 +1,9 @@
 import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ReviewEntry } from '../shared/review-entry.model';
+import { ReviewEntry } from '../_shared/review-entry.model';
 import { StarsComponent } from '../stars/stars.component';
-import { UtilService} from '../shared/util.service';
+import { UtilService} from '../_shared/util.service';
 
 @Component({
     selector: '[app-diary-card]',

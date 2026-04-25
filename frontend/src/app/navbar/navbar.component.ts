@@ -1,10 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AuthDataService } from '../shared/auth-data.component';
+import { AuthDataService } from '../_shared/auth-data.component';
 
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { UserEntry } from '../shared/user-entry.model';
+import { UserEntry } from '../_shared/user-entry.model';
 
 @Component({
     selector: 'app-navbar',

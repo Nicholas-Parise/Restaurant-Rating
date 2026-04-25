@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { ReviewEntry } from './review-entry.model';
 import { ReportEntry } from './report-entry.model';
 
-import { ToastService } from '../shared/toast.service';
+import { ToastService } from './toast.service';
 import { ApiService } from './api.service';
 
 

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NotificationsDataService } from '../shared/notification-data.component';
-import { NotificationEntry } from '../shared/notification-entry.model';
+import { NotificationsDataService } from '../_shared/notification-data.component';
+import { NotificationEntry } from '../_shared/notification-entry.model';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 

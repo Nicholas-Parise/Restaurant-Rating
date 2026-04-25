@@ -4,11 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
-import { AuthDataService } from '../../shared/auth-data.component';
-import { ListDataService } from '../../shared/list-data.component';
-import { ListEntry } from '../../shared/list-entry.model';
-import { RestaurantDataService } from '../../shared/restaurant-data.component';
-import { RestaurantEntry } from '../../shared/restaurant-entry.model';
+import { AuthDataService } from '../../_shared/auth-data.component';
+import { ListDataService } from '../../_shared/list-data.component';
+import { ListEntry } from '../../_shared/list-entry.model';
+import { RestaurantDataService } from '../../_shared/restaurant-data.component';
+import { RestaurantEntry } from '../../_shared/restaurant-entry.model';
 
 import { ListCardComponent } from '../../list-card/list-card.component';
 import { RestaurantCardComponent } from '../../restaurant-card/restaurant-card.component';
@@ -16,7 +16,7 @@ import { RestaurantCardComponent } from '../../restaurant-card/restaurant-card.c
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 
-import { ReportModalService } from '../../shared/reportModal.service';
+import { ReportModalService } from '../../_shared/reportModal.service';
 
 @Component({
     selector: 'app-lists',

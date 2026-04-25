@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { RestaurantEntry } from './restaurant-entry.model';
 import { Subject } from 'rxjs';
 
-import { ToastService } from '../shared/toast.service';
+import { ToastService } from './toast.service';
 import { ApiService } from './api.service';
 import { ReviewEntry } from './review-entry.model';
 

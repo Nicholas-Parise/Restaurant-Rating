@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 import { RestaurantCardComponent } from '../../restaurant-card/restaurant-card.component';
-import { RestaurantDataService } from '../../shared/restaurant-data.component';
-import { RestaurantEntry } from '../../shared/restaurant-entry.model';
-import { AuthDataService } from '../../shared/auth-data.component';
+import { RestaurantDataService } from '../../_shared/restaurant-data.component';
+import { RestaurantEntry } from '../../_shared/restaurant-entry.model';
+import { AuthDataService } from '../../_shared/auth-data.component';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({

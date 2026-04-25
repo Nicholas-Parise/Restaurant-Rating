@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { AuthDataService } from '../../shared/auth-data.component';
-import { ContactDataService } from '../../shared/contact-data.component';
-import { ContactEntry } from '../../shared/contact-entry.model';
+import { AuthDataService } from '../../_shared/auth-data.component';
+import { ContactDataService } from '../../_shared/contact-data.component';
+import { ContactEntry } from '../../_shared/contact-entry.model';
 
 import { ContactsCardComponent } from '../../contacts-card/contacts-card.component';
 

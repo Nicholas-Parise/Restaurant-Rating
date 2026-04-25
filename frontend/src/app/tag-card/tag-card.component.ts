@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TagEntry } from '../shared/tag-entry.model';
+import { TagEntry } from '../_shared/tag-entry.model';
 
 @Component({
     selector: 'app-tag-card',

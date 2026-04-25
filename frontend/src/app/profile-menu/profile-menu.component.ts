@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { RouterLink } from '@angular/router';
-import { UserEntry } from '../shared/user-entry.model';
-import { UserDataService } from '../shared/user-data.component';
-import { AuthDataService } from '../shared/auth-data.component';
-import { NotificationEntry } from '../shared/notification-entry.model';
-import { NotificationsDataService } from '../shared/notification-data.component';
+import { UserEntry } from '../_shared/user-entry.model';
+import { UserDataService } from '../_shared/user-data.component';
+import { AuthDataService } from '../_shared/auth-data.component';
+import { NotificationEntry } from '../_shared/notification-entry.model';
+import { NotificationsDataService } from '../_shared/notification-data.component';
 import { NotificationCardComponent } from '../notification-card/notification-card.component';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';

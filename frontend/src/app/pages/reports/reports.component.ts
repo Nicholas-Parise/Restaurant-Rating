@@ -4,12 +4,12 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { RouterLink } from '@angular/router';
 
-import { AuthDataService } from '../../shared/auth-data.component';
-import { ReportDataService } from '../../shared/report-data.component';
+import { AuthDataService } from '../../_shared/auth-data.component';
+import { ReportDataService } from '../../_shared/report-data.component';
 
-import { ReportEntry } from '../../shared/report-entry.model';
-import { ReviewEntry } from '../../shared/review-entry.model';
-import { UserEntry } from '../../shared/user-entry.model';
+import { ReportEntry } from '../../_shared/report-entry.model';
+import { ReviewEntry } from '../../_shared/review-entry.model';
+import { UserEntry } from '../../_shared/user-entry.model';
 
 import { ReportCardComponent } from '../../report-card/report-card.component';
 import { ReportCaseCardComponent } from '../../report-case-card/report-case-card.component';

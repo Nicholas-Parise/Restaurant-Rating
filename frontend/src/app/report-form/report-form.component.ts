@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { ReportDataService } from '../shared/report-data.component';
+import { ReportDataService } from '../_shared/report-data.component';
 
-import { ReportEntry } from '../shared/report-entry.model';
+import { ReportEntry } from '../_shared/report-entry.model';
 
-import { ReportModalService } from '../shared/reportModal.service';
-import { ReportTarget } from '../shared/report-target.model';
+import { ReportModalService } from '../_shared/reportModal.service';
+import { ReportTarget } from '../_shared/report-target.model';
 
 
 @Component({

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { ToastService } from '../shared/toast.service';
+import { ToastService } from '../_shared/toast.service';
 
 @Component({
   selector: 'app-toast',

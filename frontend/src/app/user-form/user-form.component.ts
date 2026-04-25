@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { UserEntry } from '../shared/user-entry.model';
-import { UserDataService } from '../shared/user-data.component';
+import { UserEntry } from '../_shared/user-entry.model';
+import { UserDataService } from '../_shared/user-data.component';
 import { FormsModule } from '@angular/forms';
 
 @Component({

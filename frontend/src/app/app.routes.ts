@@ -20,7 +20,7 @@ import { RecoverComponent } from './pages/recover/recover.component';
 import { AboutComponent } from './pages/about/about.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
-import { RestaurantResolver } from './shared/RestaurantResolver.service';
+import { RestaurantResolver } from './_shared/RestaurantResolver.service';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent },

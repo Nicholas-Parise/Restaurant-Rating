@@ -2,19 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Router } from '@angular/router';
-import { UserEntry } from '../../shared/user-entry.model';
-import { UserDataService } from '../../shared/user-data.component';
-import { RestaurantEntry } from '../../shared/restaurant-entry.model';
-import { RestaurantDataService } from '../../shared/restaurant-data.component';
+import { UserEntry } from '../../_shared/user-entry.model';
+import { UserDataService } from '../../_shared/user-data.component';
+import { RestaurantEntry } from '../../_shared/restaurant-entry.model';
+import { RestaurantDataService } from '../../_shared/restaurant-data.component';
 import { RestaurantCardComponent } from '../../restaurant-card/restaurant-card.component';
-import { ReviewEntry } from '../../shared/review-entry.model';
-import { ReviewDataService } from '../../shared/review-data.component';
+import { ReviewEntry } from '../../_shared/review-entry.model';
+import { ReviewDataService } from '../../_shared/review-data.component';
 import { ReviewCardComponent } from '../../review-card/review-card.component';
 import { Subscription } from 'rxjs';
-import { AuthDataService } from '../../shared/auth-data.component';
+import { AuthDataService } from '../../_shared/auth-data.component';
 import { UserFormComponent } from '../../user-form/user-form.component';
 
-import { ReportModalService } from '../../shared/reportModal.service';
+import { ReportModalService } from '../../_shared/reportModal.service';
 
 @Component({
     selector: 'app-user',

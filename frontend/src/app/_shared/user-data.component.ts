@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserEntry } from './user-entry.model';
 import { catchError, Observable, Subject, throwError } from 'rxjs';
 
-import { ToastService } from '../shared/toast.service';
+import { ToastService } from './toast.service';
 import { ApiService } from './api.service';
 
 @Injectable({

@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ReviewEntry } from '../shared/review-entry.model';
+import { ReviewEntry } from '../_shared/review-entry.model';
 import { Router, RouterLink } from '@angular/router';
 import { StarsComponent } from '../stars/stars.component';
-import { ReportModalService } from '../shared/reportModal.service';
+import { ReportModalService } from '../_shared/reportModal.service';
 
 @Component({
     selector: 'app-review-card',
