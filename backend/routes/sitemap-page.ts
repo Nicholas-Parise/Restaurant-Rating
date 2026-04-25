@@ -5,12 +5,18 @@ dotenv.config();
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/sitemap-:page.xml', async (req, res) => {
+
+  const page = parseInt(req.params.page, 10) || 1;
+  const limit = 50000;
+  const offset = (page - 1) * limit;
+
   try {
     const result = await db.query(`
       SELECT id, slug, COALESCE(updated, created) AS updated_at
-      FROM restaurants;
-    `);
+      FROM restaurants ORDER BY id
+      LIMIT $1 OFFSET $2;
+    `, [limit, offset]);
 
     const baseUrl = process.env.FRONTEND_URL;
 

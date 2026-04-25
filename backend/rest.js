@@ -17,8 +17,9 @@ import favouriteRoutes from './routes/favourites';
 import reportRoutes from './routes/reports'
 import contactRoutes from './routes/contacts'
 
-import sitemap from './routes/sitemap';
-import webhooks from './routes/webhooks'
+import sitemapIndex from './routes/sitemap-index';
+import sitemapPage from './routes/sitemap-page';
+import webhooks from './routes/webhooks';
 
 const responseFormatter = require('./middleware/responseFormatter');
 const cookieParser = require("cookie-parser");
@@ -74,13 +75,13 @@ app.use('/reports',reportRoutes);
 app.use('/contacts',contactRoutes);
 
 app.use('/uploads', express.static('uploads'));
-
-app.use('/sitemap.xml',sitemap);
 app.use('/webhooks',webhooks);
-
 
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
+
+app.use('/sitemap.xml',sitemapIndex);
+app.use('/',sitemapPage);
 
 module.exports = app;
