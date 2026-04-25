@@ -23,7 +23,8 @@ export class RestaurantMapComponent implements AfterViewInit{
   async ngAfterViewInit() {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const L = await import('leaflet');
+    const leaflet = await import('leaflet');
+    const L = leaflet.default ?? leaflet;
 
     const map = L.map(this.mapContainer.nativeElement).setView([this.lat, this.lon], 16)
 
