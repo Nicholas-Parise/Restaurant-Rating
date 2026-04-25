@@ -3,6 +3,7 @@ import { throwError, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserEntry } from './user-entry.model';
 import { ApiService } from './api.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,8 @@ import { ApiService } from './api.service';
 export class AuthDataService {
 
   constructor(private api: ApiService) {}
+
+  isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   private loggedin: boolean | null = null;
   private userEntry: UserEntry;
@@ -86,6 +89,9 @@ export class AuthDataService {
     if(this.loginCheckPromise){
       return this.loginCheckPromise;
     }
+
+    if (this.isBrowser) return false;
+
     console.log("contacting server");
 
     this.loginCheckPromise = this.api

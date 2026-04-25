@@ -42,6 +42,7 @@ export class RestaurantComponent implements OnInit {
   isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   restaurantEntry: RestaurantEntry;
+  mapLink: string = '';
 
   bookmarkEntry: RestaurantEntry[];
   bookmarkSubscription = new Subscription();
@@ -116,6 +117,7 @@ export class RestaurantComponent implements OnInit {
     this.router.navigate(['/restaurant', correctSlug], { replaceUrl: true });
       return;
     }
+    this.mapLink = this.getMapsLink();
 
     if (this.isBrowser) {
       this.loadUserContent();
@@ -168,9 +170,6 @@ export class RestaurantComponent implements OnInit {
 
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
-
-    console.log('test');
-
     target.src = this.util.getPlaceholderImage(this.restaurantEntry.type);
   }
 

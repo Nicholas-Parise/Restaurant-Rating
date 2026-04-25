@@ -46,7 +46,9 @@ app.use((req,res,next)=>{
 app.use(cors({
   origin: [
     'http://localhost:4200',
+    'http://localhost:4000',
     'http://local.deglazd.com:4200',
+    'http://local.deglazd.com:4000',
     'https://www.deglazd.com',
     'https://deglazd.com'
   ],

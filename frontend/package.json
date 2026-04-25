@@ -5,8 +5,6 @@
     "ng": "ng",
     "start": "ng serve",
     "start-dev": "ng serve --host local.deglazd.com",
-    "dev:ssr": "ng run restaurant-rating:serve-ssr",
-    "serve:ssr": "node dist/restaurant-rating/server/server.mjs",
     "build": "ng build --stats-json",
     "build-prod": "ng build --configuration production --stats-json",
     "watch": "ng build --watch --configuration development",
