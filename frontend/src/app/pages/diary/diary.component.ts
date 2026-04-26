@@ -9,11 +9,11 @@ import { DiaryCardComponent } from '../../diary-card/diary-card.component';
 
 
 @Component({
-    selector: 'app-diary',
-    imports: [DiaryCardComponent],
-    templateUrl: './diary.component.html',
-    styleUrl: './diary.component.css',
-    standalone: true
+  selector: 'app-diary',
+  imports: [DiaryCardComponent],
+  templateUrl: './diary.component.html',
+  styleUrl: './diary.component.css',
+  standalone: true
 })
 export class DiaryComponent implements OnInit {
 
@@ -32,6 +32,8 @@ export class DiaryComponent implements OnInit {
   username: string | null;
   LoggedIn: boolean = true;
 
+  showEdit: boolean = false;
+
 
   ngOnInit(): void {
 
@@ -47,28 +49,27 @@ export class DiaryComponent implements OnInit {
 
       if (this.username) {
         this.reviewDataService.getUserReviews(this.username, 0, 10);
-      } else {
-
-        this.authDataService.getIsLoggedIn().then(isLoggedIn => {
-          if (isLoggedIn) {
-            this.LoggedIn = true;
-            this.username = this.authDataService.getUsername();
-            this.reviewDataService.getUserReviews(this.username, 0, 10);
-          } else {
-            this.LoggedIn = false;
-          }
-        });
-      }
+      } 
+   
+      this.showEditLogic();
+   
     })
   }
 
 
-  loadReviews(): void {
+  showEditLogic(): void {
     this.authDataService.getIsLoggedIn().then(isLoggedIn => {
-      if (isLoggedIn) {
-        this.reviewDataService.getUserReviews(this.authDataService.getUsername(), this.currentPage, this.pageSize);
+      if (isLoggedIn && this.username == this.authDataService.getUsername()) {
+        this.showEdit = true;
       }
     });
+  }
+
+
+  loadReviews(): void {
+    if (this.username) {
+      this.reviewDataService.getUserReviews(this.username, this.currentPage, this.pageSize);
+    }
   }
 
   onNextPage(): void {

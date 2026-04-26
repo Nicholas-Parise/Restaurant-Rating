@@ -90,9 +90,9 @@ export class AuthDataService {
       return this.loginCheckPromise;
     }
 
-    if (this.isBrowser) return false;
+    if (!this.isBrowser) return false;
 
-    console.log("contacting server");
+    console.log("contacting server (valid account)");
 
     this.loginCheckPromise = this.api
       .get<any>(`auth/me`)

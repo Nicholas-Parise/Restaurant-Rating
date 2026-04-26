@@ -7,8 +7,8 @@
             (error)="onImageError($event)">
           </div>
           <div class="grid-item">
-            <h2>{{userEntry?.name || userEntry?.username}}</h2>
-            <p>{{userEntry?.bio}}</p>
+            <h2>{{userEntry.name || userEntry.username}}</h2>
+            <p>{{userEntry.bio}}</p>
             <div class="profile-nav">
               <button (click)="goToSection('diary')">Diary</button>
               <button (click)="goToSection('friends')">Friends</button>

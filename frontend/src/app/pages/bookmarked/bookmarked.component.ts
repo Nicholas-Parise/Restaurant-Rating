@@ -22,6 +22,8 @@ export class BookmarkedComponent implements OnInit {
   username: string | null;
   LoggedIn: boolean = false;
 
+  showEdit: boolean = false;
+
   currentPage: number = 1;
   pageSize: number = 10;
   maxPages: number = 0;
@@ -48,24 +50,19 @@ export class BookmarkedComponent implements OnInit {
 
         this.username = params.get('username');
         this.getBookmarks();
-      } else {
-        this.authDataService.getIsLoggedIn().then(isLoggedIn => {
-          if (isLoggedIn) {
+      } 
 
-            this.username = this.authDataService.getUsername();
-            this.getBookmarks();
-            this.LoggedIn = true;
-          } else {
-            this.LoggedIn = false;
-          }
-        });
-
-      }
+      this.showEditLogic();
+      
     })
+  }
 
-
-
-
+  showEditLogic(): void {
+    this.authDataService.getIsLoggedIn().then(isLoggedIn => {
+      if (isLoggedIn && this.username == this.authDataService.getUsername()) {
+        this.showEdit = true;
+      }
+    });
   }
 
 

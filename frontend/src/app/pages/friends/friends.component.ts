@@ -60,19 +60,20 @@ export class FriendsComponent implements OnInit {
       this.username = params.get('username');
 
       if (this.username) {
-        this.userDataService.GetFriendsById(this.username);
-      } else {
+        
         this.authDataService.getIsLoggedIn().then(isLoggedIn => {
-          if (isLoggedIn) {
+          if (isLoggedIn && this.username == this.authDataService.getUsername()) {
             this.userDataService.GetUser();
             this.userDataService.GetFriends();
             this.LoggedIn = true;
           } else {
-            this.LoggedIn = false;
+           if (this.username) {
+            this.userDataService.GetFriendsById(this.username);
+           }
           }
         });
-
       }
+      
     })
 
   }

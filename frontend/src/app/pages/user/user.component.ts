@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Router } from '@angular/router';
@@ -15,27 +15,27 @@ import { AuthDataService } from '../../_shared/auth-data.component';
 import { UserFormComponent } from '../../user-form/user-form.component';
 
 import { ReportModalService } from '../../_shared/reportModal.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
-    selector: 'app-user',
-    imports: [RestaurantCardComponent, ReviewCardComponent, UserFormComponent],
-    templateUrl: './user.component.html',
-    styleUrl: './user.component.css',
-    standalone: true
+  selector: 'app-user',
+  imports: [RestaurantCardComponent, ReviewCardComponent, UserFormComponent],
+  templateUrl: './user.component.html',
+  styleUrl: './user.component.css',
+  standalone: true
 })
 export class UserComponent {
 
-  userEntry: any;
+  userEntry: UserEntry;
   userSubscription = new Subscription();
 
-  restaurantSubscription = new Subscription();
   recentRestaurantEntry: RestaurantEntry[];
-
-  favouriteSubscription = new Subscription();
   favRestaurantEntry: RestaurantEntry[];
 
   reviewEntry: ReviewEntry[];
   reviewSubscription = new Subscription();
+
+  isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   username: string | null;
   currentPage: number = 1;
@@ -51,7 +51,7 @@ export class UserComponent {
     private restaurantDataService: RestaurantDataService,
     private reviewDataService: ReviewDataService,
     private authDataService: AuthDataService,
-    private reportModalService:ReportModalService,
+    private reportModalService: ReportModalService,
     private route: ActivatedRoute,
     private router: Router) { }
 
@@ -64,7 +64,6 @@ export class UserComponent {
   ngOnInit(): void {
 
     this.userSubscription = this.userDataService.userSubject.subscribe(userEntry => {
-      console.log(userEntry);
       this.userEntry = userEntry;
       this.showEditLogic();
     });
@@ -73,59 +72,46 @@ export class UserComponent {
       this.reviewEntry = reviewEntry;
       this.maxPages = this.reviewDataService.totalPages;
     });
-    this.restaurantSubscription = this.restaurantDataService.recentSubject.subscribe(recentRestaurants => {
-      this.recentRestaurantEntry = recentRestaurants;
-    });
-
-    this.favouriteSubscription = this.restaurantDataService.favouriteSubject.subscribe(favRestaurants => {
-      this.favRestaurantEntry = favRestaurants;
-    });
 
     // fetch data
+    const data = this.route.snapshot.data['userData'];
+    if (!data || !data.user) {
+      this.router.navigate(['/']);
+      return;
+    }
 
-    this.route.paramMap.subscribe(params => {
+    this.userEntry = data.user;
+    this.favRestaurantEntry = data.favourite_restaurants;
+    this.recentRestaurantEntry = data.recents;
+    this.reviewEntry = data.reviews;
+    this.maxPages = data.totalReviews / 10;
 
-      this.username = params.get('username');
+    this.username = this.userEntry.username;
 
-      if (this.username) {
+    this.showEditLogic();
 
-        this.userDataService.GetUserById(this.username);
-        this.restaurantDataService.GetFavouriteResturaunts(this.username);
-        this.restaurantDataService.GetRecentResturaunts(this.username);
-        this.reviewDataService.getUserReviews(this.username, 0, 10);
+    this.authDataService.getIsLoggedIn().then(isLoggedIn => {
+      if (isLoggedIn) {
+        this.LoggedIn = true;
+        this.userDataService.GetUser();
       } else {
-        this.authDataService.getIsLoggedIn().then(isLoggedIn => {
-          if (isLoggedIn) {
-            this.userDataService.GetUser();
-            this.restaurantDataService.GetFavouriteResturaunts(this.authDataService.getUsername());
-            this.restaurantDataService.GetRecentResturaunts(this.authDataService.getUsername());
-            this.reviewDataService.GetReviews(0, 10);
-            this.LoggedIn = true;
-          } else {
-            this.LoggedIn = false;
-          }
-        });
-
+        this.LoggedIn = false;
       }
-    })
+    });
+
   }
 
 
   goToSection(section: string) {
-    if (this.username && this.username != this.authDataService.getUsername()) {
+    if (this.username) {
       this.router.navigate([`/user/${this.username}/${section}`]);
-    } else {
-      this.router.navigate([`/user/${section}`]);
     }
   }
 
 
   loadReviews(): void {
-
     if (this.username) {
       this.reviewDataService.getUserReviews(this.username, this.currentPage, this.pageSize);
-    } else {
-      this.reviewDataService.GetReviews(this.currentPage, this.pageSize);
     }
   }
 
@@ -144,7 +130,7 @@ export class UserComponent {
     target.src = 'assets/placeholder-avatar.png';
   }
 
-    reportUser() {
+  reportUser() {
     this.reportModalService.open({
       type: 'user',
       data: this.userEntry

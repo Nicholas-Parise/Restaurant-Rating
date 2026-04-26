@@ -5,7 +5,7 @@
   <div class="spacer grid-container">
     @for (restaurantEntry of restaurantEntry; track restaurantEntry) {
       <div class="center grid-item">
-        <app-restaurant-card [restaurantEntry]="restaurantEntry" [menu]=LoggedIn [bookmark]=true></app-restaurant-card>
+        <app-restaurant-card [restaurantEntry]="restaurantEntry" [menu]=showEdit [bookmark]=true></app-restaurant-card>
       </div>
     }
   </div>

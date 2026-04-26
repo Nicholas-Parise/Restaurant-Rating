@@ -27,7 +27,7 @@ router.get('/', authenticate, async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
 
-    const result = await db.query('SELECT id, username, email, name, bio, picture, pro, setup, notifications, permissions, created, updated, (google_id IS NOT NULL) AS oauth FROM users WHERE id = $1', [userId]);
+    const result = await db.query('SELECT username, email, name, bio, picture, pro, setup, notifications, permissions, created, updated FROM users WHERE id = $1', [userId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
@@ -268,7 +268,6 @@ router.get('/recent', async (req, res, next) => {
     const pageSize = Number(req.query.pageSize) || 10;
     const offset = (page - 1) * pageSize;
 
-
     if (!username) {
       return res.status(400).json({ message: 'username required field' });
     }
@@ -361,22 +360,62 @@ router.get('/search', async (req, res, next) => {
 
 // localhost:3000/users/0
 // get specific user by username
-router.get('/:userId', async (req, res) => {
+router.get('/:username', async (req, res) => {
 
   try {
-    const userId = req.params.userId;
+    const username = req.params.username;
+    const page = 1;
+    const pageSize =  10;
+    const offset = (page - 1) * pageSize;
 
-    if (!userId) {
+    if (!username) {
       return res.status(400).json({ message: "username is required to get account" });
     }
 
-    const result = await db.query('SELECT username, name, bio, picture, notifications, pro, permissions, created FROM users WHERE username = $1', [userId]);
+    const userId = await getUserId(username, res);
+    if (!userId) return;
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+   const[
+    result, 
+    favourite_restaurants,
+    recent_results,
+    reviews_result
+  ] = await Promise.all([
+    db.query(`
+        SELECT username, name, bio, picture, notifications, pro, permissions, created, updated 
+        FROM users 
+        WHERE username = $1`, [username]),
+    db.query(`
+        SELECT r.id, r.name, r.pictures, r.type, r.slug  
+        FROM favorite_restaurant fr
+        JOIN restaurants r ON fr.restaurant_id = r.id
+        WHERE fr.user_id = $1`, [userId]),
+    db.query(`
+        SELECT r.id, r.name, r.pictures, r.type, r.slug 
+        FROM reviews rev
+        JOIN restaurants r ON rev.restaurant_id = r.id
+        WHERE rev.user_id = $1
+        ORDER BY rev.created DESC
+        LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]),
+    db.query(`
+        SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, res.name AS restaurant_name, res.pictures, res.type, res.slug, COUNT(*) OVER() AS total_count
+        FROM reviews r 
+        LEFT JOIN restaurants res ON r.restaurant_id = res.id 
+        WHERE r.user_id = $1 
+        ORDER BY r.created DESC
+        LIMIT $2 OFFSET $3;`, [userId, pageSize, offset])
+  ]);
 
-    return res.status(200).json({ user: result.rows[0] });
+      const totalReviews = reviews_result.rows[0]?.total_count ?? 0;
+      const user = result.rows[0];
+
+    return res.status(200).json({ user: result.rows[0], favourites: favourite_restaurants.rows, recents: recent_results.rows, reviews: reviews_result.rows.map(r => ({
+    ...r,
+    username: user.username,
+    name: user.name,
+    picture: user.picture
+  })), totalReviews
+});
   } catch (error) {
     console.error("Error fetching user:", error);
     return res.status(500).json({ message: 'Error retrieving user data' });

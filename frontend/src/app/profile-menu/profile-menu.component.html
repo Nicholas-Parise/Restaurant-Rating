@@ -8,7 +8,7 @@
 
   <!-- Profile Button -->
   @if (userEntry) {
-  <button class="profile-btn" routerLink='/user' (click)="closePanel()" (mouseenter)="userHover = true"
+  <button class="profile-btn" [routerLink]="['/user', userEntry.username]" (click)="closePanel()" (mouseenter)="userHover = true"
     (mouseleave)="userHover = false">
     <img [src]="userEntry.picture" (error)="onImageError($event)" alt="Profile" class="profile-img" />
     <div class="user-info">
@@ -22,12 +22,14 @@
   </button>
   }
 
+   @if (userEntry) {
   <!-- Visit Later / Diary -->
   <div class="button-row thirds">
-    <button routerLink='/user/bookmarked' (click)="closePanel()">Bookmarked</button>
-    <button routerLink='/user/diary' (click)="closePanel()">Diary</button>
-    <button routerLink='/user/friends' (click)="closePanel()">Friends</button>
+    <button routerLink='/user/{{userEntry.username}}/bookmarked' (click)="closePanel()">Bookmarked</button>
+    <button routerLink='/user/{{userEntry.username}}/diary' (click)="closePanel()">Diary</button>
+    <button routerLink='/user/{{userEntry.username}}/friends' (click)="closePanel()">Friends</button>
   </div>
+}
 
   @if (userEntry && (userEntry.permissions == 'moderator' || userEntry.permissions == 'admin')) {
   <div class="button-row thirds">

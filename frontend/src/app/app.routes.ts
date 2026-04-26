@@ -20,18 +20,14 @@ import { RecoverComponent } from './pages/recover/recover.component';
 import { AboutComponent } from './pages/about/about.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
+
 import { RestaurantResolver } from './_shared/RestaurantResolver.service';
+import { UserResolver } from './_shared/UserResolver.service';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent },
     { path: 'Explore', component: ExploreComponent },
-    { path: 'user/diary', component: DiaryComponent },
-    { path: 'user/:username/diary', component: DiaryComponent },
-    { path: 'List', component: ListsComponent },
-    { path: 'List/:id', component: ListsComponent },
-
     //{path: 'restaurant/:slug', component: RestaurantComponent},
-
     {
         path: 'restaurant/:slug',
         component: RestaurantComponent,
@@ -39,13 +35,19 @@ export const routes: Routes = [
             restaurantData: RestaurantResolver
         }
     },
-
-    { path: 'user/friends', component: FriendsComponent },
+    {
+        path: 'user/:username',
+        component: UserComponent,
+        resolve: {
+            userData: UserResolver
+        }
+    },
+    { path: 'user/:username/diary', component: DiaryComponent },
     { path: 'user/:username/friends', component: FriendsComponent },
-    { path: 'user/bookmarked', component: BookmarkedComponent },
     { path: 'user/:username/bookmarked', component: BookmarkedComponent },
-    { path: 'user/:username', component: UserComponent },
-    { path: 'user', component: UserComponent },
+
+    { path: 'List', component: ListsComponent },
+    { path: 'List/:id', component: ListsComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'reports', component: ReportsComponent },

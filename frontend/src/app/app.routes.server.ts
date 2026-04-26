@@ -8,6 +8,10 @@ export const serverRoutes: ServerRoute[] = [
     path: 'restaurant/:slug',
     renderMode: RenderMode.Server
   },
+   {
+    path: 'user/:username',
+    renderMode: RenderMode.Server
+  },
   {
     path: '**',
     renderMode: RenderMode.Client
