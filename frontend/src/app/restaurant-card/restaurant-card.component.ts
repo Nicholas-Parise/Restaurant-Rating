@@ -37,6 +37,10 @@ export class RestaurantCardComponent implements OnInit {
     if (this.menu) {
       this.allowMenu = this.menu;
     }
+    if (!this.restaurantEntry.pictures) {
+      this.restaurantEntry.pictures = this.util.getPlaceholderImage(this.restaurantEntry.type);
+    }
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {

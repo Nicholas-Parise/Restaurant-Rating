@@ -14,6 +14,7 @@
               <button (click)="goToSection('friends')">Friends</button>
               <button (click)="goToSection('bookmarked')">Bookmarked</button>
             </div>
+            @if (isBrowser){
             @if (showEdit) {
               <div>
                 <app-user-form [userEntry]="userEntry"></app-user-form>
@@ -23,6 +24,7 @@
                 <button class="btn btn-cancel" (click)="reportUser()">Report</button>
               </div>
             }
+          }
           </div>
         </div>
         <h2 class="section-header">Favourite Restaurants</h2>
