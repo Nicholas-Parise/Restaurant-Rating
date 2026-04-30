@@ -1,7 +1,7 @@
 <div class="container">
   @if (restaurantEntry) {
   <div>
-    <h2>{{restaurantEntry?.name}}</h2>
+    <h1>{{restaurantEntry?.name}}</h1>
     <div class="grid-container">
       <div class="grid-item">
         <img class="image" [src]="restaurantEntry?.pictures" alt="" (error)="onImageError($event)">

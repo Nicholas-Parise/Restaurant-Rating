@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
       { name: 'author', content: 'Nicholas Parise' },
       { name: 'description', content: 'A more personalised way to rate and manage the restaurants you and your friends have gone to' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { name: 'date', content: '2024-10-17', scheme: 'YYYY-MM-DD' },
+      { name: 'date', content: '2026-04-30', scheme: 'YYYY-MM-DD' },
       { charset: 'UTF-8' }
     ]);
 

@@ -25,6 +25,10 @@ import { RestaurantMapComponent } from '../../restaurant-map/restaurant-map.comp
 
 import { UtilService } from '../../_shared/util.service';
 
+import { Title, Meta } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
+
 @Component({
   selector: 'app-restaurant',
   imports: [TagCardComponent, CommonModule, ReviewCardComponent, ReviewFormComponent, RatingChartComponent, RestaurantMapComponent],
@@ -68,7 +72,10 @@ export class RestaurantComponent implements OnInit {
     private reviewDataService: ReviewDataService,
     private route: ActivatedRoute,
     private authDataService: AuthDataService,
-    private listDataService: ListDataService) { }
+    private listDataService: ListDataService,
+    private title: Title,
+    private meta: Meta,
+    @Inject(DOCUMENT) private document: Document) { }
 
 
   ngOnDestroy(): void {
@@ -122,6 +129,8 @@ export class RestaurantComponent implements OnInit {
     this.router.navigate(['/restaurant', correctSlug], { replaceUrl: true });
       return;
     }
+
+    this.setSEO(this.restaurantEntry);
 
     if (this.isBrowser) {
       this.loadUserContent();
@@ -194,5 +203,65 @@ export class RestaurantComponent implements OnInit {
     //return `https://www.google.com/maps/search/?api=1&query=${coords}%20(${encodedAddress})`;
     return `https://www.google.com/maps/search/?api=1&query=${encodedName}%2C${encodedAddress}`;
   }
+
+
+  setSEO(restaurant: any) {
+
+  const url = `https://deglazd.com/restaurant/${restaurant.slug}-${restaurant.id}`;
+
+  const description =
+    `${restaurant.name} reviews, photos, ratings and details on Deglazd.`;
+
+  // title
+  this.title.setTitle(
+    `${restaurant.name} | Deglazd`
+  );
+
+  // description
+  this.meta.updateTag({
+    name: 'description',
+    content: description
+  });
+
+  // OpenGraph
+  this.meta.updateTag({
+    property: 'og:title',
+    content: `${restaurant.name} | Deglazd`
+  });
+
+  this.meta.updateTag({
+    property: 'og:description',
+    content: description
+  });
+
+  this.meta.updateTag({
+    property: 'og:url',
+    content: url
+  });
+
+  this.meta.updateTag({
+    property: 'og:type',
+    content: 'website'
+  });
+
+  if (restaurant.pictures) {
+    this.meta.updateTag({
+      property: 'og:image',
+      content: restaurant.pictures
+    });
+  }
+
+  // canonical
+  let link: HTMLLinkElement =
+    this.document.querySelector("link[rel='canonical']") ||
+    this.document.createElement('link');
+
+  link.setAttribute('rel', 'canonical');
+  link.setAttribute('href', url);
+
+  this.document.head.appendChild(link);
+}
+
+
 
 }
