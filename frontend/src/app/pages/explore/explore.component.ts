@@ -40,7 +40,7 @@ export class ExploreComponent implements OnInit {
   ) { }
 
   isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
-  
+
   searchMode: 'restaurants' | 'users' | 'lists' = 'restaurants';
 
   restaurantEntry: RestaurantEntry[] = [];
@@ -52,14 +52,7 @@ export class ExploreComponent implements OnInit {
   listEntry: ListEntry[] = [];
   listSubscription = new Subscription();
 
-  private searchTrigger$ = new Subject<{
-    query: string;
-    page: number;
-    radius: number;
-    lat: number | null;
-    lng: number | null;
-    searchMode: string;
-  }>();
+  private searchDebounce?: any;
 
   currentPage: number = 1;
   pageSize: number = 10;
@@ -103,6 +96,11 @@ export class ExploreComponent implements OnInit {
       this.maxPages = this.currentPage + 1;
     })
 
+    if (this.nearbyEnabled) {
+      this.onToggleNearby(true, false);
+    }
+
+    this.performSearch();
 
     this.authDataService.getIsLoggedIn().then(isLoggedIn => {
       if (isLoggedIn) {
@@ -111,65 +109,59 @@ export class ExploreComponent implements OnInit {
         this.LoggedIn = false;
       }
     });
-
-
-    this.searchTrigger$
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged((a, b) =>
-          a.query === b.query &&
-          a.page === b.page &&
-          a.radius === b.radius &&
-          a.lat === b.lat &&
-          a.lng === b.lng &&
-          a.searchMode === b.searchMode
-        )
-      )
-      .subscribe(({ query, page, radius, lat, lng }) => {
-        if (this.searchMode === 'restaurants') {
-          this.restaurantDataService.getSearch(query, lat, lng, radius, page);
-        } else if (this.searchMode === 'users') {
-          this.userDataService.GetSearch(query, page);
-        } else {
-          this.listDataService.GetSearch(query, page, 10);
-        }
-        this.updateQueryParams();
-      });
-
-    this.onSearchChange(false);
-
-    if (this.nearbyEnabled) {
-      this.onToggleNearby(true, false);
-    }
-
-    this.onRadiusChange(false);
-    this.onPageChange();
   }
 
   ngOnDestroy(): void {
     this.restaurantSubscription.unsubscribe();
     this.userSubscription.unsubscribe();
     this.listSubscription.unsubscribe();
-    this.searchTrigger$.complete();
+  }
+
+  performSearch() {
+    if (this.searchMode === 'restaurants') {
+      this.restaurantDataService.getSearch(
+        this.searchQuery,
+        this.lat,
+        this.lng,
+        this.searchRadius,
+        this.currentPage,
+        12
+      );
+    } else if (this.searchMode === 'users') {
+      this.userDataService.GetSearch(
+        this.searchQuery,
+        this.currentPage,
+        12
+      );
+    } else {
+      this.listDataService.GetSearch(
+        this.searchQuery,
+        this.currentPage,
+        12
+      );
+    }
+    this.updateQueryParams();
   }
 
 
   onSearchChange(resetPage: boolean = true) {
     if (resetPage) {
       this.currentPage = 1;
-      this.triggerSearch();
     }
+
+    clearTimeout(this.searchDebounce);
+
+    this.searchDebounce = setTimeout(() => {
+      this.performSearch();
+    }, 300);
   }
+
 
   onRadiusChange(resetPage: boolean = true): void {
     if (resetPage) {
       this.currentPage = 1;
-      this.triggerSearch();
+      this.performSearch();
     }
-  }
-
-  onPageChange(): void {
-    this.triggerSearch();
   }
 
 
@@ -191,48 +183,33 @@ export class ExploreComponent implements OnInit {
 
     if (resetPage) {
       this.currentPage = 1;
-      this.triggerSearch();
+      this.performSearch();
     }
   }
 
   updateQueryParams(): void {
-    this.router.navigate(
-      [],
-      {
-        relativeTo: this.activatedRoute,
-        queryParams: {
-          search: this.searchQuery,
-          mode: this.searchMode,
-          page: this.currentPage,
-          nearby: this.nearbyEnabled
-        },
-        queryParamsHandling: 'merge',
-      }
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: {
+        search: this.searchQuery,
+        mode: this.searchMode,
+        page: this.currentPage,
+        nearby: this.nearbyEnabled
+      },
+      queryParamsHandling: 'merge',
+    }
     );
   }
 
-
-  triggerSearch() {
-    this.searchTrigger$.next({
-      query: this.searchQuery,
-      page: this.currentPage,
-      radius: this.searchRadius,
-      lat: this.lat,
-      lng: this.lng,
-      searchMode: this.searchMode
-    });
-  }
-
-
   onNextPage(): void {
     this.currentPage++;
-    this.onPageChange();
+    this.onSearchChange(false); 
   }
 
   onPreviousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.onPageChange();
+      this.onSearchChange(false); 
     }
   }
 

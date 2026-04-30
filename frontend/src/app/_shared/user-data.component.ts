@@ -124,9 +124,9 @@ export class UserDataService {
   }
 
 
-  GetSearch(searchQuery: string, page: Number | null) {
+  GetSearch(searchQuery: string, page: Number | null, pageSize: Number = 12) {
 
-    let args = `?q=${searchQuery}&page=${page}`;
+    let args = `?q=${searchQuery}&page=${page}&pageSize=${pageSize}`;
 
     this.api.get<{ users: UserEntry[], totalusers: number, pageSize: number }>(`users/search${args}`).subscribe((jsonData) => {
       this.userSearchEntry = jsonData.users;

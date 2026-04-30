@@ -108,7 +108,6 @@ router.get('/search', async (req, res, next) => {
           ) sub
           ORDER BY sim DESC
           LIMIT $2 OFFSET $3;`, [searchTerm, pageSize, offset]);
-          console.log(result.query);
       }
 
     } else {

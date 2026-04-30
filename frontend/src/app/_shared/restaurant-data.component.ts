@@ -42,11 +42,11 @@ export class RestaurantDataService {
   }
 
 
-  getSearch(searchQuery: string, lat: Number | null, lng: Number | null, radius: Number | null, page: Number | null) {
+  getSearch(searchQuery: string, lat: Number | null, lng: Number | null, radius: Number | null, page: Number | null, pageSize: Number = 12) {
 
-    let args = `?q=${searchQuery}&page=${page}`;
+    let args = `?q=${searchQuery}&page=${page}&pageSize=${pageSize}`;
     if (lat) {
-      args = `?q=${searchQuery}&lat=${lat}&lng=${lng}&rad=${radius}&page=${page}`
+      args = `?q=${searchQuery}&lat=${lat}&lng=${lng}&rad=${radius}&page=${page}&pageSize=${pageSize}`
     }
 
     this.api.get<{ restaurants: RestaurantEntry[], totalRestaurants: number, pageSize: number }>(`restaurants/search${args}`).subscribe((jsonData) => {
