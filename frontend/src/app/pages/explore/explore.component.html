@@ -28,6 +28,24 @@
     </div>
     }
   </div>
+  <div class="search-controls">
+    <div class="tag-picker">
+      <button class="btn" (click)="showTagModal = true">Add/Change Tags</button>
+
+      @if (showTagModal) {
+      <app-tag-modal [selectedTags]="selectedTags" 
+      (selectedTagsChange)="updateTags($event)"
+      (close)="showTagModal = false">
+      </app-tag-modal>
+      }
+    </div>
+
+    @for (tagEntry of selectedTags; track tagEntry) {
+    <div class="center tag-item">
+      <app-tag-card [tagEntry]="tagEntry"></app-tag-card>
+    </div>
+    }
+  </div>
 
   @if (searchMode === 'restaurants') {
   <div class="spacer grid-container">

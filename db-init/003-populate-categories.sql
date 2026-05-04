@@ -6,6 +6,19 @@ WHERE cuisine IS NOT NULL
   AND trim(cat) <> ''
 ON CONFLICT (name) DO NOTHING;
 
+UPDATE categories
+SET slug = regexp_replace(
+    lower(unaccent(name)),
+    '[^a-z0-9]+',
+    '-',
+    'g'
+)
+WHERE slug IS NULL 
+ON CONFLICT DO NOTHING;
+
+UPDATE categories
+SET slug = trim(both '-' from slug);
+
 
 INSERT INTO category_aliases (alias, canonical_category_id)
 SELECT name, id

@@ -100,3 +100,8 @@ input[type="range"] {
 .btn {
   margin-top: 0px;
 }
+
+.tag-item{
+  display: flex;
+  padding: 2px;
+}

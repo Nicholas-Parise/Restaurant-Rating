@@ -41,15 +41,17 @@ CREATE INDEX idx_locations_geom ON locations USING GIST ((geom::geography));
 CREATE TABLE categories(
 id SERIAL PRIMARY KEY,   
 name TEXT UNIQUE NOT NULL,
-description TEXT,
+slug TEXT UNIQUE,
 created TIMESTAMP DEFAULT NOW()
 );
+CREATE INDEX idx_categories_name ON categories(name);
+
 
 CREATE TABLE category_aliases (
 alias TEXT PRIMARY KEY,
 canonical_category_id INT REFERENCES categories(id) ON DELETE CASCADE
 );
-
+CREATE INDEX idx_category_aliases_id ON category_aliases(canonical_category_id);
 
 CREATE TABLE restaurants (
 id BIGINT PRIMARY KEY,

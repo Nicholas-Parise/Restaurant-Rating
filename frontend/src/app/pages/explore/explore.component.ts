@@ -21,9 +21,14 @@ import { ListDataService } from '../../_shared/list-data.component';
 import { ListCardComponent } from '../../list-card/list-card.component';
 import { isPlatformBrowser } from '@angular/common';
 
+import { TagCardComponent } from '../../tag-card/tag-card.component';
+import { TagEntry } from '../../_shared/tag-entry.model';
+
+import { TagModalComponent } from '../../tag-modal/tag-modal.component';
+
 @Component({
   selector: 'app-explore',
-  imports: [FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent],
+  imports: [FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent, TagCardComponent, TagModalComponent],
   templateUrl: './explore.component.html',
   styleUrl: './explore.component.css',
   standalone: true
@@ -51,6 +56,10 @@ export class ExploreComponent implements OnInit {
 
   listEntry: ListEntry[] = [];
   listSubscription = new Subscription();
+
+  selectedTagSlugs: string[] = [];
+  selectedTags: TagEntry[] = [];
+  showTagModal: boolean = false;
 
   private searchDebounce?: any;
 
@@ -93,6 +102,24 @@ export class ExploreComponent implements OnInit {
       this.searchMode = params['mode'] || 'restaurants';
       this.currentPage = +params['page'] || 1;
       this.nearbyEnabled = params['nearby'] === 'true';
+      const tagParam = params['tags'];
+
+      if (Array.isArray(tagParam)) {
+        this.selectedTagSlugs = tagParam;
+      } else if (typeof tagParam === 'string' && tagParam.length > 0) {
+        this.selectedTagSlugs = [tagParam];
+      } else {
+        this.selectedTagSlugs = [];
+      }
+
+      this.selectedTags = this.selectedTagSlugs.map(slug => ({
+        slug,
+        name: slug
+          .replace(/-/g, ' ')
+          .replace(/\b\w/g, c => c.toUpperCase())
+      })) as TagEntry[];
+
+
       this.maxPages = this.currentPage + 1;
     })
 
@@ -194,7 +221,8 @@ export class ExploreComponent implements OnInit {
         search: this.searchQuery,
         mode: this.searchMode,
         page: this.currentPage,
-        nearby: this.nearbyEnabled
+        nearby: this.nearbyEnabled,
+        tags: this.selectedTagSlugs
       },
       queryParamsHandling: 'merge',
     }
@@ -203,18 +231,25 @@ export class ExploreComponent implements OnInit {
 
   onNextPage(): void {
     this.currentPage++;
-    this.onSearchChange(false); 
+    this.onSearchChange(false);
   }
 
   onPreviousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.onSearchChange(false); 
+      this.onSearchChange(false);
     }
   }
 
   openReportModal(user: UserEntry) {
     this.selectedUser = user;
   }
+
+
+  updateTags(tags: TagEntry[]) {
+    this.selectedTags = tags;
+    this.performSearch();
+  }
+
 
 }

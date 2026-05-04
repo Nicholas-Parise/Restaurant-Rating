@@ -1,7 +1,6 @@
-export class TagEntry{
-    constructor(public id:number, 
-        public name: string, 
-        public description: string,
-        public created: string){}
+export interface TagEntry {
+    id: number,
+    name: string,
+    slug: string,
+    created: Date
 }
-    

@@ -13,6 +13,7 @@ import listRoutes from './routes/lists';
 import notificationRoutes from './routes/notifications';
 import bookmarkRoutes from './routes/bookmarks';
 import favouriteRoutes from './routes/favourites';
+import categoryRoutes from './routes/categories';
 
 import reportRoutes from './routes/reports'
 import contactRoutes from './routes/contacts'
@@ -73,6 +74,7 @@ app.use('/favourites',favouriteRoutes);
 app.use('/lists',listRoutes);
 app.use('/reports',reportRoutes);
 app.use('/contacts',contactRoutes);
+app.use('/categories',categoryRoutes);
 
 app.use('/uploads', express.static('uploads'));
 app.use('/webhooks',webhooks);

@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { ToastService } from './toast.service';
 import { ApiService } from './api.service';
 import { ReviewEntry } from './review-entry.model';
+import { TagEntry } from './tag-entry.model';
 
 
 @Injectable({
@@ -28,6 +29,9 @@ export class RestaurantDataService {
   bookmarkSubject = new Subject<RestaurantEntry[]>();
   totalBookmarks: number;
 
+  tagSubject = new Subject<TagEntry[]>();
+  tagEntry: TagEntry[];
+
   totalReviews = 0;
   totalRestaurants = 0;
   totalPages = 0;
@@ -38,6 +42,13 @@ export class RestaurantDataService {
     this.api.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`restaurants`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.restaurantSubject.next(this.restaurantEntry);
+    })
+  }
+
+  getTags() {
+    this.api.get<{ categories: TagEntry[]}>(`categories`).subscribe((jsonData) => {
+      this.tagEntry = jsonData.categories;
+      this.tagSubject.next(this.tagEntry);
     })
   }
 

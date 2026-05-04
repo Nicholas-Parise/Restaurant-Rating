@@ -205,7 +205,8 @@ router.get('/:restaurantId', async (req, res, next) => {
       json_agg(
         json_build_object(
           'id', c.id,
-          'name', c.name
+          'name', c.name,
+          'slug', c.slug
         )
       ) FILTER (WHERE c.id IS NOT NULL) AS categories
       FROM restaurants r

@@ -1,0 +1,48 @@
+.search-input {
+  width: 100%;
+
+  padding: 10px;
+
+  margin-bottom: 15px;
+
+  border-radius: 8px;
+  border: 1px solid #ccc;
+
+  box-sizing: border-box;
+}
+
+.tag-container {
+  overflow-y: auto;
+
+  max-height: 60vh;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  align-content: flex-start;
+
+  padding-right: 5px;
+}
+
+.tag-button {
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 999px;
+
+  cursor: pointer;
+
+  transition: 0.15s;
+}
+
+.section-title {
+  width: 100%;
+
+  margin-top: 10px;
+  margin-bottom: 5px;
+
+  font-size: 1rem;
+  font-weight: bold;
+}

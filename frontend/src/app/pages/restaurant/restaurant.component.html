@@ -1,15 +1,15 @@
 <div class="container">
   @if (restaurantEntry) {
   <div>
-    <h1>{{restaurantEntry?.name}}</h1>
+    <h1>{{restaurantEntry.name}}</h1>
     <div class="grid-container">
       <div class="grid-item">
-        <img class="image" [src]="restaurantEntry?.pictures" alt="" (error)="onImageError($event)">
+        <img class="image" [src]="restaurantEntry.pictures" alt="" (error)="onImageError($event)">
       </div>
       <div class="grid-item">
-        <p>{{ restaurantEntry?.description }}</p>
-        <p><strong>Type:</strong> {{ restaurantEntry?.type }}</p>
-        @if (restaurantEntry?.categories) {
+        <p>{{ restaurantEntry.description }}</p>
+        <p><strong>Type:</strong> {{ restaurantEntry.type }}</p>
+        @if (restaurantEntry.categories) {
         <div class="tags">
           @for (tagEntry of restaurantEntry.categories; track tagEntry) {
           <div class="center tag-item">
@@ -19,40 +19,40 @@
         </div>
 
         }
-        @if (restaurantEntry?.opening_hours) {
-        <p><strong>Opening Hours:</strong> {{ restaurantEntry?.opening_hours }}
+        @if (restaurantEntry.opening_hours) {
+        <p><strong>Opening Hours:</strong> {{ restaurantEntry.opening_hours }}
         </p>
         }
-        @if (restaurantEntry?.phone) {
-        <p><strong>Phone:</strong> {{ restaurantEntry?.phone }}</p>
+        @if (restaurantEntry.phone) {
+        <p><strong>Phone:</strong> {{ restaurantEntry.phone }}</p>
         }
-        @if (restaurantEntry?.website) {
-        <p><strong>Website:</strong> <a [href]="restaurantEntry?.website" target="_blank">{{
-            restaurantEntry?.website}}</a></p>
+        @if (restaurantEntry.website) {
+        <p><strong>Website:</strong> <a [href]="restaurantEntry.website" target="_blank">{{
+            restaurantEntry.website}}</a></p>
         }
-        @if (restaurantEntry?.wikipedia) {
+        @if (restaurantEntry.wikipedia) {
         <p><strong>Wikipedia:</strong> <a [href]="'http://wikipedia.org/wiki/' + restaurantEntry.wikipedia"
             target="_blank">{{
-            restaurantEntry?.wikipedia }}</a></p>
+            restaurantEntry.wikipedia }}</a></p>
         }
         <br>
-        @if (restaurantEntry?.facebook) {
-        <a target="_blank" [href]="restaurantEntry?.facebook">
-          <i [ngClass]="restaurantEntry?.facebook ? 'fa-brands fa-facebook text-blue pointer': ''" title="facebook">
+        @if (restaurantEntry.facebook) {
+        <a target="_blank" [href]="restaurantEntry.facebook">
+          <i [ngClass]="restaurantEntry.facebook ? 'fa-brands fa-facebook text-blue pointer': ''" title="facebook">
           </i>
         </a>
         }
 
-        @if (restaurantEntry?.instagram) {
-        <a target="_blank" [href]="restaurantEntry?.instagram">
-          <i [ngClass]="restaurantEntry?.instagram ? 'fa-brands fa-instagram text-blue pointer': ''" title="instagram">
+        @if (restaurantEntry.instagram) {
+        <a target="_blank" [href]="restaurantEntry.instagram">
+          <i [ngClass]="restaurantEntry.instagram ? 'fa-brands fa-instagram text-blue pointer': ''" title="instagram">
           </i>
         </a>
         }
 
-        @if (restaurantEntry?.twitter) {
-        <a target="_blank" [href]="restaurantEntry?.twitter">
-          <i [ngClass]="restaurantEntry?.twitter ? 'fa-brands fa-twitter text-blue pointer': ''" title="twitter">
+        @if (restaurantEntry.twitter) {
+        <a target="_blank" [href]="restaurantEntry.twitter">
+          <i [ngClass]="restaurantEntry.twitter ? 'fa-brands fa-twitter text-blue pointer': ''" title="twitter">
           </i>
         </a>
         }
@@ -61,29 +61,29 @@
 
         <p>address:
           <a target="_blank" href="{{mapLink}}">
-            @if (restaurantEntry?.housenumber) {
+            @if (restaurantEntry.housenumber) {
             <span>{{ restaurantEntry.housenumber }} </span>
             } @else {
             <span>{{ restaurantEntry.name }} </span>
             }
-            @if (restaurantEntry?.addr) {
+            @if (restaurantEntry.addr) {
             <span>{{ restaurantEntry.addr }} </span>
             }
-            @if (restaurantEntry?.city) {
+            @if (restaurantEntry.city) {
             <span>
               {{ restaurantEntry.city }}@if (restaurantEntry.province || restaurantEntry.country) {
               <span>,</span>
               }
             </span>
             }
-            @if (restaurantEntry?.province) {
+            @if (restaurantEntry.province) {
             <span>
               {{ restaurantEntry.province }}@if (restaurantEntry.country) {
               <span>,</span>
               }
             </span>
             }
-            @if (restaurantEntry?.country) {
+            @if (restaurantEntry.country) {
             <span>{{ restaurantEntry.country }}</span>
             }
           </a>
@@ -118,83 +118,83 @@
     <div class="amenities">
       <ul class="icon-list">
         <li>
-          <i class="fas fa-money-bill" [ngClass]="restaurantEntry?.cash ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-money-bill" [ngClass]="restaurantEntry.cash ? 'text-white' : 'text-grey strikethrough'"
             title="Cash"></i>
         </li>
         <li>
-          <i class="fab fa-cc-visa" [ngClass]="restaurantEntry?.visa ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fab fa-cc-visa" [ngClass]="restaurantEntry.visa ? 'text-white' : 'text-grey strikethrough'"
             title="Visa"></i>
         </li>
         <li>
           <i class="fab fa-cc-mastercard"
-            [ngClass]="restaurantEntry?.mastercard ? 'text-white' : 'text-grey strikethrough'" title="MasterCard"></i>
+            [ngClass]="restaurantEntry.mastercard ? 'text-white' : 'text-grey strikethrough'" title="MasterCard"></i>
         </li>
         <li>
-          <i class="fas fa-truck" [ngClass]="restaurantEntry?.delivery ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-truck" [ngClass]="restaurantEntry.delivery ? 'text-white' : 'text-grey strikethrough'"
             title="Delivery"></i>
         </li>
         <li>
           <i class="fas fa-bag-shopping"
-            [ngClass]="restaurantEntry?.takeaway ? 'text-white' : 'text-grey strikethrough'" title="Takeaway"></i>
+            [ngClass]="restaurantEntry.takeaway ? 'text-white' : 'text-grey strikethrough'" title="Takeaway"></i>
         </li>
         <li>
-          <i class="fas fa-leaf" [ngClass]="restaurantEntry?.vegetarian ? 'text-green' : 'text-grey strikethrough'"
+          <i class="fas fa-leaf" [ngClass]="restaurantEntry.vegetarian ? 'text-green' : 'text-grey strikethrough'"
             title="Vegetarian"></i>
         </li>
         <li>
           <i class="fas fa-wheelchair"
-            [ngClass]="restaurantEntry?.wheelchair ? 'text-white' : 'text-grey strikethrough'"
+            [ngClass]="restaurantEntry.wheelchair ? 'text-white' : 'text-grey strikethrough'"
             title="Wheelchair Accessible"></i>
         </li>
         <li>
           <i class="fas fa-snowflake"
-            [ngClass]="restaurantEntry?.air_conditioning ? 'text-blue' : 'text-grey strikethrough'"
+            [ngClass]="restaurantEntry.air_conditioning ? 'text-blue' : 'text-grey strikethrough'"
             title="Air Conditioning"></i>
         </li>
         <li>
-          <i class="fas fa-wifi" [ngClass]="restaurantEntry?.internet_access ? 'text-blue' : 'text-grey strikethrough'"
+          <i class="fas fa-wifi" [ngClass]="restaurantEntry.internet_access ? 'text-blue' : 'text-grey strikethrough'"
             title="Wi-Fi"></i>
         </li>
         <li>
           <i class="fas fa-chair"
-            [ngClass]="restaurantEntry?.outdoor_seating ? 'text-white' : 'text-grey strikethrough'"
+            [ngClass]="restaurantEntry.outdoor_seating ? 'text-white' : 'text-grey strikethrough'"
             title="Outdoor Seating"></i>
         </li>
         <li>
-          <i class="fas fa-car" [ngClass]="restaurantEntry?.drive_through ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-car" [ngClass]="restaurantEntry.drive_through ? 'text-white' : 'text-grey strikethrough'"
             title="Drive Through"></i>
         </li>
         <li>
-          <i class="fas fa-smoking" [ngClass]="restaurantEntry?.smoking ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-smoking" [ngClass]="restaurantEntry.smoking ? 'text-white' : 'text-grey strikethrough'"
             title="Smoking"></i>
         </li>
         <li>
-          <i class="fas fa-toilet" [ngClass]="restaurantEntry?.toilets ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-toilet" [ngClass]="restaurantEntry.toilets ? 'text-white' : 'text-grey strikethrough'"
             title="Toilets"></i>
         </li>
         <li>
-          <i class="fas fa-egg" [ngClass]="restaurantEntry?.breakfast ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-egg" [ngClass]="restaurantEntry.breakfast ? 'text-white' : 'text-grey strikethrough'"
             title="Breakfast"></i>
         </li>
         <li>
-          <i class="fas fa-burger" [ngClass]="restaurantEntry?.lunch ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-burger" [ngClass]="restaurantEntry.lunch ? 'text-white' : 'text-grey strikethrough'"
             title="Lunch"></i>
         </li>
         <li>
-          <i class="fas fa-pizza-slice" [ngClass]="restaurantEntry?.dinner ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-pizza-slice" [ngClass]="restaurantEntry.dinner ? 'text-white' : 'text-grey strikethrough'"
             title="Dinner"></i>
         </li>
         <li>
-          <i class="fas fa-couch" [ngClass]="restaurantEntry?.indoor_seating ? 'text-white' : 'text-grey strikethrough'"
+          <i class="fas fa-couch" [ngClass]="restaurantEntry.indoor_seating ? 'text-white' : 'text-grey strikethrough'"
             title="Indoor seating"></i>
         </li>
       </ul>
     </div>
-
+    <!---
     <h2>Food items</h2>
     <div class="foods">
-      <!-- ngfor to place all foods -->
     </div>
+    -->
     <h2>Reviews</h2>
     <div class="reviews">
       <ul class="all-reviews">
