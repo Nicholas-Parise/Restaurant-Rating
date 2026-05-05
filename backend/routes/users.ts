@@ -323,7 +323,7 @@ router.get('/search', async (req, res, next) => {
           FROM pg_class
           WHERE oid = 'users'::regclass
         )
-        SELECT u.id, u.username, u.name, u.picture, c.total_count
+        SELECT u.username, u.name, u.picture, c.total_count
         FROM users u, count_estimate c
         LIMIT $1 OFFSET $2;`, [pageSize, offset]);
     } else {
@@ -331,7 +331,7 @@ router.get('/search', async (req, res, next) => {
       result = await db.query(
         `SELECT *, COUNT(*) OVER() AS total_count 
           FROM (
-          SELECT id, username, name, picture, GREATEST(similarity(username, $1), similarity(name, $1)) AS sim
+          SELECT username, name, picture, GREATEST(similarity(username, $1), similarity(name, $1)) AS sim
           FROM users
           WHERE username % $1 OR name % $1
           ) sub
