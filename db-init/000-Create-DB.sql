@@ -41,6 +41,7 @@ CREATE INDEX idx_locations_geom ON locations USING GIST ((geom::geography));
 CREATE TABLE categories(
 id SERIAL PRIMARY KEY,   
 name TEXT UNIQUE NOT NULL,
+description TEXT,
 slug TEXT UNIQUE,
 created TIMESTAMP DEFAULT NOW()
 );
