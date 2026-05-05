@@ -128,9 +128,9 @@ export class UserDataService {
 
     let args = `?q=${searchQuery}&page=${page}&pageSize=${pageSize}`;
 
-    this.api.get<{ users: UserEntry[], totalusers: number, pageSize: number }>(`users/search${args}`).subscribe((jsonData) => {
+    this.api.get<{ users: UserEntry[], totalUsers: number, pageSize: number }>(`users/search${args}`).subscribe((jsonData) => {
       this.userSearchEntry = jsonData.users;
-      this.totalusers = jsonData.totalusers;
+      this.totalusers = jsonData.totalUsers;
       this.totalPages = Math.ceil(this.totalusers / jsonData.pageSize);
       console.log(this.totalusers, this.totalPages);
       this.userSearchSubject.next(this.userSearchEntry);

@@ -127,10 +127,10 @@ export class ExploreComponent implements OnInit {
     })
 
     if (this.nearbyEnabled) {
-      this.onToggleNearby(true, false);
+      this.onToggleNearby(true);
+    } else {
+      this.performSearch();
     }
-
-    this.performSearch();
 
     this.authDataService.getIsLoggedIn().then(isLoggedIn => {
       if (isLoggedIn) {
@@ -154,7 +154,7 @@ export class ExploreComponent implements OnInit {
         this.lat,
         this.lng,
         this.searchRadius,
-        this.selectedTagSlugs,
+        [...this.selectedTagSlugs].sort(),
         this.currentPage,
         30
       );
@@ -200,27 +200,46 @@ export class ExploreComponent implements OnInit {
 
     this.nearbyEnabled = enabled;
 
-    if (this.nearbyEnabled && this.isBrowser) {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
+    if (resetPage) {
+      this.currentPage = 1;
+    }
+
+    if (enabled && this.isBrowser) {
+
+      if (!navigator.geolocation) {
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+
           this.lat = position.coords.latitude;
           this.lng = position.coords.longitude;
-          if (resetPage) {
-            this.currentPage = 1;
-            this.performSearch();
-          }
-        });
-      }
+
+          this.performSearch();
+        },
+        error => {
+          console.error(error);
+
+          this.lat = null;
+          this.lng = null;
+
+          this.performSearch();
+        }
+      );
+
     } else {
+
       this.lat = null;
       this.lng = null;
 
-      if (resetPage) {
-        this.currentPage = 1;
-        this.performSearch();
-      }
+      this.performSearch();
     }
   }
+
+
+
+
 
   updateQueryParams(): void {
     this.router.navigate([], {
@@ -230,7 +249,7 @@ export class ExploreComponent implements OnInit {
         mode: this.searchMode,
         page: this.currentPage,
         nearby: this.nearbyEnabled,
-        tags: this.selectedTagSlugs
+        tags: [...this.selectedTagSlugs].sort()
       },
       queryParamsHandling: 'merge',
     }

@@ -38,6 +38,37 @@ export class RestaurantDataService {
 
   constructor(private api: ApiService, private toast: ToastService) { }
 
+  private searchCache = new Map<string, {
+    restaurants: RestaurantEntry[],
+    totalRestaurants: number,
+    pageSize: number,
+    timestamp: number
+  }>();
+
+  private buildSearchKey(
+    searchQuery: string,
+    lat: number | null,
+    lng: number | null,
+    radius: number | null,
+    selectedTagSlugs: string[],
+    page: number | null,
+    pageSize: number
+  ): string {
+
+    return JSON.stringify({
+      searchQuery,
+      lat: lat ? Number(lat.toFixed(3)) : null,
+      lng: lng ? Number(lng.toFixed(3)) : null,
+      radius,
+      tags: [...selectedTagSlugs].sort(),
+      page,
+      pageSize
+    });
+  }
+
+
+
+
   get() {
     this.api.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`restaurants`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
@@ -53,7 +84,29 @@ export class RestaurantDataService {
   }
 
 
-  getSearch(searchQuery: string, lat: Number | null, lng: Number | null, radius: Number | null, selectedTagSlugs: string[] = [], page: Number | null, pageSize: Number = 12) {
+  getSearch(searchQuery: string, lat: number | null, lng: number | null, radius: number | null, selectedTagSlugs: string[] = [], page: number | null, pageSize: number = 12) {
+
+    const cacheKey = this.buildSearchKey(
+      searchQuery,
+      lat,
+      lng,
+      radius,
+      selectedTagSlugs,
+      page,
+      pageSize
+    );
+
+
+    const cached = this.searchCache.get(cacheKey);
+
+    if (cached) {
+      console.log("cache");
+      this.restaurantEntry = cached.restaurants;
+      this.totalRestaurants = cached.totalRestaurants;
+      this.totalPages = Math.ceil(cached.totalRestaurants / cached.pageSize);
+      this.restaurantSubject.next(this.restaurantEntry);
+      return;
+    }
 
     const params = new URLSearchParams();
 
@@ -72,6 +125,12 @@ export class RestaurantDataService {
     }
 
     this.api.get<{ restaurants: RestaurantEntry[], totalRestaurants: number, pageSize: number }>(`restaurants/search?${params.toString()}`).subscribe((jsonData) => {
+
+      this.searchCache.set(cacheKey, {
+        ...jsonData,
+        timestamp: Date.now()
+      });
+
       this.restaurantEntry = jsonData.restaurants;
       this.totalRestaurants = jsonData.totalRestaurants;
       this.totalPages = Math.ceil(this.totalRestaurants / jsonData.pageSize);

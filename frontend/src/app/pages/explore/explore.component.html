@@ -29,6 +29,7 @@
     }
   </div>
   <div class="search-controls">
+    @if (searchMode === 'restaurants') {
     <div class="tag-picker">
       <button class="btn" (click)="showTagModal = true">Add/Change Tags</button>
 
@@ -53,14 +54,14 @@
       </div>
       }
     </div>
-
+}
 </div>
 
 @if (searchMode === 'restaurants') {
 <div class="spacer grid-container">
-  @for (restaurantEntry of restaurantEntry; track restaurantEntry) {
+  @for (restaurants of restaurantEntry; track restaurants.id) {
   <div class="center grid-item">
-    <app-restaurant-card [restaurantEntry]="restaurantEntry"></app-restaurant-card>
+    <app-restaurant-card [restaurantEntry]="restaurants"></app-restaurant-card>
   </div>
   }
   @if (restaurantEntry && restaurantEntry.length === 0) {
@@ -71,9 +72,9 @@
 
 @if (searchMode === 'users') {
 <div class="spacer grid-container">
-  @for (userEntry of userEntry; track userEntry) {
+  @for (users of userEntry; track users.username) {
   <div class="center grid-item">
-    <app-user-card [userEntry]="userEntry" [menu]="LoggedIn"></app-user-card>
+    <app-user-card [userEntry]="users" [menu]="LoggedIn"></app-user-card>
   </div>
   }
   @if (userEntry && userEntry.length === 0) {
@@ -84,9 +85,9 @@
 
 @if (searchMode === 'lists') {
 <div class="spacer grid-container">
-  @for (listEntry of listEntry; track listEntry) {
+  @for (lists of listEntry; track lists.id) {
   <div class="center grid-item">
-    <app-list-card [listEntry]="listEntry"></app-list-card>
+    <app-list-card [listEntry]="lists"></app-list-card>
   </div>
   }
   @if (listEntry && listEntry.length === 0) {
