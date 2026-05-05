@@ -13,8 +13,7 @@ SET slug = regexp_replace(
     '-',
     'g'
 )
-WHERE slug IS NULL 
-ON CONFLICT DO NOTHING;
+WHERE slug IS NULL;
 
 UPDATE categories
 SET slug = trim(both '-' from slug);

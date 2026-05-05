@@ -205,16 +205,20 @@ export class ExploreComponent implements OnInit {
         navigator.geolocation.getCurrentPosition(position => {
           this.lat = position.coords.latitude;
           this.lng = position.coords.longitude;
+          if (resetPage) {
+            this.currentPage = 1;
+            this.performSearch();
+          }
         });
       }
     } else {
       this.lat = null;
       this.lng = null;
-    }
 
-    if (resetPage) {
-      this.currentPage = 1;
-      this.performSearch();
+      if (resetPage) {
+        this.currentPage = 1;
+        this.performSearch();
+      }
     }
   }
 
@@ -258,10 +262,10 @@ export class ExploreComponent implements OnInit {
   }
 
   updateTagDisplay() {
-  const max = 5;
-  this.visibleTags = this.selectedTags.slice(0, max);
-  this.overflowTags = this.selectedTags.slice(max);
-}
+    const max = 5;
+    this.visibleTags = this.selectedTags.slice(0, max);
+    this.overflowTags = this.selectedTags.slice(max);
+  }
 
 
 }

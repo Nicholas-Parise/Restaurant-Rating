@@ -1,4 +1,6 @@
 /*
+DROP TABLE IF EXISTS email_suppression;
+DROP TABLE IF EXISTS contacts;
 DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS listed_restaurants;
 DROP TABLE IF EXISTS lists;
