@@ -69,6 +69,15 @@ router.get('/search', async (req, res, next) => {
   let pageSize = Number(req.query.pageSize) || 10;
   const offset = (page - 1) * pageSize;
 
+  const tags = req.query.tags;
+
+  const selectedTags = Array.isArray(tags)
+    ? tags
+    : tags
+      ? [tags]
+      : [];
+  const hasTags = selectedTags.length > 0;
+
   var result;
 
   if (pageSize && pageSize > 100) {
@@ -76,65 +85,86 @@ router.get('/search', async (req, res, next) => {
   }
 
   try {
-    if (searchTerm) {
-      if (lat && lng) {
-        result = await db.query(`
-        SELECT *, COUNT(*) OVER() AS total_count 
-        FROM (
-          SELECT r.id, r.name, r.pictures, r.type, r.slug, l.city, similarity(r.name, $4) AS sim,
-        ST_Distance(
-          l.geom::geography,
-          ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
-        ) AS dist
-        FROM locations l
-        JOIN restaurants r ON l.id = r.location_id
-        WHERE ST_DWithin(
-          l.geom::geography,
-          ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
-          $3
-        )
-        AND r.name % $4
-        ) sub
-        ORDER BY dist ASC, sim DESC
-        LIMIT $5 OFFSET $6;
-      `, [lng, lat, radiusInMeters, searchTerm, pageSize, offset]);
-      } else {
-        result = await db.query(
-          `SELECT *, COUNT(*) OVER() AS total_count 
-          FROM (
-          SELECT *, similarity(name, $1) AS sim
-          FROM restaurants
-          WHERE name % $1
-          ) sub
-          ORDER BY sim DESC
-          LIMIT $2 OFFSET $3;`, [searchTerm, pageSize, offset]);
-      }
 
-    } else {
 
-      if (lat && lng) {
-        result = await db.query(`
-        SELECT *, COUNT(*) OVER() AS total_count 
-          FROM (
-        SELECT r.id, r.name, r.pictures, r.type, r.slug, l.city, 
-        ST_Distance(
-          l.geom::geography,
-          ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
-        ) AS dist
-        FROM locations l
-        JOIN restaurants r ON l.id = r.location_id
-        WHERE ST_DWithin(
-          l.geom::geography,
-          ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
-          $3
-        )
-        ) sub
-        ORDER BY dist ASC
-        LIMIT $4 OFFSET $5;
-      `, [lng, lat, radiusInMeters, pageSize, offset]);
+    /*
+        if (searchTerm) {
+          if (lat && lng) {
+            result = await db.query(`
+            SELECT *, COUNT(*) OVER() AS total_count 
+            FROM (
+              SELECT r.id, r.name, r.pictures, r.type, r.slug, similarity(r.name, $4) AS sim,
+            ST_Distance(
+              l.geom::geography,
+              ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+            ) AS dist
+            FROM locations l
+            JOIN restaurants r ON l.id = r.location_id
+            WHERE ST_DWithin(
+              l.geom::geography,
+              ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
+              $3
+            )
+            AND r.name % $4
+            ) sub
+            ORDER BY dist ASC, sim DESC
+            LIMIT $5 OFFSET $6;
+          `, [lng, lat, radiusInMeters, searchTerm, pageSize, offset]);
+    
+    
+          } else {
+            result = await db.query(
+              `SELECT *, COUNT(*) OVER() AS total_count 
+              FROM (
+              SELECT  r.id, r.name, r.pictures, r.type, r.slug, similarity(r.name, $1) AS sim
+              FROM restaurants r
+              WHERE r.name % $1
+              ) sub
+              ORDER BY sim DESC
+              LIMIT $2 OFFSET $3;`, [searchTerm, pageSize, offset]);
+          }
+    
+        } else {
+    
+          if (lat && lng) {
+            result = await db.query(`
+            SELECT *, COUNT(*) OVER() AS total_count 
+              FROM (
+            SELECT r.id, r.name, r.pictures, r.type, r.slug, 
+            ST_Distance(
+              l.geom::geography,
+              ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+            ) AS dist
+            FROM locations l
+            JOIN restaurants r ON l.id = r.location_id
+            WHERE ST_DWithin(
+              l.geom::geography,
+              ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
+              $3
+            )
+            ) sub
+            ORDER BY dist ASC
+            LIMIT $4 OFFSET $5;
+          `, [lng, lat, radiusInMeters, pageSize, offset]);
+    
+          } else {
+            result = await db.query(`
+              WITH count_estimate AS (
+                SELECT reltuples::bigint AS total_count
+                FROM pg_class
+                WHERE oid = 'restaurants'::regclass
+              )
+              SELECT r.id, r.name, r.pictures, r.type, r.slug, c.total_count
+              FROM restaurants r, count_estimate c
+              LIMIT $1 OFFSET $2;`, [pageSize, offset]);
+    
+    
+          }
+        }
+        */
 
-      } else {
-          result = await db.query(`
+    if (!searchTerm && !lat && !lng && !hasTags) {
+      result = await db.query(`
           WITH count_estimate AS (
             SELECT reltuples::bigint AS total_count
             FROM pg_class
@@ -143,10 +173,38 @@ router.get('/search', async (req, res, next) => {
           SELECT r.id, r.name, r.pictures, r.type, r.slug, c.total_count
           FROM restaurants r, count_estimate c
           LIMIT $1 OFFSET $2;`, [pageSize, offset]);
+    } else {
+  
 
+      const latVal = lat ? Number(lat) : null;
+      const lngVal = lng ? Number(lng) : null;
+      const tags = selectedTags?.length ? selectedTags : null;
+      const searchVal = searchTerm ? searchTerm : null;
 
-      }
+      result = await db.query(`
+      SELECT r.id, r.name, r.pictures, r.type, r.slug, COUNT(*) OVER() AS total_count
+      FROM restaurants r
+      JOIN locations l ON l.id = r.location_id
+      LEFT JOIN restaurant_cats rc ON rc.restaurant_id = r.id
+      LEFT JOIN categories c ON c.id = rc.category_id
+      WHERE 1=1
+      AND
+        ($4::text IS NULL OR r.name % $4)
+      AND
+        ($1::float IS NULL OR $2::float IS NULL OR
+        ST_DWithin(l.geom, ST_SetSRID(ST_MakePoint($1,$2),4326), $3))
+      AND
+        ($5::text[] IS NULL OR c.slug = ANY($5))
+      GROUP BY r.id, l.id
+      ORDER BY
+        CASE WHEN $1 IS NOT NULL THEN l.geom <-> ST_SetSRID(ST_MakePoint($1,$2),4326)
+            ELSE 0 END,
+        similarity(r.name, $4) DESC
+      LIMIT $6 OFFSET $7;
+      `, [lngVal, latVal, radiusInMeters, searchVal, tags, pageSize, offset]);
     }
+
+
     const restaurants = result.rows;
 
     const totalRestaurants = restaurants[0]?.total_count ?? 0;

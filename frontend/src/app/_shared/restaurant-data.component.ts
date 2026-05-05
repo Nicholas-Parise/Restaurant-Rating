@@ -36,7 +36,7 @@ export class RestaurantDataService {
   totalRestaurants = 0;
   totalPages = 0;
 
-  constructor(private api: ApiService,private toast: ToastService) {}
+  constructor(private api: ApiService, private toast: ToastService) { }
 
   get() {
     this.api.get<{ restaurants: RestaurantEntry[], totalReviews: Number }>(`restaurants`).subscribe((jsonData) => {
@@ -46,21 +46,32 @@ export class RestaurantDataService {
   }
 
   getTags() {
-    this.api.get<{ categories: TagEntry[]}>(`categories`).subscribe((jsonData) => {
+    this.api.get<{ categories: TagEntry[] }>(`categories`).subscribe((jsonData) => {
       this.tagEntry = jsonData.categories;
       this.tagSubject.next(this.tagEntry);
     })
   }
 
 
-  getSearch(searchQuery: string, lat: Number | null, lng: Number | null, radius: Number | null, page: Number | null, pageSize: Number = 12) {
+  getSearch(searchQuery: string, lat: Number | null, lng: Number | null, radius: Number | null, selectedTagSlugs: string[] = [], page: Number | null, pageSize: Number = 12) {
 
-    let args = `?q=${searchQuery}&page=${page}&pageSize=${pageSize}`;
-    if (lat) {
-      args = `?q=${searchQuery}&lat=${lat}&lng=${lng}&rad=${radius}&page=${page}&pageSize=${pageSize}`
+    const params = new URLSearchParams();
+
+    params.set('q', searchQuery);
+    params.set('page', String(page));
+    params.set('pageSize', String(pageSize));
+
+    if (lat != null && lng != null) {
+      params.set('lat', String(lat));
+      params.set('lng', String(lng));
+      params.set('rad', String(radius));
     }
 
-    this.api.get<{ restaurants: RestaurantEntry[], totalRestaurants: number, pageSize: number }>(`restaurants/search${args}`).subscribe((jsonData) => {
+    for (const slug of selectedTagSlugs) {
+      params.append('tags', slug);
+    }
+
+    this.api.get<{ restaurants: RestaurantEntry[], totalRestaurants: number, pageSize: number }>(`restaurants/search?${params.toString()}`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.totalRestaurants = jsonData.totalRestaurants;
       this.totalPages = Math.ceil(this.totalRestaurants / jsonData.pageSize);
@@ -77,8 +88,8 @@ export class RestaurantDataService {
   }
 
 
-  getHot(){
-   this.api.get<{ restaurants: RestaurantEntry[], totalRestaurants: Number }>(`restaurants/popular`).subscribe((jsonData) => {
+  getHot() {
+    this.api.get<{ restaurants: RestaurantEntry[], totalRestaurants: Number }>(`restaurants/popular`).subscribe((jsonData) => {
       this.restaurantEntry = jsonData.restaurants;
       this.restaurantSubject.next(this.restaurantEntry);
     })
@@ -93,7 +104,7 @@ export class RestaurantDataService {
     })
   }
 
-  GetRecentResturaunts(username:string) {
+  GetRecentResturaunts(username: string) {
 
     this.api.get<{ recents: RestaurantEntry[], totalRecents: number }>(`users/recent?username=${username}`).subscribe((jsonData) => {
       this.recentEntry = jsonData.recents;
@@ -102,7 +113,7 @@ export class RestaurantDataService {
   }
 
 
-  GetFavouriteResturaunts(username:string) {
+  GetFavouriteResturaunts(username: string) {
 
     this.api.get<{ favourites: RestaurantEntry[], totalFavourites: number }>(`favourites/${username}`).subscribe((jsonData) => {
       this.favouriteEntry = jsonData.favourites;
@@ -127,7 +138,7 @@ export class RestaurantDataService {
   }
 
 
-  GetBookmarkResturaunts(restaurantId: number|null) {
+  GetBookmarkResturaunts(restaurantId: number | null) {
     this.api.get<{ bookmarked: RestaurantEntry[], totalBookmarked: number }>(`bookmarks?restaurant=${restaurantId}`).subscribe((jsonData) => {
       this.bookmarkEntry = jsonData.bookmarked;
       this.totalBookmarks = jsonData.totalBookmarked;
@@ -136,7 +147,7 @@ export class RestaurantDataService {
   }
 
 
-    GetBookmark(username: string, page: Number) {
+  GetBookmark(username: string, page: Number) {
     this.api.get<{ bookmarked: RestaurantEntry[], totalBookmarked: number }>(`bookmarks/${username}?page=${page}`).subscribe((jsonData) => {
       this.bookmarkEntry = jsonData.bookmarked;
       this.totalBookmarks = jsonData.totalBookmarked;
@@ -154,7 +165,7 @@ export class RestaurantDataService {
 
   removeBookmark(restaurantId: number) {
     this.api.delete<{ message: string }>(`bookmarks/${restaurantId}`).subscribe((jsonData) => {
-     this.bookmarkEntry = this.bookmarkEntry.filter(res => res.id !== restaurantId);
+      this.bookmarkEntry = this.bookmarkEntry.filter(res => res.id !== restaurantId);
       this.bookmarkSubject.next(this.bookmarkEntry);
     })
   }

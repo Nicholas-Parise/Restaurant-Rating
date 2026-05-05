@@ -101,7 +101,24 @@ input[type="range"] {
   margin-top: 0px;
 }
 
-.tag-item{
+.tag-row {
   display: flex;
-  padding: 2px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+}
+
+.tag-item {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.tag-more {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  color: #888;
+  font-size: 0.9rem;
+  padding: 4px 6px;
 }

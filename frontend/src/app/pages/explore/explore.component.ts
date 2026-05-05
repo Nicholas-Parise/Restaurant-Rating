@@ -61,6 +61,9 @@ export class ExploreComponent implements OnInit {
   selectedTags: TagEntry[] = [];
   showTagModal: boolean = false;
 
+  visibleTags: TagEntry[] = [];
+  overflowTags: TagEntry[] = [];
+
   private searchDebounce?: any;
 
   currentPage: number = 1;
@@ -118,7 +121,7 @@ export class ExploreComponent implements OnInit {
           .replace(/-/g, ' ')
           .replace(/\b\w/g, c => c.toUpperCase())
       })) as TagEntry[];
-
+      this.updateTagDisplay();
 
       this.maxPages = this.currentPage + 1;
     })
@@ -151,20 +154,21 @@ export class ExploreComponent implements OnInit {
         this.lat,
         this.lng,
         this.searchRadius,
+        this.selectedTagSlugs,
         this.currentPage,
-        12
+        30
       );
     } else if (this.searchMode === 'users') {
       this.userDataService.GetSearch(
         this.searchQuery,
         this.currentPage,
-        12
+        30
       );
     } else {
       this.listDataService.GetSearch(
         this.searchQuery,
         this.currentPage,
-        12
+        30
       );
     }
     this.updateQueryParams();
@@ -248,8 +252,16 @@ export class ExploreComponent implements OnInit {
 
   updateTags(tags: TagEntry[]) {
     this.selectedTags = tags;
+    this.selectedTagSlugs = tags.map(tag => tag.slug);
+    this.updateTagDisplay();
     this.performSearch();
   }
+
+  updateTagDisplay() {
+  const max = 5;
+  this.visibleTags = this.selectedTags.slice(0, max);
+  this.overflowTags = this.selectedTags.slice(max);
+}
 
 
 }
