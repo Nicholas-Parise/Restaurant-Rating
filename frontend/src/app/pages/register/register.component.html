@@ -42,6 +42,32 @@
       }
     </div>
 
+
+    <div>
+      <label>I accept the <a [routerLink]="['/terms-of-service']">Terms and conditions</a>
+      <input class="checkInput" type="checkbox" formControlName="acceptTerms" />
+      </label>
+      @if (f['acceptTerms'].touched && f['acceptTerms'].invalid) {
+      <div class="error">
+        Must accept terms to create an account
+      </div>
+      }
+    </div>
+
+      <div>
+      <label>I am at least 13 years of age
+      <input class="checkInput" type="checkbox" formControlName="ageConsent" />
+      </label>
+      @if (f['ageConsent'].touched && f['ageConsent'].invalid) {
+      <div class="error">
+        Must be over the age of 13 to create an account
+      </div>
+      }
+    </div>
+
+    
+
+
     @if (errorMessage) {
     <div class="error-message">
       {{ errorMessage }}

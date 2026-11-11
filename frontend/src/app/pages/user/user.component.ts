@@ -64,8 +64,8 @@ export class UserComponent {
   ngOnInit(): void {
 
     this.userSubscription = this.userDataService.userSubject.subscribe(userEntry => {
-      this.userEntry = userEntry;
-      this.showEditLogic();
+        this.userEntry = userEntry;
+        this.showEditLogic();
     });
 
     this.reviewSubscription = this.reviewDataService.userReviewSubject.subscribe(reviewEntry => {
@@ -74,31 +74,36 @@ export class UserComponent {
     });
 
     // fetch data
-    const data = this.route.snapshot.data['userData'];
-    if (!data || !data.user) {
-      this.router.navigate(['/']);
-      return;
-    }
-
-    this.userEntry = data.user;
-    this.favRestaurantEntry = data.favourite_restaurants;
-    this.recentRestaurantEntry = data.recents;
-    this.reviewEntry = data.reviews;
-    this.maxPages = data.totalReviews / 10;
-
-    this.username = this.userEntry.username;
-
-    this.showEditLogic();
-
-    this.authDataService.getIsLoggedIn().then(isLoggedIn => {
-      if (isLoggedIn) {
-        this.LoggedIn = true;
-        this.userDataService.GetUser();
-      } else {
-        this.LoggedIn = false;
+    this.route.data.subscribe(routeData => {
+      
+      const data = routeData['userData'];
+      if (!data || !data.user) {
+        this.router.navigate(['/']);
+        return;
       }
-    });
 
+      this.userEntry = data.user;
+      this.favRestaurantEntry = data.favourite_restaurants;
+      this.recentRestaurantEntry = data.recents;
+      this.reviewEntry = data.reviews;
+      this.maxPages = data.totalReviews / 10;
+
+      this.username = this.userEntry.username;
+
+      this.showEditLogic();
+
+      this.authDataService.getIsLoggedIn().then(isLoggedIn => {
+        if (isLoggedIn) {
+          this.LoggedIn = true;
+          if(!this.userEntry)
+            this.userDataService.GetUser();
+        
+        } else {
+          this.LoggedIn = false;
+        }
+      });
+
+    });
   }
 
 

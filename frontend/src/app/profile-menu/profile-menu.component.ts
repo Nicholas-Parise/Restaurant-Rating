@@ -43,6 +43,17 @@ export class ProfileMenuComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.authSubscription = this.authDataService.loginSubject.subscribe(userEntry => {
+      if(userEntry){
+        this.authDataService.getIsLoggedIn().then(isLoggedIn => {
+          if (isLoggedIn) {
+            this.userEntry = this.authDataService.getUserEntry();
+            this.notificationsDataService.Get();
+          }
+        });
+      }
+    });
+
      this.notificationSubscription = this.notificationsDataService.NotificationSubject.subscribe(notificationEntry => {
       console.log(notificationEntry)
       this.notificationEntry = notificationEntry;

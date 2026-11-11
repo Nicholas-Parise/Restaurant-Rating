@@ -48,8 +48,8 @@ export class LoginComponent {
     this.auth.PostLogin(userData.password, userData.email).subscribe({
       next: (response) => {
         console.log('Login success:', response);
-        this.router.navigate(['/user']);
-        // Navigate or show success
+        this.router.navigate(['/user',response.username]);
+        // Navigate to show success
       },
       error: (error) => {
         console.error('Login failed:', error);

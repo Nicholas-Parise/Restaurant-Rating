@@ -28,7 +28,9 @@ export class RegisterComponent implements OnInit {
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', Validators.required],
+      acceptTerms: [false, Validators.requiredTrue],
+      ageConsent: [false, Validators.requiredTrue]
     });
   }
 
@@ -49,12 +51,14 @@ export class RegisterComponent implements OnInit {
     const userData = {
       username: this.f['username'].value,
       email: this.f['email'].value,
-      password: this.f['password'].value
+      password: this.f['password'].value,
+      acceptTerms: this.f['acceptTerms'].value,
+      ageConsent: this.f['ageConsent'].value
     };
 
     console.log('Registering user:', userData);
     this.errorMessage = null;
-    this.auth.PostRegister(userData.username, userData.password, userData.email).subscribe({
+    this.auth.PostRegisterPayload(userData).subscribe({
       next: (response) => {
         console.log('register success:', response);
         this.router.navigate(['/login']);

@@ -5,6 +5,8 @@ import { UserEntry } from '../_shared/user-entry.model';
 import { UserDataService } from '../_shared/user-data.component';
 import { FormsModule } from '@angular/forms';
 
+import { Router } from '@angular/router';
+
 @Component({
     selector: 'app-user-form',
     imports: [ReactiveFormsModule, FormsModule],
@@ -30,7 +32,7 @@ export class UserFormComponent implements OnInit {
   currentEmail: string;
   email: string;
 
-  constructor(private userDataService: UserDataService) { }
+  constructor(private userDataService: UserDataService, private router:Router) { }
 
   selectedFile: File | null = null;
   previewUrl: string | ArrayBuffer | null = null;
@@ -131,6 +133,8 @@ export class UserFormComponent implements OnInit {
     this.userDataService.deleteAccount(this.password);
     this.closeDeleteConfirm();
     this.password = "";
+    this.closeForm();
+    this.router.navigate(['/']);
   }
 
 

@@ -30,6 +30,11 @@ input {
   box-sizing: border-box;
 }
 
+
+.checkInput{
+width:fit-content;
+}
+
 .error {
   color: red;
   font-size: 0.8rem;

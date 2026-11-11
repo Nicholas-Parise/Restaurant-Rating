@@ -17,8 +17,7 @@ export class NavbarComponent implements OnInit {
 
   @Output() toggleNotifications = new EventEmitter<void>();
 
-  constructor(private authDataService: AuthDataService,
-    private router: Router) { }
+  constructor(private authDataService: AuthDataService) { }
 
   dropdownOpen: boolean = false;
   loggedIn: boolean = false;
@@ -29,6 +28,19 @@ export class NavbarComponent implements OnInit {
   navOpen = false;
 
   ngOnInit(): void {
+
+     this.authSubscription = this.authDataService.loginSubject.subscribe(userEntry => {
+      if(userEntry){
+        this.authDataService.getIsLoggedIn().then(isLoggedIn => {
+          if (isLoggedIn) {
+            this.picture = this.authDataService.getPicture();
+            this.loggedIn = true;
+          }
+        });
+      }else{
+        this.loggedIn = false;
+      }
+    });
 
     this.authDataService.getIsLoggedIn().then(isLoggedIn => {
       if (isLoggedIn) {

@@ -1,5 +1,5 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { throwError, Observable } from 'rxjs';
+import { throwError, Observable, Subject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserEntry } from './user-entry.model';
 import { ApiService } from './api.service';
@@ -19,11 +19,22 @@ export class AuthDataService {
   private userEntry: UserEntry;
   private loginCheckPromise: Promise<boolean> | null = null;
 
+  loginSubject = new Subject<UserEntry|null>();
+
   PostRegister(username: String, password: String, email: String): Observable<any> {
 
     var sendData = { "username": username, "password": password, "email": email };
 
     return this.api.post<any>(`auth/register`, sendData).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
+  PostRegisterPayload(payload: any): Observable<any> {
+
+    return this.api.post<any>(`auth/register`, payload).pipe(
       catchError((error) => {
         return throwError(() => error);
       })
@@ -40,6 +51,8 @@ export class AuthDataService {
           localStorage.setItem('authToken', token);
           this.loggedin = true;
           this.userEntry = response;
+          // let things know we are logged in now
+          this.loginSubject.next(this.userEntry);
         }
       }),
       catchError((error) => {
@@ -77,6 +90,7 @@ export class AuthDataService {
     })
     localStorage.removeItem("authToken");
     this.loginCheckPromise = null;
+    this.loginSubject.next(null);
   }
 
 
