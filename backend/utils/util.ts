@@ -93,3 +93,10 @@ export function isMod(permission: string): boolean {
 export function isBanned(permission: string): boolean {
   return permission === 'banned';
 }
+
+// A->Z, a->z, 0->9, - or _
+export function isValidUsername(username: string): boolean {
+  const regex = /[^A-Za-z0-9\-_]/;
+  return !regex.test(username);
+}
+

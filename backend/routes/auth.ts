@@ -18,17 +18,26 @@ const router = express.Router();
 
 
 import * as dotenv from 'dotenv';
-import { isEmail } from "../utils/util";
+import { isEmail, isValidUsername } from "../utils/util";
 dotenv.config();
 
 // localhost:3000/auth/register
 // register account
 router.post('/register', async (req, res, next) => {
-    const { email, password, username, bio, notifications } = req.body;
+    const { email, password, username, bio, notifications, acceptTerms, ageConsent } = req.body;
 
     if (!email || !password || !username) {
         return res.status(400).json({ message: "email, password and username are required" });
     }
+
+    if (!acceptTerms) {
+        return res.status(400).json({ message: "Must accept Terms and conditions to register account" });
+    }
+
+    if (!ageConsent) {
+        return res.status(400).json({ message: "Must be 13 years or older to register account" });
+    }
+
 
     if (email && !isEmail(email)) {
         return res.status(400).json({ error: "invalid email" });
@@ -46,6 +55,10 @@ router.post('/register', async (req, res, next) => {
         return res.status(400).json({ error: "bio must be a string" });
     }
 
+    if(!isValidUsername(username)){
+         return res.status(400).json({ error: "username can only contain Letters, Numbers, - and _" })
+    }
+
     // default picture
     const picture = "/assets/placeholder-avatar.png";
 
@@ -61,8 +74,8 @@ router.post('/register', async (req, res, next) => {
         // send notification if allowed  
         if (result.rows[0].notifications) {
             await createNotification([result.rows[0].id], "Welcome to Deglazd!", "Hello from the Deglazd team! we are so excited to welcome you to this platform.", "/home");
-            // Emails are not needed right now. TODO 
-            await welcomeEmail(email, username);
+            //Emails are not needed right now. TODO 
+            //await welcomeEmail(email, username);
         }
 
         res.status(201).json({ message: "User registered successfully", user: result.rows[0] });
@@ -193,6 +206,10 @@ router.get('/username/:username', async (req, res, next) => {
 
         if (banned.Banned.some(item => item === username)) {
             return res.status(401).json({ message: "invalid username" });
+        }
+
+        if(!isValidUsername(username)){
+         return res.status(401).json({ message: "username can only contain Letters, Numbers, - and _" })
         }
 
 

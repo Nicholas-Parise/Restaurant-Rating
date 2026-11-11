@@ -8,7 +8,7 @@ import authenticate from "../middleware/authenticate";
 import createNotification from "../middleware/createNotification";
 import uploadPicture from '../middleware/upload';
 
-import { getUserId, isEmail, maxString, deleteImage, isBanned, getUserPermissions } from "../utils/util";
+import { getUserId, isEmail, maxString, deleteImage, isBanned, getUserPermissions, isValidUsername } from "../utils/util";
 
 const router = express.Router();
 
@@ -163,6 +163,10 @@ router.put('/complete', authenticate, async (req, res) => {
 
     if (password !== undefined && typeof password !== "string") {
       return res.status(400).json({ error: "password must be a string" });
+    }
+
+    if(!isValidUsername(username)){
+      return res.status(400).json({ error: "username can only contain Letters, Numbers, - and _" })
     }
 
     // Make sure user is still in setup mode
