@@ -1,6 +1,6 @@
 <div class="container">
 
-    @if (users && reports) {
+    @if (mode == 'users' && users && reports) {
 
     <div class="list-details">
         <h1 class="owner" [routerLink]="['/user', users.username]">{{ users.name ?
@@ -23,7 +23,7 @@
     }
 
 
-    } @else if(reviews && reports){
+    } @else if(mode == 'reviews' && reviews && reports){
 
     <div class="list-details">
 
@@ -41,7 +41,7 @@
     </div>
     }
 
-    }@else if(reports){
+    }@else if(mode == 'overview' && reports){
     <h1>All Reports</h1>
     <div class="grid-container">
         @for (reports of reports; track reports.id) {

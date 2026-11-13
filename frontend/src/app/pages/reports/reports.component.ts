@@ -40,6 +40,8 @@ export class ReportsComponent implements OnInit {
   target_type: string | null;
   target_id: string | number | null;
 
+  mode: 'overview' | 'users' | 'reviews' = 'overview';
+
   ngOnDestroy(): void {
     this.reportSubscription.unsubscribe();
   }
@@ -64,10 +66,13 @@ export class ReportsComponent implements OnInit {
         if (isLoggedIn && this.authDataService.getIsMod()) {
           if (this.target_type == "user" && this.target_id) {
             this.reportDataService.getUser(this.target_id);
+            this.mode = 'users';
           } else if (this.target_type == "review" && this.target_id) {
             this.reportDataService.getReview(this.target_id);
+            this.mode = 'reviews';
           } else {
             this.reportDataService.get();
+            this.mode = 'overview';
           }
         } else {
           this.router.navigate(['/']);

@@ -61,7 +61,7 @@ export class ReportFormComponent implements OnInit {
       description: this.form.value.description,
       reason: this.form.value.reason,
       target_type: this.target.type,
-      target_id: this.target.data.id
+      target_id: this.target.type == 'user' ? this.target.data.username : this.target.data.id 
     } as ReportEntry;
 
     this.reportDataService.report(newEntry);

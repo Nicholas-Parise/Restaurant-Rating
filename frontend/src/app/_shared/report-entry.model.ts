@@ -3,7 +3,7 @@ export interface ReportEntry {
     reporter_id: number,
     reporter: string,
     target_type: string,
-    target_id: number,
+    target_id: number|string,
     reason: string,
     description: string,
     status: string,

@@ -21,6 +21,8 @@ import { AboutComponent } from './pages/about/about.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 
+import { NewsComponent } from './pages/news/news.component';
+
 import { RestaurantResolver } from './_shared/RestaurantResolver.service';
 import { UserResolver } from './_shared/UserResolver.service';
 
@@ -58,6 +60,9 @@ export const routes: Routes = [
     { path: 'about', component: AboutComponent },
     { path: 'privacy-policy', component: PrivacyPolicyComponent },
     { path: 'terms-of-service', component: TermsOfServiceComponent },
+    { path: 'news', component: NewsComponent },
+
+
     { path: 'forgot', component: ForgotComponent },
 
     { path: 'recover', component: RecoverComponent },

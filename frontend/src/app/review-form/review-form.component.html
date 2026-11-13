@@ -4,7 +4,7 @@
       <h2>leave a review</h2>
       <form (ngSubmit)="onSubmit()" [formGroup]="reviewForm">
         <label for="review">review</label>
-        <textarea placeholder="Type your review..." type="text" class="form-control" rows="3"
+        <textarea (input)="onTextareaChange($event)" placeholder="Type your review..." type="text" class="form-control" rows="3"
         formControlName="description"></textarea>
         <label>Your rating</label>
         <app-stars [inputRating]="selectedRating" (rating)="getDataFromStar($event)"></app-stars>

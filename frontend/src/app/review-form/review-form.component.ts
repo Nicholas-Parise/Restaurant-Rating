@@ -78,6 +78,13 @@ export class ReviewFormComponent implements OnInit {
   }
 
 
+  onTextareaChange(event: Event): void{
+    // if there is a description then they have to have visited.
+    if(this.reviewForm.value.description.length > 0){
+      this.reviewForm.patchValue({ visited: true });
+    }
+  }
+
   getDataFromStar(e: any) {
     console.log("test");
     this.selectedRating = e;
@@ -122,6 +129,9 @@ export class ReviewFormComponent implements OnInit {
   }
 
   toggleVisited(): void {
+    // disabled if there is a description
+     if(this.reviewForm.value.description.length > 0) return;
+
     const current = this.reviewForm.get('visited')?.value;
     this.reviewForm.patchValue({ visited: !current });
   }
