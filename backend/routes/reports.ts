@@ -185,6 +185,11 @@ router.post('/:type/:id/dismiss', authenticate, async (req, res, next) => {
       return res.status(403).json({ message: "User lacks permissions" });
     }
 
+    // Validate target_type
+    if (!type || !['review', 'user', 'list'].includes(type)) {
+      return res.status(400).json({ error: 'Invalid type' });
+    }
+
     const result = await db.query(`
     UPDATE reports
       SET status = 'dismissed',
@@ -219,22 +224,23 @@ router.post('/review/:id/remove', authenticate, async (req, res, next) => {
       return res.status(403).json({ message: "User lacks permissions" });
     }
 
-    const result = await db.query(`
-    BEGIN;
+    await db.query('BEGIN');
+    try {
+      await db.query('DELETE FROM reviews WHERE id = $1;', [id]);
+      await db.query(`UPDATE reports
+                      SET status = 'resolved',
+                        reviewed_by = $2,
+                        reviewed_at = NOW()
+                      WHERE target_type = 'review'
+                        AND target_id = $1;`, [id, userId]);
+      await db.query('COMMIT');
+    } catch (err) {
+      await db.query('ROLLBACK');
+      console.log(err);
+      return res.status(400).json({ message: "Error deleting review" });
+    }
 
-    DELETE FROM reviews
-    WHERE id = $1;
-
-    UPDATE reports
-    SET status = 'resolved',
-        reviewed_by = $2,
-        reviewed_at = NOW()
-    WHERE target_type = 'review'
-      AND target_id = $1;
-
-    COMMIT;`, [id, userId]);
-
-    return res.status(200).json({ message: "success" });
+  return res.status(200).json({ message: "success" });
   } catch (error) {
     console.error("Error fetching reports:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
@@ -257,26 +263,28 @@ router.post('/user/:id/ban', authenticate, async (req, res, next) => {
     if (!isMod(permission)) {
       return res.status(403).json({ message: "User lacks permissions" });
     }
-    const result = await db.query(`
-    BEGIN;
-
-    UPDATE users
-    SET 
-      permissions = 'banned',
-      name = 'Banned User',
-      bio = 'Your account has been temporarily banned for breaking TOS',
-      updated = NOW()
-    WHERE id = $1;
-
-    UPDATE reports
-    SET status = 'resolved',
-        reviewed_by = $2,
-        reviewed_at = NOW()
-    WHERE target_type = 'user'
-      AND target_id = $1;
-
-    COMMIT;`, [id, userId]);
-
+    
+    await db.query('BEGIN');
+    try {
+      await db.query(`UPDATE users
+                      SET 
+                        permissions = 'banned',
+                        name = 'Banned User',
+                        bio = 'Your account has been temporarily banned for breaking TOS',
+                        updated = NOW()
+                      WHERE id = $1;`, [id]);
+      await db.query(`UPDATE reports
+                      SET status = 'resolved',
+                          reviewed_by = $2,
+                          reviewed_at = NOW()
+                      WHERE target_type = 'user'
+                        AND target_id = $1;`, [id, userId]);
+      await db.query('COMMIT');
+    } catch (err) {
+      await db.query('ROLLBACK');
+      console.log(err);
+      return res.status(400).json({ message: "Error banning user" });
+    }
 
     const user = await db.query("SELECT picture FROM users WHERE id = $1", [id]);
     const picture = user.rows[0].picture;
@@ -294,12 +302,12 @@ router.post('/', authenticate, async (req, res) => {
   const userId = req.user.userId; // Get user ID from authenticated token
   const { target_type, target_id, reason, description } = req.body;
 
-  // 1. Validate target_type
+  // Validate target_type
   if (!target_type || !['review', 'user', 'list'].includes(target_type)) {
     return res.status(400).json({ error: 'Invalid target_type' });
   }
 
-  // 2. Validate reason
+  // Validate reason
   const validReasons = [
     'spam', 'harassment', 'hate', 'nudity',
     'violence', 'misinformation', 'other'
@@ -310,21 +318,19 @@ router.post('/', authenticate, async (req, res) => {
   }
 
   try {
-    // 3. Prevent self-reporting (optional but recommended)
-    if (target_type === 'user' && target_id === userId) {
-      return res.status(400).json({ error: 'Cannot report yourself' });
-    }
-
-    // 4. Check target exists
+  
+    // Check target exists
     let existsQuery;
     if (target_type === 'review') {
+      // for review the supplied 'target_id' is the review id
       existsQuery = await db.query(
-        'SELECT id FROM reviews WHERE id = $1',
+        'SELECT id FROM reviews WHERE id = $1;',
         [target_id]
       );
-    } else {
+    } else if (target_type === 'user'){
+      // for user the supplied 'target_id' is actually the string username
       existsQuery = await db.query(
-        'SELECT id FROM users WHERE id = $1',
+        'SELECT id FROM users WHERE username = $1;',
         [target_id]
       );
     }
@@ -333,13 +339,21 @@ router.post('/', authenticate, async (req, res) => {
       return res.status(404).json({ error: 'Target not found' });
     }
 
-    // 5. Insert report (handles duplicate via constraint)
+    const new_target_id = existsQuery.rows[0].id;
+
+    // Prevent self-reporting cus why would you do that bruh
+    if (target_type === 'user' && new_target_id === userId) {
+      return res.status(400).json({ error: 'Cannot report yourself' });
+    }
+
+
+    // Insert report (handles duplicate via constraint)
     await db.query(
       `INSERT INTO reports 
        (reporter_id, target_type, target_id, reason, description)
        VALUES ($1, $2, $3, $4, $5)
        ON CONFLICT (reporter_id, target_type, target_id) DO NOTHING`,
-      [userId, target_type, target_id, reason, description || null]
+      [userId, target_type, new_target_id, reason, description || null]
     );
 
     return res.status(201).json({ message: 'Report submitted' });
