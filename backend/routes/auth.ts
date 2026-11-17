@@ -156,7 +156,18 @@ router.post('/logout', authenticate, async (req, res, next) => {
     }
 
     try {
+        const isProd = process.env.STATUS === "PROD";
+
         await db.query("DELETE FROM sessions WHERE token = $1", [token]);
+
+       res.clearCookie('session', {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: 'lax',
+            domain: '.deglazd.com',
+            maxAge: 0
+        });
+
         return res.status(200).json({ message: "Logout successful" });
     } catch (error) {
         console.error(error);

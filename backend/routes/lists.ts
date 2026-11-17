@@ -9,6 +9,7 @@ const router = express.Router();
 // localhost:3000/lists
 // get logged in users lists
 router.get('/', authenticate, async (req, res, next) => {
+  
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
 

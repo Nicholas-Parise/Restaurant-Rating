@@ -231,9 +231,7 @@ router.get('/popular', async (req, res, next) => {
     const result = await db.query(
       `SELECT r.id, r.name, r.pictures, r.type, r.slug, p.priority 
        FROM restaurants r
-       JOIN popular p ON r.id = p.restaurant_id 
-        `, []);
-
+       JOIN popular p ON r.id = p.restaurant_id;`, []);
 
     const restaurants = result.rows;
     const totalRestaurants = restaurants.length;
@@ -250,14 +248,16 @@ router.get('/popular', async (req, res, next) => {
 });
 
 
-
-
 // localhost:3000/restaurants
 router.get('/:restaurantId', async (req, res, next) => {
 
-  const restaurantId = parseInt(req.params.restaurantId);
-
   try {
+    const restaurantId = Number(req.params.restaurantId);
+
+    if (Number.isNaN(restaurantId) || !Number.isInteger(restaurantId)) {
+      return res.status(400).json({ error: "Invalid ID" });
+    }
+
     const result = await db.query(
       `SELECT r.*, l.housenumber, l.addr, l.city, l.province, l.country, l.postalcode, l.lat, l.lon,
       json_agg(

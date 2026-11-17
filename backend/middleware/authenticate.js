@@ -10,10 +10,10 @@ require("dotenv").config(); // Load environment variables
  */
 
 const authenticate = async (req, res, next) => {
-    
     const cookieToken = req.cookies?.session;
 
     const authHeader  = req.header("Authorization");
+    // Remove "Bearer " prefix if present
     const bearerToken =
       authHeader?.startsWith("Bearer ")
         ? authHeader.replace("Bearer ", "")
@@ -27,14 +27,15 @@ const authenticate = async (req, res, next) => {
 
     try {
 
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
         // Find the user associated with the token
         const session = await db.query("SELECT user_id FROM sessions WHERE token = $1;", [token]);
 
         if (session.rows.length === 0) {
             return res.status(401).json({ message: "invalid token" });
         }
-        
-        const decoded = jwt.verify(token, process.env.SECRET_KEY); // Remove "Bearer " prefix if present
+                
         req.user = decoded; // Attach user info to the request
         req.token = token;
         next(); // Continue to the next middleware or route handler
