@@ -30,6 +30,9 @@ export class ProfileMenuComponent implements OnInit {
 
   userHover:boolean = false;
 
+  private timerId: ReturnType<typeof setTimeout> | null = null;
+  private readonly hideDelayMs = 250;
+
   constructor(private userDataService: UserDataService,
     private authDataService: AuthDataService,
     private notificationsDataService: NotificationsDataService,
@@ -38,6 +41,7 @@ export class ProfileMenuComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.notificationSubscription.unsubscribe();
+    this.stopTimer();
   }
 
 
@@ -66,6 +70,26 @@ export class ProfileMenuComponent implements OnInit {
       }
     });
   }
+
+
+  startTimer(): void {
+    // Clear any existing timer to prevent duplicates
+    this.stopTimer();
+
+    this.timerId = setTimeout(() => {
+      this.closePanel();
+    }, this.hideDelayMs);
+  }
+
+  stopTimer(): void {
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+      this.timerId = null;
+    }
+  }
+
+
+
 
 
   closePanel() {

@@ -36,14 +36,13 @@ export class ListDataService {
 
   // get authenticated user lists
   getLists() {
-
     this.restaurantEntry = [];
-
     this.api.get<{ lists: ListEntry[], totalLists: number }>(`lists`).subscribe((jsonData) => {
       this.userListEntry = jsonData.lists;
       this.totalUserLists = jsonData.totalLists;
       this.userListSubject.next(this.userListEntry);
     })
+  
   }
 
   getListsByUsername(username: string) {

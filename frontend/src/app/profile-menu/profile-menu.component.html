@@ -1,3 +1,5 @@
+<div class="profile-menu-grayout" [class.open]="isOpen" (click)="closePanel()" (mouseenter)="startTimer()" (mouseleave)="stopTimer()"></div>
+
 <div class="profile-menu" [class.open]="isOpen">
   <!-- Close Button -->
   <div class="menu-header">
@@ -29,7 +31,7 @@
     <button routerLink='/user/{{userEntry.username}}/diary' (click)="closePanel()">Diary</button>
     <button routerLink='/user/{{userEntry.username}}/friends' (click)="closePanel()">Friends</button>
   </div>
-}
+  }
 
   @if (userEntry && (userEntry.permissions == 'moderator' || userEntry.permissions == 'admin')) {
   <div class="button-row thirds">

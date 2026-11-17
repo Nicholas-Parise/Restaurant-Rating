@@ -17,6 +17,20 @@
   right: 0;
 }
 
+.profile-menu-grayout{
+
+}
+
+.profile-menu-grayout.open{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+
+  z-index: 9998;
+}
+
+
 .menu-header {
   display: flex;
   justify-content: flex-end;
