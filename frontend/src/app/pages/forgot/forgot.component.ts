@@ -5,6 +5,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthDataService } from '../../_shared/auth-data.component';
 import { Router } from '@angular/router';
 
+import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-forgot',
@@ -12,18 +15,23 @@ import { Router } from '@angular/router';
   templateUrl: './forgot.component.html',
   styleUrl: './forgot.component.css',
 })
-export class ForgotComponent {
+export class ForgotComponent implements OnInit{
 
 
   loginForm: FormGroup;
   passwordMismatch = false;
   errorMessage: string | null = null;
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.setSEO();
+   }
 
   constructor(private fb: FormBuilder,
     private auth: AuthDataService,
-    private router: Router) {
+    private router: Router,
+    private title: Title,
+    private meta: Meta,
+    @Inject(DOCUMENT) private document: Document) {
 
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
@@ -50,4 +58,64 @@ export class ForgotComponent {
       }
     });
   }
+
+
+  setSEO(){
+
+    const url = `https://deglazd.com/forgot`;
+
+    const description =
+        `Recover your account Login on Deglazd`;
+
+    // title
+    this.title.setTitle(
+        `Forgot | Deglazd`
+    );
+
+    // description
+    this.meta.updateTag({
+        name: 'description',
+        content: description
+    });
+
+    // OpenGraph
+    this.meta.updateTag({
+        property: 'og:title',
+        content: `Forgot | Deglazd`
+    });
+
+    this.meta.updateTag({
+        property: 'og:description',
+        content: description
+    });
+
+    this.meta.updateTag({
+        property: 'og:url',
+        content: url
+    });
+
+    this.meta.updateTag({
+        property: 'og:type',
+        content: 'website'
+    });
+    /*
+    if (user.picture) {
+        this.meta.updateTag({
+        property: 'og:image',
+        content: user.picture
+        });
+    }
+    */
+
+    // canonical
+    let link: HTMLLinkElement =
+        this.document.querySelector("link[rel='canonical']") ||
+        this.document.createElement('link');
+
+    link.setAttribute('rel', 'canonical');
+    link.setAttribute('href', url);
+
+    this.document.head.appendChild(link);
+    }
+
 }

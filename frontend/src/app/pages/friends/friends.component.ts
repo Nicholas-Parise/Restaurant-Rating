@@ -8,6 +8,10 @@ import { UserCardComponent } from '../../user-card/user-card.component';
 import { UserDataService } from '../../_shared/user-data.component';
 import { UserEntry } from '../../_shared/user-entry.model';
 
+import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
+
 @Component({
     selector: 'app-friends',
     imports: [FormsModule, UserCardComponent],
@@ -19,7 +23,10 @@ export class FriendsComponent implements OnInit {
 
   constructor(private userDataService: UserDataService,
     private authDataService: AuthDataService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private title: Title,
+    private meta: Meta,
+    @Inject(DOCUMENT) private document: Document) { }
 
   userEntry: UserEntry[];
   userSubscription = new Subscription();
@@ -60,6 +67,7 @@ export class FriendsComponent implements OnInit {
       this.username = params.get('username');
 
       if (this.username) {
+        this.setSEO(this.username);
         
         this.authDataService.getIsLoggedIn().then(isLoggedIn => {
           if (isLoggedIn && this.username == this.authDataService.getUsername()) {
@@ -95,6 +103,65 @@ export class FriendsComponent implements OnInit {
     if (this.currentPage > 1) {
       this.currentPage--;
     }
+  }
+
+
+  setSEO(username: string) {
+  
+    const url = `https://deglazd.com/user/${username}/friends`;
+  
+    const description =
+      `${username}'s Friends see all the friends and connections they have on Deglazd.`;
+  
+    // title
+    this.title.setTitle(
+      `${username}'s Friends | Deglazd`
+    );
+  
+    // description
+    this.meta.updateTag({
+      name: 'description',
+      content: description
+    });
+  
+    // OpenGraph
+    this.meta.updateTag({
+      property: 'og:title',
+      content: `${username}'s Friends | Deglazd`
+    });
+  
+    this.meta.updateTag({
+      property: 'og:description',
+      content: description
+    });
+  
+    this.meta.updateTag({
+      property: 'og:url',
+      content: url
+    });
+  
+    this.meta.updateTag({
+      property: 'og:type',
+      content: 'website'
+    });
+  /*
+    if (user.picture) {
+      this.meta.updateTag({
+        property: 'og:image',
+        content: user.picture
+      });
+    }
+  */
+
+    // canonical
+    let link: HTMLLinkElement =
+      this.document.querySelector("link[rel='canonical']") ||
+      this.document.createElement('link');
+  
+    link.setAttribute('rel', 'canonical');
+    link.setAttribute('href', url);
+  
+    this.document.head.appendChild(link);
   }
 
 

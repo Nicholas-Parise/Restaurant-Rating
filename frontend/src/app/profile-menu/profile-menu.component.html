@@ -1,6 +1,7 @@
-<div class="profile-menu-grayout" [class.open]="isOpen" (click)="closePanel()" (mouseenter)="startTimer()" (mouseleave)="stopTimer()"></div>
+ <!-- Close pane -->
+<div class="profile-menu-grayout" [class.open]="isOpen" (click)="closePanel()"></div>
 
-<div class="profile-menu" [class.open]="isOpen">
+<div class="profile-menu" [class.open]="isOpen" (mouseleave)="startTimer()" (mouseenter)="stopTimer()">
   <!-- Close Button -->
   <div class="menu-header">
     <button class="close-btn" (click)="closePanel()">

@@ -15,6 +15,10 @@ import { ReportCardComponent } from '../../report-card/report-card.component';
 import { ReportCaseCardComponent } from '../../report-case-card/report-case-card.component';
 import { ReviewCardComponent } from '../../review-card/review-card.component';
 
+import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
+
 @Component({
   selector: 'app-reports',
   imports: [CommonModule, RouterLink, ReportCaseCardComponent, ReportCardComponent,ReviewCardComponent],
@@ -27,7 +31,10 @@ export class ReportsComponent implements OnInit {
   constructor(private router: Router,
     private route: ActivatedRoute,
     private authDataService: AuthDataService,
-    private reportDataService: ReportDataService
+    private reportDataService: ReportDataService,
+    private title: Title,
+    private meta: Meta,
+    @Inject(DOCUMENT) private document: Document
   ) { }
   LoggedIn: boolean = false;
 
@@ -47,7 +54,8 @@ export class ReportsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.setSEO();
+    
     this.reportSubscription = this.reportDataService.reportSubject.subscribe(reports => {
       this.reports = reports;
       this.reviews = this.reportDataService.reviewEntry;
@@ -98,6 +106,66 @@ remove(review:ReviewEntry):void{
   this.reportDataService.removeReview(review.id);
   this.router.navigate(['/reports']);
 }
+
+
+
+  setSEO(){
+
+    const url = `https://deglazd.com/reports`;
+
+    const description =
+        `Reports Admin Console for Deglazd`;
+
+    // title
+    this.title.setTitle(
+        `Reports Admin Console | Deglazd`
+    );
+
+    // description
+    this.meta.updateTag({
+        name: 'description',
+        content: description
+    });
+
+    // OpenGraph
+    this.meta.updateTag({
+        property: 'og:title',
+        content: `Reports Admin Console | Deglazd`
+    });
+
+    this.meta.updateTag({
+        property: 'og:description',
+        content: description
+    });
+
+    this.meta.updateTag({
+        property: 'og:url',
+        content: url
+    });
+
+    this.meta.updateTag({
+        property: 'og:type',
+        content: 'website'
+    });
+    /*
+    if (user.picture) {
+        this.meta.updateTag({
+        property: 'og:image',
+        content: user.picture
+        });
+    }
+    */
+
+    // canonical
+    let link: HTMLLinkElement =
+        this.document.querySelector("link[rel='canonical']") ||
+        this.document.createElement('link');
+
+    link.setAttribute('rel', 'canonical');
+    link.setAttribute('href', url);
+
+    this.document.head.appendChild(link);
+    }
 
 
 

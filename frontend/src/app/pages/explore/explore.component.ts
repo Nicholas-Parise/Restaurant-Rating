@@ -26,6 +26,11 @@ import { TagEntry } from '../../_shared/tag-entry.model';
 
 import { TagModalComponent } from '../../tag-modal/tag-modal.component';
 
+import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
+
+
 @Component({
   selector: 'app-explore',
   imports: [FormsModule, RestaurantCardComponent, UserCardComponent, ListCardComponent, TagCardComponent, TagModalComponent],
@@ -41,7 +46,10 @@ export class ExploreComponent implements OnInit {
     private authDataService: AuthDataService,
     private restaurantDataService: RestaurantDataService,
     private userDataService: UserDataService,
-    private listDataService: ListDataService
+    private listDataService: ListDataService,
+    private title: Title,
+    private meta: Meta,
+    @Inject(DOCUMENT) private document: Document
   ) { }
 
   isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
@@ -99,6 +107,8 @@ export class ExploreComponent implements OnInit {
       this.listEntry = listEntry;
       this.maxPages = this.listDataService.totalPages;
     });
+
+    this.setSEO();
 
     this.activatedRoute.queryParams.subscribe(params => {
       this.searchQuery = params['search'] || '';
@@ -286,5 +296,64 @@ export class ExploreComponent implements OnInit {
     this.overflowTags = this.selectedTags.slice(max);
   }
 
+
+  
+  setSEO() {
+
+  const url = `https://deglazd.com/explore`;
+
+  const description =
+    `Find your next favourite restaurant, your favourite reviewer, or even a list so amazing you wish you made it yourself all on Deglazd.`;
+
+  // title
+  this.title.setTitle(
+    `Explore | Deglazd`
+  );
+
+  // description
+  this.meta.updateTag({
+    name: 'description',
+    content: description
+  });
+
+  // OpenGraph
+  this.meta.updateTag({
+    property: 'og:title',
+    content: `Explore | Deglazd`
+  });
+
+  this.meta.updateTag({
+    property: 'og:description',
+    content: description
+  });
+
+  this.meta.updateTag({
+    property: 'og:url',
+    content: url
+  });
+
+  this.meta.updateTag({
+    property: 'og:type',
+    content: 'website'
+  });
+/*
+  if (user.picture) {
+    this.meta.updateTag({
+      property: 'og:image',
+      content: user.picture
+    });
+  }
+*/
+
+  // canonical
+  let link: HTMLLinkElement =
+    this.document.querySelector("link[rel='canonical']") ||
+    this.document.createElement('link');
+
+  link.setAttribute('rel', 'canonical');
+  link.setAttribute('href', url);
+
+  this.document.head.appendChild(link);
+}
 
 }

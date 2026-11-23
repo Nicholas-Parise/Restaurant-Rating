@@ -17,6 +17,10 @@ import { UserFormComponent } from '../../user-form/user-form.component';
 import { ReportModalService } from '../../_shared/reportModal.service';
 import { isPlatformBrowser } from '@angular/common';
 
+import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
+
 @Component({
   selector: 'app-user',
   imports: [RestaurantCardComponent, ReviewCardComponent, UserFormComponent],
@@ -53,7 +57,10 @@ export class UserComponent {
     private authDataService: AuthDataService,
     private reportModalService: ReportModalService,
     private route: ActivatedRoute,
-    private router: Router) { }
+    private router: Router,
+    private title: Title,
+    private meta: Meta,
+    @Inject(DOCUMENT) private document: Document) { }
 
 
   ngOnDestroy(): void {
@@ -89,6 +96,9 @@ export class UserComponent {
       this.maxPages = data.totalReviews / 10;
 
       this.username = this.userEntry.username;
+
+      this.setSEO(this.userEntry);
+
 
       this.showEditLogic();
 
@@ -154,6 +164,64 @@ export class UserComponent {
       this.loadReviews();
     }
   }
+
+  
+  setSEO(user: UserEntry) {
+
+  const url = `https://deglazd.com/user/${user.username}`;
+
+  const description =
+    `${user.username}'s profile where you can see all their reviews, ratings and details on Deglazd.`;
+
+  // title
+  this.title.setTitle(
+    `${user.username}'s profile | Deglazd`
+  );
+
+  // description
+  this.meta.updateTag({
+    name: 'description',
+    content: description
+  });
+
+  // OpenGraph
+  this.meta.updateTag({
+    property: 'og:title',
+    content: `${user.username}'s profile | Deglazd`
+  });
+
+  this.meta.updateTag({
+    property: 'og:description',
+    content: description
+  });
+
+  this.meta.updateTag({
+    property: 'og:url',
+    content: url
+  });
+
+  this.meta.updateTag({
+    property: 'og:type',
+    content: 'website'
+  });
+
+  if (user.picture) {
+    this.meta.updateTag({
+      property: 'og:image',
+      content: user.picture
+    });
+  }
+
+  // canonical
+  let link: HTMLLinkElement =
+    this.document.querySelector("link[rel='canonical']") ||
+    this.document.createElement('link');
+
+  link.setAttribute('rel', 'canonical');
+  link.setAttribute('href', url);
+
+  this.document.head.appendChild(link);
+}
 
 
 

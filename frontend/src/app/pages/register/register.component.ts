@@ -8,6 +8,10 @@ import { Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
 
+import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
+
 @Component({
     selector: 'app-register',
     imports: [ReactiveFormsModule, RouterLink],
@@ -21,9 +25,17 @@ export class RegisterComponent implements OnInit {
   errorMessage: string | null = null;
   invalidUserErrorMessage: string | null = null;
 
-  ngOnInit(): void { }
+  ngOnInit(): void { 
+      this.setSEO();
+  }
 
-  constructor(private fb: FormBuilder, private auth: AuthDataService, private router:Router) {
+
+  constructor(private fb: FormBuilder, 
+    private auth: AuthDataService, 
+    private router:Router,
+    private title: Title,
+    private meta: Meta,
+    @Inject(DOCUMENT) private document: Document) {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -93,6 +105,65 @@ export class RegisterComponent implements OnInit {
   googleButton():void{
     window.location.href = `${environment.apiEndpoint}auth/google`;
   }
+
+
+ setSEO(){
+
+    const url = `https://deglazd.com/register`;
+
+    const description =
+        `Create an account on Deglazd.`;
+
+    // title
+    this.title.setTitle(
+        `Register | Deglazd`
+    );
+
+    // description
+    this.meta.updateTag({
+        name: 'description',
+        content: description
+    });
+
+    // OpenGraph
+    this.meta.updateTag({
+        property: 'og:title',
+        content: `Register | Deglazd`
+    });
+
+    this.meta.updateTag({
+        property: 'og:description',
+        content: description
+    });
+
+    this.meta.updateTag({
+        property: 'og:url',
+        content: url
+    });
+
+    this.meta.updateTag({
+        property: 'og:type',
+        content: 'website'
+    });
+    /*
+    if (user.picture) {
+        this.meta.updateTag({
+        property: 'og:image',
+        content: user.picture
+        });
+    }
+    */
+
+    // canonical
+    let link: HTMLLinkElement =
+        this.document.querySelector("link[rel='canonical']") ||
+        this.document.createElement('link');
+
+    link.setAttribute('rel', 'canonical');
+    link.setAttribute('href', url);
+
+    this.document.head.appendChild(link);
+    }
 
 
 }

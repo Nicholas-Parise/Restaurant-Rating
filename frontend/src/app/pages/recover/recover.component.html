@@ -3,7 +3,7 @@
     <h2>Reset Password</h2>
     <div>
       <label>Reset Code</label>
-      <input type="text" formControlName="otc" />
+      <input type="text" autocomplete="one-time-code" maxlength="6" formControlName="otc" />
       @if (f['otc'].touched && f['otc'].invalid) {
       <div class="error">Reset Code is required</div>
       }

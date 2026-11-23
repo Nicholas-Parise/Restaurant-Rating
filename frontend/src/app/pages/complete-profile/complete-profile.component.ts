@@ -7,7 +7,9 @@ import { UserEntry } from '../../_shared/user-entry.model';
 import { UserDataService } from '../../_shared/user-data.component';
 import { AuthDataService } from '../../_shared/auth-data.component';
 
-
+import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-complete-profile',
@@ -15,7 +17,7 @@ import { AuthDataService } from '../../_shared/auth-data.component';
   templateUrl: './complete-profile.component.html',
   styleUrl: './complete-profile.component.css',
 })
-export class CompleteProfileComponent {
+export class CompleteProfileComponent implements OnInit{
 
   userEntry: UserEntry;
 
@@ -39,7 +41,16 @@ export class CompleteProfileComponent {
   loading: boolean = false;
   isDisabled: boolean = false;
 
-  constructor(private userDataService: UserDataService, private router: Router, private auth: AuthDataService) { }
+   ngOnInit(): void {
+    this.setSEO();
+   }
+
+  constructor(private userDataService: UserDataService, 
+    private router: Router, 
+    private auth: AuthDataService,
+    private title: Title,
+    private meta: Meta,
+    @Inject(DOCUMENT) private document: Document) { }
 
   selectedFile: File | null = null;
   previewUrl: string | ArrayBuffer | null = null;
@@ -123,6 +134,65 @@ export class CompleteProfileComponent {
     });
   }
 
+
+  
+  setSEO(){
+
+    const url = `https://deglazd.com/complete-profile`;
+
+    const description =
+        `Complete your Deglazd profile`;
+
+    // title
+    this.title.setTitle(
+        `Complete Profile | Deglazd`
+    );
+
+    // description
+    this.meta.updateTag({
+        name: 'description',
+        content: description
+    });
+
+    // OpenGraph
+    this.meta.updateTag({
+        property: 'og:title',
+        content: `Complete Profile | Deglazd`
+    });
+
+    this.meta.updateTag({
+        property: 'og:description',
+        content: description
+    });
+
+    this.meta.updateTag({
+        property: 'og:url',
+        content: url
+    });
+
+    this.meta.updateTag({
+        property: 'og:type',
+        content: 'website'
+    });
+    /*
+    if (user.picture) {
+        this.meta.updateTag({
+        property: 'og:image',
+        content: user.picture
+        });
+    }
+    */
+
+    // canonical
+    let link: HTMLLinkElement =
+        this.document.querySelector("link[rel='canonical']") ||
+        this.document.createElement('link');
+
+    link.setAttribute('rel', 'canonical');
+    link.setAttribute('href', url);
+
+    this.document.head.appendChild(link);
+    }
 
 
 

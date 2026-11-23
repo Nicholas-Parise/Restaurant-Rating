@@ -5,6 +5,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthDataService } from '../../_shared/auth-data.component';
 import { Router, ActivatedRoute } from '@angular/router';
 
+import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
+
 @Component({
   selector: 'app-recover',
   imports: [ReactiveFormsModule],
@@ -18,7 +22,13 @@ export class RecoverComponent implements OnInit{
   errorMessage: string | null = null;
   invalidOTC: string | null = null;
 
-  constructor(private fb: FormBuilder, private auth: AuthDataService, private router:Router, private route: ActivatedRoute) {
+  constructor(private fb: FormBuilder, 
+    private auth: AuthDataService, 
+    private router:Router, 
+    private route: ActivatedRoute,
+    private title: Title,
+    private meta: Meta,
+    @Inject(DOCUMENT) private document: Document) {
     this.recoverForm = this.fb.group({
       otc: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -28,6 +38,7 @@ export class RecoverComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.setSEO();
     this.route.params.subscribe(params => {
       const otc = params['recover_id'];
 
@@ -63,6 +74,65 @@ export class RecoverComponent implements OnInit{
       }
     });
   }
+
+  
+  setSEO(){
+
+    const url = `https://deglazd.com/recover`;
+
+    const description =
+        `Recover your account Login on Deglazd`;
+
+    // title
+    this.title.setTitle(
+        `Recover | Deglazd`
+    );
+
+    // description
+    this.meta.updateTag({
+        name: 'description',
+        content: description
+    });
+
+    // OpenGraph
+    this.meta.updateTag({
+        property: 'og:title',
+        content: `Recover | Deglazd`
+    });
+
+    this.meta.updateTag({
+        property: 'og:description',
+        content: description
+    });
+
+    this.meta.updateTag({
+        property: 'og:url',
+        content: url
+    });
+
+    this.meta.updateTag({
+        property: 'og:type',
+        content: 'website'
+    });
+    /*
+    if (user.picture) {
+        this.meta.updateTag({
+        property: 'og:image',
+        content: user.picture
+        });
+    }
+    */
+
+    // canonical
+    let link: HTMLLinkElement =
+        this.document.querySelector("link[rel='canonical']") ||
+        this.document.createElement('link');
+
+    link.setAttribute('rel', 'canonical');
+    link.setAttribute('href', url);
+
+    this.document.head.appendChild(link);
+    }
 
 
 }

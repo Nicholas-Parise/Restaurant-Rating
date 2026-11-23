@@ -18,6 +18,11 @@ import { Router } from '@angular/router';
 
 import { ReportModalService } from '../../_shared/reportModal.service';
 
+import { Meta, Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Inject } from '@angular/core';
+
+
 @Component({
     selector: 'app-lists',
     imports: [CommonModule, FormsModule, ListCardComponent, RestaurantCardComponent, RouterLink],
@@ -31,7 +36,10 @@ export class ListsComponent implements OnInit {
     private listDataService: ListDataService,
     private reportModalService:ReportModalService,
     private route: ActivatedRoute,
-    private router: Router) { }
+    private router: Router,
+    private title: Title,
+    private meta: Meta,
+    @Inject(DOCUMENT) private document: Document) { }
 
   userListSubscription = new Subscription();
   userList: ListEntry[];
@@ -61,6 +69,9 @@ export class ListsComponent implements OnInit {
     this.listSubscription = this.listDataService.listSubject.subscribe(listEntry => {
       this.listEntry = listEntry;
       this.restaurantEntry = this.listDataService.restaurantEntry;
+      if(this.listEntry && this.list_id){
+        this.setSEO(this.listEntry[0]);
+      }
     });
 
     this.route.paramMap.subscribe(params => {
@@ -73,15 +84,15 @@ export class ListsComponent implements OnInit {
         if (this.list_id) {
           this.listDataService.getListById(this.list_id);
         } else {
-
+          this.setBaseSEO();
           if (isLoggedIn) {
             this.listDataService.getLists();
           }
+          this.listDataService.getRecommended();
         }
       });
     });
 
-    this.listDataService.getRecommended();
   }
 
   ngOnDestroy(): void {
@@ -172,5 +183,108 @@ export class ListsComponent implements OnInit {
     });
   }
 
+
+setBaseSEO() {
+
+  const url = `https://deglazd.com/list`;
+
+  const description =
+    `Create and share your own lists or find a recommended list so amazing you wish you made it yourself all on Deglazd.`;
+
+  // title
+  this.title.setTitle(
+    `Lists | Deglazd`
+  );
+
+  // description
+  this.meta.updateTag({
+    name: 'description',
+    content: description
+  });
+
+  // OpenGraph
+  this.meta.updateTag({
+    property: 'og:title',
+    content: `Lists | Deglazd`
+  });
+
+  this.meta.updateTag({
+    property: 'og:description',
+    content: description
+  });
+
+  this.meta.updateTag({
+    property: 'og:url',
+    content: url
+  });
+
+  this.meta.updateTag({
+    property: 'og:type',
+    content: 'website'
+  });
+
+  // canonical
+  let link: HTMLLinkElement =
+    this.document.querySelector("link[rel='canonical']") ||
+    this.document.createElement('link');
+
+  link.setAttribute('rel', 'canonical');
+  link.setAttribute('href', url);
+
+  this.document.head.appendChild(link);
+}
+
+
+
+
+setSEO(list: ListEntry) {
+
+  const url = `https://deglazd.com/list/${list.id}`;
+
+  const description =
+    `${list.owner_username} has made the amazing list: ${list.name}. You can see all their carefully hand picked restaurants only on Deglazd.`;
+
+  // title
+  this.title.setTitle(
+    `${list.owner_username}'s ${list.name} List | Deglazd`
+  );
+
+  // description
+  this.meta.updateTag({
+    name: 'description',
+    content: description
+  });
+
+  // OpenGraph
+  this.meta.updateTag({
+    property: 'og:title',
+    content: `${list.owner_username}'s ${list.name} List | Deglazd`
+  });
+
+  this.meta.updateTag({
+    property: 'og:description',
+    content: description
+  });
+
+  this.meta.updateTag({
+    property: 'og:url',
+    content: url
+  });
+
+  this.meta.updateTag({
+    property: 'og:type',
+    content: 'website'
+  });
+
+  // canonical
+  let link: HTMLLinkElement =
+    this.document.querySelector("link[rel='canonical']") ||
+    this.document.createElement('link');
+
+  link.setAttribute('rel', 'canonical');
+  link.setAttribute('href', url);
+
+  this.document.head.appendChild(link);
+}
 
 }
