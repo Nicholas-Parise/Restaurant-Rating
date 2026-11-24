@@ -48,7 +48,7 @@ const authenticate = async (req, res, next) => {
             console.error("Failed to delete invalid session:", dbError.message);
         }
 
-        res.status(403).json({ message: "expired token" });
+        return res.status(403).json({ message: "expired token" });
     }
 };
 

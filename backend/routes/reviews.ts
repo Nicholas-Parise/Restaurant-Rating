@@ -11,6 +11,7 @@ import { getUserPermissions, isBanned, isMod } from "../utils/util";
 const router = express.Router();
 
 import * as dotenv from 'dotenv';
+import requirePermission from "../middleware/requirePermission";
 dotenv.config();
 
 
@@ -154,7 +155,7 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
 });
 
 
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, requirePermission, async (req, res) => {
 
   const { restaurant_id, liked, visited, score, description } = req.body;
   const userId = req.user.userId; // Get user ID from authenticated token
@@ -163,16 +164,6 @@ router.post('/', authenticate, async (req, res) => {
     return res.status(400).json({ message: "restaurant_id is required" });
   }
   try {
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (isBanned(permission)) {
-      return res.status(403).json({ message: "User is banned" });
-    }
 
     const result = await db.query(
       `INSERT INTO reviews (restaurant_id, user_id, liked, visited, score, description) 

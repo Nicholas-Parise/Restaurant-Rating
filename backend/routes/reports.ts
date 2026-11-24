@@ -8,22 +8,13 @@ import { isBanned, isMod, deleteImage, getUserPermissions } from "../utils/util"
 const router = express.Router();
 
 import * as dotenv from 'dotenv';
+import requirePermission from "../middleware/requirePermission";
 dotenv.config();
 
 // get reports
-router.get('/', authenticate, async (req, res, next) => {
+router.get('/', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     // TODO add average reason so it is easier to know what to expect
     const result = await db.query(`
@@ -51,20 +42,10 @@ router.get('/', authenticate, async (req, res, next) => {
 
 //Get full details for one reported review
 //Get all report messages for that review
-router.get('/review/:reviewId', authenticate, async (req, res, next) => {
+router.get('/review/:reviewId', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const reviewId = req.params.reviewId;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const result = await db.query(`
     SELECT 
@@ -115,20 +96,10 @@ router.get('/review/:reviewId', authenticate, async (req, res, next) => {
 
 //Get full details for one reported user
 //Get all report messages for that user
-router.get('/user/:userReportId', authenticate, async (req, res, next) => {
+router.get('/user/:userReportId', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const userReportId = req.params.userReportId;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const result = await db.query(`
     SELECT 
@@ -169,21 +140,11 @@ router.get('/user/:userReportId', authenticate, async (req, res, next) => {
 });
 
 //Dismiss reports
-router.post('/:type/:id/dismiss', authenticate, async (req, res, next) => {
+router.post('/:type/:id/dismiss', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const type = req.params.type;
     const id = req.params.id;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     // Validate target_type
     if (!type || !['review', 'user', 'list'].includes(type)) {
@@ -209,20 +170,10 @@ router.post('/:type/:id/dismiss', authenticate, async (req, res, next) => {
 
 
 // Remove review (and resolve reports)
-router.post('/review/:id/remove', authenticate, async (req, res, next) => {
+router.post('/review/:id/remove', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const client = await db.connect();
 
@@ -253,20 +204,10 @@ router.post('/review/:id/remove', authenticate, async (req, res, next) => {
 
 
 // Ban / restrict user
-router.post('/user/:id/ban', authenticate, async (req, res, next) => {
+router.post('/user/:id/ban', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
     
     const client = await db.connect();
     
