@@ -368,7 +368,6 @@ router.delete('/:list_id', authenticate, async (req, res, next) => {
 
   } catch (error) {
     console.error("Error removing restaurant:", error);
-     await db.query("ROLLBACK");
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

@@ -192,7 +192,13 @@ router.get('/search', async (req, res, next) => {
         ($4::text IS NULL OR r.name % $4)
       AND
         ($1::float IS NULL OR $2::float IS NULL OR
-        ST_DWithin(l.geom, ST_SetSRID(ST_MakePoint($1,$2),4326), $3))
+        ST_DWithin(
+          l.geom::geography, 
+          ST_SetSRID(
+            ST_MakePoint($1,$2),
+            4326
+            )::geography, 
+          $3))
       AND
         ($5::text[] IS NULL OR c.slug = ANY($5))
       GROUP BY r.id, l.id

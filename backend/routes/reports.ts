@@ -224,23 +224,27 @@ router.post('/review/:id/remove', authenticate, async (req, res, next) => {
       return res.status(403).json({ message: "User lacks permissions" });
     }
 
-    await db.query('BEGIN');
+    const client = await db.connect();
+
     try {
-      await db.query('DELETE FROM reviews WHERE id = $1;', [id]);
-      await db.query(`UPDATE reports
+      await client.query('BEGIN');
+      await client.query('DELETE FROM reviews WHERE id = $1;', [id]);
+      await client.query(`UPDATE reports
                       SET status = 'resolved',
                         reviewed_by = $2,
                         reviewed_at = NOW()
                       WHERE target_type = 'review'
                         AND target_id = $1;`, [id, userId]);
-      await db.query('COMMIT');
+      await client.query('COMMIT');
+      
+      return res.status(200).json({ message: "success" });
     } catch (err) {
-      await db.query('ROLLBACK');
+      await client.query('ROLLBACK');
       console.log(err);
       return res.status(400).json({ message: "Error deleting review" });
+    } finally {
+      client.release();
     }
-
-  return res.status(200).json({ message: "success" });
   } catch (error) {
     console.error("Error fetching reports:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
@@ -264,26 +268,30 @@ router.post('/user/:id/ban', authenticate, async (req, res, next) => {
       return res.status(403).json({ message: "User lacks permissions" });
     }
     
-    await db.query('BEGIN');
+    const client = await db.connect();
+    
     try {
-      await db.query(`UPDATE users
-                      SET 
-                        permissions = 'banned',
-                        name = 'Banned User',
-                        bio = 'Your account has been temporarily banned for breaking TOS',
-                        updated = NOW()
-                      WHERE id = $1;`, [id]);
-      await db.query(`UPDATE reports
-                      SET status = 'resolved',
-                          reviewed_by = $2,
-                          reviewed_at = NOW()
-                      WHERE target_type = 'user'
-                        AND target_id = $1;`, [id, userId]);
-      await db.query('COMMIT');
+        await client.query('BEGIN');
+        await client.query(`UPDATE users
+                        SET 
+                          permissions = 'banned',
+                          name = 'Banned User',
+                          bio = 'Your account has been temporarily banned for breaking TOS',
+                          updated = NOW()
+                        WHERE id = $1;`, [id]);
+        await client.query(`UPDATE reports
+                        SET status = 'resolved',
+                            reviewed_by = $2,
+                            reviewed_at = NOW()
+                        WHERE target_type = 'user'
+                          AND target_id = $1;`, [id, userId]);
+        await client.query('COMMIT');
     } catch (err) {
-      await db.query('ROLLBACK');
-      console.log(err);
-      return res.status(400).json({ message: "Error banning user" });
+        await client.query('ROLLBACK');
+        console.log(err);
+        return res.status(400).json({ message: "Error banning user" });
+    } finally {
+        client.release();
     }
 
     const user = await db.query("SELECT picture FROM users WHERE id = $1", [id]);

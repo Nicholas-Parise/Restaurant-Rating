@@ -261,6 +261,8 @@ router.post('/forgot-password', async (req, res, next) => {
         return res.status(401).json({ message: "email required" });
     }
 
+  
+
     try {
         // Check if user exists
         const userCheck = await db.query("SELECT id, name, google_id FROM users WHERE email = $1", [email]);
@@ -277,21 +279,32 @@ router.post('/forgot-password', async (req, res, next) => {
         const user_name = userCheck.rows[0].name;
         const resetToken = await generateUniqueToken(); // need to ensure a unique token, don't want a crash
 
-        await db.query("BEGIN"); // Start a transaction
+        const client = await db.connect();
 
-        await db.query("INSERT INTO sessions (user_id, token, created) VALUES ($1, $2, NOW())", [userId, resetToken]);
+        try {
+             // BEGIN a transaction
+            await client.query('BEGIN');
 
-        const url = process.env.FRONTEND_URL;
+            await client.query("INSERT INTO sessions (user_id, token, created) VALUES ($1, $2, NOW())", [userId, resetToken]);
 
-        const resetLink = `${url}/recover/${resetToken}`;
+            const url = process.env.FRONTEND_URL;
 
-        await forgotEmail(email, user_name, resetLink, resetToken, 1);
+            const resetLink = `${url}/recover/${resetToken}`;
+            // disabled while awaiting AWS provisioning.
+            //await forgotEmail(email, user_name, resetLink, resetToken, 1);
 
-        await db.query("COMMIT"); // Commit the transaction
+            await client.query("COMMIT"); // Commit the transaction
 
-        return res.status(200).json({ message: "email sent successfully" });
+            return res.status(200).json({ message: "email sent successfully" });
+        } catch (error) {
+            // if we can't send an email we want to Rollback
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+
     } catch (error) {
-        await db.query("ROLLBACK"); // if we can't send an email we want to Rollback
         console.error(error);
         return res.status(500).json({ message: "Email could not be sent" });
     }
