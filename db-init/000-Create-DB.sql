@@ -24,7 +24,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE EXTENSION IF NOT EXISTS unaccent;
 
 CREATE TABLE locations (
-id SERIAL PRIMARY KEY,
+id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 housenumber TEXT,       
 addr TEXT,
 city TEXT,
@@ -165,7 +165,8 @@ friend_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 status TEXT CHECK (status IN ('pending', 'accepted', 'declined')) DEFAULT 'pending',
 created TIMESTAMP DEFAULT NOW(),
 updated TIMESTAMP,
-PRIMARY KEY(user_id, friend_id)
+PRIMARY KEY(user_id, friend_id),
+CONSTRAINT no_self_friendship CHECK (user_id <> friend_id)
 );
 
 CREATE INDEX idx_friends_status_requester ON friends(status, user_id);
@@ -197,7 +198,7 @@ restaurant_id BIGINT NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
 user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 liked BOOLEAN,
 visited BOOLEAN,
-score INT,
+score INT CHECK (score BETWEEN 0 AND 10),
 description TEXT,
 updated TIMESTAMP,
 created TIMESTAMP DEFAULT NOW()
