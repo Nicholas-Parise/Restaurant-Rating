@@ -18,7 +18,7 @@ const router = express.Router();
 
 
 import * as dotenv from 'dotenv';
-import { isEmail, isValidUsername } from "../utils/util";
+import { generateUniqueToken, isEmail, isValidUsername } from "../utils/util";
 dotenv.config();
 
 // localhost:3000/auth/register
@@ -233,22 +233,6 @@ router.get('/username/:username', async (req, res, next) => {
 });
 
 
-// helper function to generate a gaurnetted unique one time code
-// since it's hex there is no 'o' only 'zero' 0->9 + A->F
-// example code: 1F5A7B
-const generateUniqueToken = async () => {
-    let token;
-    let exists = true;
-
-    while (exists) {
-        token = crypto.randomBytes(3).toString("hex"); // generate 6-character hex token
-        const tokenCheck = await db.query("SELECT 1 FROM sessions WHERE token = $1", [token]);
-        exists = tokenCheck.rows.length > 0; // If a row exists, try again
-    }
-
-    return token;
-};
-
 
 // localhost:3000/auth/forgot-password
 // start the account recovery process, 
@@ -292,6 +276,8 @@ router.post('/forgot-password', async (req, res, next) => {
             const resetLink = `${url}/recover/${resetToken}`;
             // disabled while awaiting AWS provisioning.
             //await forgotEmail(email, user_name, resetLink, resetToken, 1);
+
+            //console.log(resetLink);
 
             await client.query("COMMIT"); // Commit the transaction
 
@@ -346,19 +332,37 @@ router.post("/reset-password", async (req, res) => {
         // Check if token is expired (1 hour limit)
         const expiryTime = 3600000; // 1 hour in milliseconds
         if (Date.now() - new Date(created).getTime() > expiryTime) {
+            // delete the expired token to clean up space.
+            await db.query("DELETE FROM sessions WHERE token = $1", [otc]);
             return res.status(400).json({ error: "Token has expired." });
         }
 
         // Hash new password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Update password
-        await db.query("UPDATE users SET password = $1 WHERE id = $2", [hashedPassword, user_id]);
 
-        // Delete used reset token
-        await db.query("DELETE FROM sessions WHERE token = $1", [otc]);
+        const client = await db.connect();
 
-        res.json({ message: "Password updated successfully." });
+        try {
+             // BEGIN a transaction
+            await client.query('BEGIN');
+
+            // Update password
+            await db.query("UPDATE users SET password = $1 WHERE id = $2", [hashedPassword, user_id]);
+
+            // Delete used reset token
+            await db.query("DELETE FROM sessions WHERE token = $1", [otc]);
+
+            await client.query("COMMIT"); // Commit the transaction
+
+            return res.json({ message: "Password updated successfully." });
+        } catch (error) {
+            // if we can't send an email we want to Rollback
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });

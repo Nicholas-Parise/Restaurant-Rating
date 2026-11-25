@@ -76,7 +76,7 @@ router.get('/:username', async (req, res) => {
         WHEN f.user_id = $1 THEN f.friend_id
         ELSE f.user_id
       END
-      WHERE f.user_id = $1 OR f.friend_id = $1
+      WHERE (f.user_id = $1 OR f.friend_id = $1)
       AND status = 'accepted';`, [userId]);
 
 

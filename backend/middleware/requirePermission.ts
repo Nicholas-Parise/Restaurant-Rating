@@ -17,7 +17,7 @@ const requirePermission = (requiredPermissions: string|null= 'user') => {
             
             const permission = await getUserPermissions(userId);
 
-            console.log("permission",permission);
+            //console.log("permission: ",permission);
 
             if (!permission) {
                 return res.status(404).json({ message: "User not found" });
