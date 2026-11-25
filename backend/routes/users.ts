@@ -260,7 +260,10 @@ router.get('/recent', async (req, res, next) => {
   try {
     const username = req.query.username;
     const page = Number(req.query.page) || 1;
-    const pageSize = Number(req.query.pageSize) || 10;
+    var pageSize = Number(req.query.pageSize) || 10;
+    if (pageSize && pageSize > 100) {
+      pageSize = 100;
+    }
     const offset = (page - 1) * pageSize;
 
     if (!username) {
@@ -299,15 +302,14 @@ router.get('/recent', async (req, res, next) => {
 
 router.get('/search', async (req, res, next) => {
 
+  const searchTerm = req.query.q;
   const page = Number(req.query.page) || 1;
   var pageSize = Number(req.query.pageSize) || 10;
-  const searchTerm = req.query.q;
-  const offset = (page - 1) * pageSize;
-  var result;
-
   if (pageSize && pageSize > 100) {
     pageSize = 100;
   }
+  const offset = (page - 1) * pageSize;
+  var result;
 
   try {
     if (!searchTerm) {

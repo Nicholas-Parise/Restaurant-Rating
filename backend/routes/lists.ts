@@ -15,7 +15,10 @@ router.get('/', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
 
     const page = Number(req.query.page) || 1;
-    const pageSize = Number(req.query.pageSize) || 10;
+    var pageSize = Number(req.query.pageSize) || 10;
+    if (pageSize && pageSize > 100) {
+      pageSize = 100;
+    }
     const offset = (page - 1) * pageSize;
 
     const result = await db.query(
@@ -49,7 +52,10 @@ router.get('/recommended', async (req, res, next) => {
   try {
 
     const page = Number(req.query.page) || 1;
-    const pageSize = Number(req.query.pageSize) || 10;
+    var pageSize = Number(req.query.pageSize) || 10;
+    if (pageSize && pageSize > 100) {
+      pageSize = 100;
+    }
     const offset = (page - 1) * pageSize;
 
     const result = await db.query(
@@ -86,7 +92,10 @@ router.get('/users/:username', async (req, res, next) => {
     const username: string = req.params.username;
 
     const page = Number(req.query.page) || 1;
-    const pageSize = Number(req.query.pageSize) || 10;
+    var pageSize = Number(req.query.pageSize) || 10;
+    if (pageSize && pageSize > 100) {
+      pageSize = 100;
+    }
     const offset = (page - 1) * pageSize;
 
     if (!username) {
@@ -124,15 +133,15 @@ router.get('/users/:username', async (req, res, next) => {
 
 
 router.get('/search', async (req, res, next) => {
-
+  
+  const searchTerm = req.query.q;
   const page = Number(req.query.page) || 1;
   let pageSize = Number(req.query.pageSize) || 10;
-  const searchTerm = req.query.q;
-  const offset = (page - 1) * pageSize;
-
+  
   if (pageSize && pageSize > 100) {
     pageSize = 100;
   }
+  const offset = (page - 1) * pageSize;
 
   let result;
 

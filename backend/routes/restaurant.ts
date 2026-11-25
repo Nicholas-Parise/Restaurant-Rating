@@ -11,14 +11,14 @@ router.get('/', async (req, res, next) => {
 
   const page = Number(req.query.page) || 1;
   let pageSize = Number(req.query.pageSize) || 10;
-  const amount = Number(req.query.amount) || 1;
-  const offset = (page - 1) * pageSize;
-  let result;
-
+  const amount = req.query.amount !== undefined ? Number(req.query.amount): 0;
 
   if (pageSize && pageSize > 100) {
     pageSize = 100;
   }
+  const offset = (page - 1) * pageSize;
+  
+  let result;
 
   try {
     if (amount == 1) {
@@ -67,6 +67,11 @@ router.get('/search', async (req, res, next) => {
 
   const page = Number(req.query.page) || 1;
   let pageSize = Number(req.query.pageSize) || 10;
+  
+  if (pageSize && pageSize > 100) {
+    pageSize = 100;
+  }
+
   const offset = (page - 1) * pageSize;
 
   const tags = req.query.tags;
@@ -80,9 +85,7 @@ router.get('/search', async (req, res, next) => {
 
   var result;
 
-  if (pageSize && pageSize > 100) {
-    pageSize = 100;
-  }
+
 
   try {
 

@@ -93,7 +93,7 @@ router.get('/:username', async (req, res) => {
 
 
 
-// Add a friendship request from logged in user to provided user
+// Add a friendship request from logged in user (sender) to provided user (reciever)
 router.post('/:username', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
@@ -104,26 +104,40 @@ router.post('/:username', authenticate, requirePermission(), async (req, res, ne
       return res.status(400).json({ message: "username is required to add friend" });
     }
 
-    const friendUserIDCheck = await db.query(
+    const receiverUserIDCheck = await db.query(
       `SELECT id, name, username 
         FROM users 
         WHERE username = $1`, [username]);
 
-    if (friendUserIDCheck.rows.length === 0) {
+    if (receiverUserIDCheck.rows.length === 0) {
       return res.status(404).json({ message: `User: ${username} not found` });
     }
+    const receiverUserId = receiverUserIDCheck.rows[0].id;
+    
+    const askerUser = await db.query(
+      `SELECT name, username 
+        FROM users 
+        WHERE id = $1`, [userId]);
 
-    const friendUserId = friendUserIDCheck.rows[0].id;
+    if (askerUser.rows.length === 0) {
+      return res.status(404).json({ message: `User not found` });
+    }
 
     // existing entry check:
-    if (await doesExist(userId, friendUserId)) {
-      return res.status(404).json({ message: 'Friendship already exists' });
+    if (await doesExist(userId, receiverUserId)) {
+      return res.status(401).json({ message: 'Friendship already exists' });
     }
+
+    // Same user check:
+    if (userId === receiverUserId) {
+      return res.status(401).json({ message: 'Cannot be friends with yourself' });
+    }
+
 
     const result = await db.query(`
         INSERT INTO friends 
         (user_id, friend_id)
-        VALUES ($1, $2) RETURNING status;`, [userId, friendUserId]);
+        VALUES ($1, $2) RETURNING status;`, [userId, receiverUserId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "user not found." });
@@ -132,8 +146,8 @@ router.post('/:username', authenticate, requirePermission(), async (req, res, ne
 
     // send notification if allowed  
     //if (result.rows[0].notifications) {
-    const fromName = friendUserIDCheck.rows[0].name ? friendUserIDCheck.rows[0].name + ' (@' + friendUserIDCheck.rows[0].username + ')' : friendUserIDCheck.rows[0].username;
-    await createNotification([friendUserId], `${fromName} Wants to be your friend`, `${fromName} has sent you a friend request, accept to become friends`, "/user/friends");
+    const fromName = askerUser.rows[0].name ? askerUser.rows[0].name + ' (@' + askerUser.rows[0].username + ')' : askerUser.rows[0].username;
+    await createNotification([receiverUserId], `${fromName} Wants to be your friend`, `${fromName} has sent you a friend request, accept to become friends`, `/user/${receiverUserIDCheck.rows[0].username}/friends`);
     //}
 
 
@@ -142,10 +156,10 @@ router.post('/:username', authenticate, requirePermission(), async (req, res, ne
   } catch (error: any) {
     // Handle duplicate restaurantId error
     if (error.code === "23505") {
-      return res.status(409).json({ message: "Restaurant is already added" });
+      return res.status(409).json({ message: "Friend is already added" });
     }
 
-    console.error("Error adding restaurant:", error);
+    console.error("Error adding Friend:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

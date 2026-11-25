@@ -9,7 +9,10 @@ const router = express.Router();
 router.get('/', authenticate, async (req, res, next) => {
   const userId = req.user.userId; // Get user ID from authenticated token
   const page = Number(req.query.page) || 1;
-  const pageSize = Number(req.query.pageSize) || 10;
+  var pageSize = Number(req.query.pageSize) || 10;
+  if (pageSize && pageSize > 100) {
+    pageSize = 100;
+  }
   const offset = (page - 1) * pageSize;
   
   try {
@@ -35,10 +38,10 @@ router.get('/', authenticate, async (req, res, next) => {
 router.put('/:id', authenticate, async (req, res, next) => {
 
   const notificationId = parseInt(req.params.id);
-  const is_read:boolean|null = req.body.is_read;
+  const is_read: boolean | null = req.body.is_read;
   const userId = req.user.userId; // Get user ID from authenticated token
 
- if (!is_read) {
+ if (typeof is_read !== "boolean") {
     return res.status(400).json({ error: "is_read is required" });
   }
 

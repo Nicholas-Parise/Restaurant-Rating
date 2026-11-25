@@ -50,7 +50,11 @@ router.get('/:username', async (req, res, next) => {
 
     const username = req.params.username;
     const page = Number(req.query.page) || 1;
-    const pageSize = Number(req.query.pageSize) || 10;
+    var pageSize = Number(req.query.pageSize) || 10;
+    if (pageSize && pageSize > 100) {
+    pageSize = 100;
+    }
+
     const offset = (page - 1) * pageSize;
 
     if (!username) {

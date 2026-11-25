@@ -33,23 +33,28 @@ const authenticate = async (req, res, next) => {
         const session = await db.query("SELECT user_id FROM sessions WHERE token = $1;", [token]);
 
         if (session.rows.length === 0) {
-            return res.status(401).json({ message: "invalid token" });
+            return res.status(403).json({ message: "invalid token" });
         }
                 
         req.user = decoded; // Attach user info to the request
         req.token = token;
         next(); // Continue to the next middleware or route handler
-    } catch (error) {
-
-        try {
-            // delete the invalid session, so when users come back it will be removed over time
-            await db.query("DELETE FROM sessions WHERE token = $1;", [token]);
-        } catch (dbError) {
-            console.error("Failed to delete invalid session:", dbError.message);
+    } catch (error : any) {
+        // handle specific errors, if they are JWT related handle here: 
+        if(error.name === "TokenExpiredError" || error.name === "JsonWebTokenError" || error.name === "NotBeforeError"){
+            if(token){
+                try {
+                    // delete the invalid session, so when users come back it will be removed over time
+                    await db.query("DELETE FROM sessions WHERE token = $1;", [token]);
+                } catch (dbError : any) {
+                    console.error("Failed to delete invalid session:", dbError.message);
+                }
+            }
+            return res.status(403).json({ message: "expired token" });
         }
-
-        res.status(403).json({ message: "expired token" });
+        // only gets here if it's a real error
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
-module.exports = authenticate;
+export default authenticate;

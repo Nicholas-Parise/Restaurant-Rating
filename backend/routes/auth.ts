@@ -59,6 +59,11 @@ router.post('/register', async (req, res, next) => {
          return res.status(400).json({ error: "username can only contain Letters, Numbers, - and _" })
     }
 
+    // check if the username is in the banned list
+    if (banned.Banned.some(item => item === username)) {
+        return res.status(400).json({ message: "invalid username" });
+    }
+
     // default picture
     const picture = "/assets/placeholder-avatar.png";
 
@@ -245,18 +250,16 @@ router.post('/forgot-password', async (req, res, next) => {
         return res.status(401).json({ message: "email required" });
     }
 
-  
-
     try {
         // Check if user exists
         const userCheck = await db.query("SELECT id, name, google_id FROM users WHERE email = $1", [email]);
 
         if (userCheck.rows.length === 0) {
-            return res.status(404).json({ message: "No account with that email exists." });
+            return res.status(404).json({ message: "No account with that email exists. Or password cannot be changed for this account." });
         }
 
         if (userCheck.rows[0].google_id) {
-            return res.status(404).json({ message: "Oauth users cannot change their password." });
+            return res.status(404).json({ message: "No account with that email exists. Or password cannot be changed for this account." });
         }
 
         const userId = userCheck.rows[0].id;
@@ -326,7 +329,7 @@ router.post("/reset-password", async (req, res) => {
         );
 
         if (emailCheck.rows.length === 0) {
-            return res.status(400).json({ error: "Invalid email or token." });
+            return res.status(404).json({ error: "Account not found, or invalid token." });
         }
 
         // Check if token is expired (1 hour limit)

@@ -282,9 +282,16 @@ router.post('/', authenticate, async (req, res) => {
         'SELECT id FROM users WHERE username = $1;',
         [target_id]
       );
+    }else if (target_type === 'list'){
+      // for lists the supplied 'target_id' is the list id
+      existsQuery = await db.query(
+        'SELECT id FROM lists WHERE id = $1;',
+        [target_id]
+      );
     }
 
-    if (existsQuery.rowCount === 0) {
+    // if exists is null or there are no rows then the item must not exist
+    if (!existsQuery || existsQuery.rowCount === 0) {
       return res.status(404).json({ error: 'Target not found' });
     }
 
