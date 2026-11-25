@@ -12,19 +12,9 @@ import requirePermission from "../middleware/requirePermission";
 dotenv.config();
 
 // get reports
-router.get('/', authenticate, async (req, res, next) => {
+router.get('/', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const result = await db.query(`
       SELECT 
@@ -45,20 +35,10 @@ router.get('/', authenticate, async (req, res, next) => {
 
 
 //Get full details for one contact message
-router.get('/:contactId', authenticate, async (req, res, next) => {
+router.get('/:contactId', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const contactId = req.params.contactId;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const result = await db.query(`
     SELECT 

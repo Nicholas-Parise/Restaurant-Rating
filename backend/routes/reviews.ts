@@ -155,7 +155,7 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
 });
 
 
-router.post('/', authenticate, requirePermission, async (req, res) => {
+router.post('/', authenticate, requirePermission(), async (req, res) => {
 
   const { restaurant_id, liked, visited, score, description } = req.body;
   const userId = req.user.userId; // Get user ID from authenticated token

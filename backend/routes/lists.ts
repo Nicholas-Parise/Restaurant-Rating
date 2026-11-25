@@ -214,7 +214,7 @@ router.get('/:id', async (req, res, next) => {
 
 
 // create a list
-router.post('/', authenticate, requirePermission, async (req, res, next) => {
+router.post('/', authenticate, requirePermission(), async (req, res, next) => {
 
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
@@ -256,7 +256,7 @@ router.post('/', authenticate, requirePermission, async (req, res, next) => {
 
 
 // edit a list
-router.put('/:list_id', authenticate, requirePermission, async (req, res, next) => {
+router.put('/:list_id', authenticate, requirePermission(), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const list_id = parseInt(req.params.list_id);
@@ -292,7 +292,7 @@ router.put('/:list_id', authenticate, requirePermission, async (req, res, next) 
 
 
 // add restaurant to a list
-router.post('/:list_id/:restaurant_id', authenticate, requirePermission, async (req, res, next) => {
+router.post('/:list_id/:restaurant_id', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 
@@ -352,7 +352,7 @@ router.delete('/:list_id/:restaurant_id', authenticate, async (req, res, next) =
 
 
 // delete a list
-router.delete('/:list_id', authenticate, requirePermission, async (req, res, next) => {
+router.delete('/:list_id', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 

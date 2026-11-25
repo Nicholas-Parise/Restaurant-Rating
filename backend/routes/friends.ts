@@ -94,7 +94,7 @@ router.get('/:username', async (req, res) => {
 
 
 // Add a friendship request from logged in user to provided user
-router.post('/:username', authenticate, requirePermission, async (req, res, next) => {
+router.post('/:username', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
   const username = req.params.username;
@@ -152,7 +152,7 @@ router.post('/:username', authenticate, requirePermission, async (req, res, next
 
 
 // Accept a friendship request from provided user
-router.post('/:username/accept', authenticate, requirePermission, async (req, res, next) => {
+router.post('/:username/accept', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
   const username = req.params.username;
@@ -193,7 +193,7 @@ router.post('/:username/accept', authenticate, requirePermission, async (req, re
 
 
 // Deny a friendship request from provided user
-router.post('/:username/deny', authenticate, requirePermission, async (req, res, next) => {
+router.post('/:username/deny', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
   const username = req.params.username;
@@ -234,7 +234,7 @@ router.post('/:username/deny', authenticate, requirePermission, async (req, res,
 
 
 // Remove a friend (provided user)
-router.delete('/:username', authenticate, requirePermission, async (req, res, next) => {
+router.delete('/:username', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
   const username = req.params.username;

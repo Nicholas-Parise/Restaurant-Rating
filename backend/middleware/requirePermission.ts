@@ -1,7 +1,4 @@
 import { getUserPermissions } from "../utils/util";
-
-const jwt = require("jsonwebtoken");
-const db = require('../utils/db');
 require("dotenv").config(); // Load environment variables
 
 /**
@@ -20,10 +17,10 @@ const requirePermission = (requiredPermissions: string|null= 'user') => {
             
             const permission = await getUserPermissions(userId);
 
+            console.log("permission",permission);
+
             if (!permission) {
-                return res.status(404).json({
-                    message: "User not found"
-                });
+                return res.status(404).json({ message: "User not found" });
             }
     
             // Continue to the next middleware or route handler if....
@@ -37,10 +34,11 @@ const requirePermission = (requiredPermissions: string|null= 'user') => {
                 return res.status(403).json({ message: "Please wait for your ban to finish before performing this action again." });
             }
 
-            return res.status(403).json({ message: "User lacks permissions" });
+            //return res.status(403).json({ message: "User lacks permissions" });
         
-        } catch (error) {
-            return res.status(403).json({ message: "expired token" });
+        } catch (error : any) {
+            console.error("Permission check failed: ", error);
+            return res.status(404).json({ message: "Can't find user" });
         }
     };
 };

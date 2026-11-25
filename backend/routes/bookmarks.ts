@@ -81,7 +81,7 @@ router.get('/:username', async (req, res, next) => {
 
 
 // Add a bookmarked restaurant to logged in user
-router.post('/:restaurant_id', authenticate, requirePermission, async (req, res, next) => {
+router.post('/:restaurant_id', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 

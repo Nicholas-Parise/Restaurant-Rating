@@ -46,7 +46,7 @@ router.get('/', authenticate, async (req, res, next) => {
 
 // localhost:3000/users
 // Update logged-in user's profile
-router.put('/', authenticate, requirePermission, async (req, res) => {
+router.put('/', authenticate, requirePermission(), async (req, res) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     var { email, name, password, newPassword, bio, notifications } = req.body;
@@ -420,7 +420,7 @@ router.get('/:username', async (req, res) => {
 
 // localhost:3000/users/upload-profile
 // upload new profile picture
-router.post('/upload', authenticate, requirePermission, uploadPicture, async (req, res) => {
+router.post('/upload', authenticate, requirePermission(), uploadPicture, async (req, res) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 
