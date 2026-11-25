@@ -2,6 +2,7 @@ import express from "express";
 import db from "../utils/db";
 import authenticate from "../middleware/authenticate";
 import { isMod, getUserPermissions } from "../utils/util";
+import requirePermission from "../middleware/requirePermission";
 
 const router = express.Router();
 
@@ -49,7 +50,7 @@ router.get('/:categoryId', async (req, res, next) => {
 
 // localhost:3000/categories
 // create a category
-router.post('/', authenticate, async (req, res, next) => {
+router.post('/', authenticate, requirePermission('moderator'), async (req, res, next) => {
   const userId = req.user.userId; // Get user ID from authenticated token
   const { name, description } = req.body;
 
@@ -57,17 +58,6 @@ router.post('/', authenticate, async (req, res, next) => {
     return res.status(400).json({ message: "name and description are required fields" });
   }
   try {
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
-
 
     const result = await db.query(`
         INSERT INTO categories

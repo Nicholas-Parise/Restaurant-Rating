@@ -3,6 +3,7 @@ import db from "../utils/db";
 import createNotification from "../middleware/createNotification";
 import authenticate from "../middleware/authenticate";
 import { getUserId, maxString } from "../utils/util";
+import requirePermission from "../middleware/requirePermission";
 
 const router = express.Router();
 
@@ -14,7 +15,10 @@ router.get('/', authenticate, async (req, res, next) => {
     const userId = req.user.userId; // Get user ID from authenticated token
 
     const page = Number(req.query.page) || 1;
-    const pageSize = Number(req.query.pageSize) || 10;
+    var pageSize = Number(req.query.pageSize) || 10;
+    if (pageSize && pageSize > 100) {
+      pageSize = 100;
+    }
     const offset = (page - 1) * pageSize;
 
     const result = await db.query(
@@ -48,7 +52,10 @@ router.get('/recommended', async (req, res, next) => {
   try {
 
     const page = Number(req.query.page) || 1;
-    const pageSize = Number(req.query.pageSize) || 10;
+    var pageSize = Number(req.query.pageSize) || 10;
+    if (pageSize && pageSize > 100) {
+      pageSize = 100;
+    }
     const offset = (page - 1) * pageSize;
 
     const result = await db.query(
@@ -85,7 +92,10 @@ router.get('/users/:username', async (req, res, next) => {
     const username: string = req.params.username;
 
     const page = Number(req.query.page) || 1;
-    const pageSize = Number(req.query.pageSize) || 10;
+    var pageSize = Number(req.query.pageSize) || 10;
+    if (pageSize && pageSize > 100) {
+      pageSize = 100;
+    }
     const offset = (page - 1) * pageSize;
 
     if (!username) {
@@ -123,15 +133,15 @@ router.get('/users/:username', async (req, res, next) => {
 
 
 router.get('/search', async (req, res, next) => {
-
+  
+  const searchTerm = req.query.q;
   const page = Number(req.query.page) || 1;
   let pageSize = Number(req.query.pageSize) || 10;
-  const searchTerm = req.query.q;
-  const offset = (page - 1) * pageSize;
-
+  
   if (pageSize && pageSize > 100) {
     pageSize = 100;
   }
+  const offset = (page - 1) * pageSize;
 
   let result;
 
@@ -213,7 +223,7 @@ router.get('/:id', async (req, res, next) => {
 
 
 // create a list
-router.post('/', authenticate, async (req, res, next) => {
+router.post('/', authenticate, requirePermission(), async (req, res, next) => {
 
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
@@ -255,7 +265,7 @@ router.post('/', authenticate, async (req, res, next) => {
 
 
 // edit a list
-router.put('/:list_id', authenticate, async (req, res, next) => {
+router.put('/:list_id', authenticate, requirePermission(), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const list_id = parseInt(req.params.list_id);
@@ -291,7 +301,7 @@ router.put('/:list_id', authenticate, async (req, res, next) => {
 
 
 // add restaurant to a list
-router.post('/:list_id/:restaurant_id', authenticate, async (req, res, next) => {
+router.post('/:list_id/:restaurant_id', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 
@@ -351,7 +361,7 @@ router.delete('/:list_id/:restaurant_id', authenticate, async (req, res, next) =
 
 
 // delete a list
-router.delete('/:list_id', authenticate, async (req, res, next) => {
+router.delete('/:list_id', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 
@@ -368,7 +378,6 @@ router.delete('/:list_id', authenticate, async (req, res, next) => {
 
   } catch (error) {
     console.error("Error removing restaurant:", error);
-     await db.query("ROLLBACK");
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

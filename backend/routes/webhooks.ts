@@ -8,9 +8,9 @@ const router = express.Router();
 
 router.post('/ses', async (req, res) => {
 
-  console.log("HEADERS:", req.headers);
-  console.log("BODY:", req.body);
-  console.log("everything:", req);
+  //console.log("HEADERS:", req.headers);
+  //console.log("BODY:", req.body);
+  //console.log("everything:", req);
 
   let snsMessage;
 

@@ -17,6 +17,7 @@ dotenv.config();
 
 
 import Stripe from 'stripe';
+import requirePermission from "../middleware/requirePermission";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-08-27.basil', // Use the latest API version from the Stripe dashboard
 });
@@ -45,22 +46,12 @@ router.get('/', authenticate, async (req, res, next) => {
 
 // localhost:3000/users
 // Update logged-in user's profile
-router.put('/', authenticate, async (req, res) => {
+router.put('/', authenticate, requirePermission(), async (req, res) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     var { email, name, password, newPassword, bio, notifications } = req.body;
     let newHashedPassword: string | null = null;
     let newEmail: string | null = null;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (isBanned(permission)) {
-      return res.status(403).json({ message: "User is banned" });
-    }
 
     // Type checking
     if (email !== undefined && typeof email !== "string") {
@@ -269,7 +260,10 @@ router.get('/recent', async (req, res, next) => {
   try {
     const username = req.query.username;
     const page = Number(req.query.page) || 1;
-    const pageSize = Number(req.query.pageSize) || 10;
+    var pageSize = Number(req.query.pageSize) || 10;
+    if (pageSize && pageSize > 100) {
+      pageSize = 100;
+    }
     const offset = (page - 1) * pageSize;
 
     if (!username) {
@@ -308,15 +302,14 @@ router.get('/recent', async (req, res, next) => {
 
 router.get('/search', async (req, res, next) => {
 
+  const searchTerm = req.query.q;
   const page = Number(req.query.page) || 1;
   var pageSize = Number(req.query.pageSize) || 10;
-  const searchTerm = req.query.q;
-  const offset = (page - 1) * pageSize;
-  var result;
-
   if (pageSize && pageSize > 100) {
     pageSize = 100;
   }
+  const offset = (page - 1) * pageSize;
+  var result;
 
   try {
     if (!searchTerm) {
@@ -429,7 +422,7 @@ router.get('/:username', async (req, res) => {
 
 // localhost:3000/users/upload-profile
 // upload new profile picture
-router.post('/upload', authenticate, uploadPicture, async (req, res) => {
+router.post('/upload', authenticate, requirePermission(), uploadPicture, async (req, res) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 
@@ -440,17 +433,6 @@ router.post('/upload', authenticate, uploadPicture, async (req, res) => {
   const filePath = `/uploads/users/${req.file.filename}`; // get file name from file
 
   try {
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (isBanned(permission)) {
-      return res.status(403).json({ message: "User is banned" });
-    }
-
     //get the file name
     const user = await db.query("SELECT picture FROM users WHERE id = $1", [userId]);
     const picture = user.rows[0].picture;

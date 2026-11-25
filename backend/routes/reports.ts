@@ -8,22 +8,13 @@ import { isBanned, isMod, deleteImage, getUserPermissions } from "../utils/util"
 const router = express.Router();
 
 import * as dotenv from 'dotenv';
+import requirePermission from "../middleware/requirePermission";
 dotenv.config();
 
 // get reports
-router.get('/', authenticate, async (req, res, next) => {
+router.get('/', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     // TODO add average reason so it is easier to know what to expect
     const result = await db.query(`
@@ -51,20 +42,10 @@ router.get('/', authenticate, async (req, res, next) => {
 
 //Get full details for one reported review
 //Get all report messages for that review
-router.get('/review/:reviewId', authenticate, async (req, res, next) => {
+router.get('/review/:reviewId', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const reviewId = req.params.reviewId;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const result = await db.query(`
     SELECT 
@@ -115,20 +96,10 @@ router.get('/review/:reviewId', authenticate, async (req, res, next) => {
 
 //Get full details for one reported user
 //Get all report messages for that user
-router.get('/user/:userReportId', authenticate, async (req, res, next) => {
+router.get('/user/:userReportId', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const userReportId = req.params.userReportId;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const result = await db.query(`
     SELECT 
@@ -169,21 +140,11 @@ router.get('/user/:userReportId', authenticate, async (req, res, next) => {
 });
 
 //Dismiss reports
-router.post('/:type/:id/dismiss', authenticate, async (req, res, next) => {
+router.post('/:type/:id/dismiss', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const type = req.params.type;
     const id = req.params.id;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     // Validate target_type
     if (!type || !['review', 'user', 'list'].includes(type)) {
@@ -209,38 +170,32 @@ router.post('/:type/:id/dismiss', authenticate, async (req, res, next) => {
 
 
 // Remove review (and resolve reports)
-router.post('/review/:id/remove', authenticate, async (req, res, next) => {
+router.post('/review/:id/remove', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
 
-    const permission = await getUserPermissions(userId);
+    const client = await db.connect();
 
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
-
-    await db.query('BEGIN');
     try {
-      await db.query('DELETE FROM reviews WHERE id = $1;', [id]);
-      await db.query(`UPDATE reports
+      await client.query('BEGIN');
+      await client.query('DELETE FROM reviews WHERE id = $1;', [id]);
+      await client.query(`UPDATE reports
                       SET status = 'resolved',
                         reviewed_by = $2,
                         reviewed_at = NOW()
                       WHERE target_type = 'review'
                         AND target_id = $1;`, [id, userId]);
-      await db.query('COMMIT');
+      await client.query('COMMIT');
+      
+      return res.status(200).json({ message: "success" });
     } catch (err) {
-      await db.query('ROLLBACK');
+      await client.query('ROLLBACK');
       console.log(err);
       return res.status(400).json({ message: "Error deleting review" });
+    } finally {
+      client.release();
     }
-
-  return res.status(200).json({ message: "success" });
   } catch (error) {
     console.error("Error fetching reports:", error);
     res.status(500).json({ message: 'Error retrieving user data' });
@@ -249,41 +204,35 @@ router.post('/review/:id/remove', authenticate, async (req, res, next) => {
 
 
 // Ban / restrict user
-router.post('/user/:id/ban', authenticate, async (req, res, next) => {
+router.post('/user/:id/ban', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
     
-    await db.query('BEGIN');
+    const client = await db.connect();
+    
     try {
-      await db.query(`UPDATE users
-                      SET 
-                        permissions = 'banned',
-                        name = 'Banned User',
-                        bio = 'Your account has been temporarily banned for breaking TOS',
-                        updated = NOW()
-                      WHERE id = $1;`, [id]);
-      await db.query(`UPDATE reports
-                      SET status = 'resolved',
-                          reviewed_by = $2,
-                          reviewed_at = NOW()
-                      WHERE target_type = 'user'
-                        AND target_id = $1;`, [id, userId]);
-      await db.query('COMMIT');
+        await client.query('BEGIN');
+        await client.query(`UPDATE users
+                        SET 
+                          permissions = 'banned',
+                          name = 'Banned User',
+                          bio = 'Your account has been temporarily banned for breaking TOS',
+                          updated = NOW()
+                        WHERE id = $1;`, [id]);
+        await client.query(`UPDATE reports
+                        SET status = 'resolved',
+                            reviewed_by = $2,
+                            reviewed_at = NOW()
+                        WHERE target_type = 'user'
+                          AND target_id = $1;`, [id, userId]);
+        await client.query('COMMIT');
     } catch (err) {
-      await db.query('ROLLBACK');
-      console.log(err);
-      return res.status(400).json({ message: "Error banning user" });
+        await client.query('ROLLBACK');
+        console.log(err);
+        return res.status(400).json({ message: "Error banning user" });
+    } finally {
+        client.release();
     }
 
     const user = await db.query("SELECT picture FROM users WHERE id = $1", [id]);
@@ -333,9 +282,16 @@ router.post('/', authenticate, async (req, res) => {
         'SELECT id FROM users WHERE username = $1;',
         [target_id]
       );
+    }else if (target_type === 'list'){
+      // for lists the supplied 'target_id' is the list id
+      existsQuery = await db.query(
+        'SELECT id FROM lists WHERE id = $1;',
+        [target_id]
+      );
     }
 
-    if (existsQuery.rowCount === 0) {
+    // if exists is null or there are no rows then the item must not exist
+    if (!existsQuery || existsQuery.rowCount === 0) {
       return res.status(404).json({ error: 'Target not found' });
     }
 

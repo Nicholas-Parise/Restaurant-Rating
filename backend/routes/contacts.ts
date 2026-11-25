@@ -8,22 +8,13 @@ import { isMod, getUserPermissions, isEmail } from "../utils/util";
 const router = express.Router();
 
 import * as dotenv from 'dotenv';
+import requirePermission from "../middleware/requirePermission";
 dotenv.config();
 
 // get reports
-router.get('/', authenticate, async (req, res, next) => {
+router.get('/', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const result = await db.query(`
       SELECT 
@@ -44,20 +35,10 @@ router.get('/', authenticate, async (req, res, next) => {
 
 
 //Get full details for one contact message
-router.get('/:contactId', authenticate, async (req, res, next) => {
+router.get('/:contactId', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const contactId = req.params.contactId;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const result = await db.query(`
     SELECT 
@@ -84,20 +65,10 @@ router.get('/:contactId', authenticate, async (req, res, next) => {
 
 
 //Dismiss reports
-router.post('/:id/dismiss', authenticate, async (req, res, next) => {
+router.post('/:id/dismiss', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const result = await db.query(`
     UPDATE contacts
@@ -115,20 +86,10 @@ router.post('/:id/dismiss', authenticate, async (req, res, next) => {
 
 
 //resolve reports
-router.post('/:id/resolve', authenticate, async (req, res, next) => {
+router.post('/:id/resolve', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!isMod(permission)) {
-      return res.status(403).json({ message: "User lacks permissions" });
-    }
 
     const result = await db.query(`
     UPDATE contacts

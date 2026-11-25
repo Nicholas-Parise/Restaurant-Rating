@@ -11,6 +11,7 @@ import { getUserPermissions, isBanned, isMod } from "../utils/util";
 const router = express.Router();
 
 import * as dotenv from 'dotenv';
+import requirePermission from "../middleware/requirePermission";
 dotenv.config();
 
 
@@ -20,7 +21,10 @@ router.get('/', authenticate, async (req, res, next) => {
   const userId = req.user.userId; // Get user ID from authenticated token
 
   const page = Number(req.query.page) || 1;
-  const pageSize = Number(req.query.pageSize) || 10;
+  var pageSize = Number(req.query.pageSize) || 10;
+  if (pageSize && pageSize > 100) {
+    pageSize = 100;
+  }
   const offset = (page - 1) * pageSize;
 
   try {
@@ -57,7 +61,10 @@ router.get('/:username', async (req, res, next) => {
 
   const restaurantId = req.query.restaurant || null;
   const page = Number(req.query.page) || 1;
-  const pageSize = Number(req.query.pageSize) || 10;
+  var pageSize = Number(req.query.pageSize) || 10;
+  if (pageSize && pageSize > 100) {
+    pageSize = 100;
+  }
   const offset = (page - 1) * pageSize;
 
   try {
@@ -124,7 +131,10 @@ router.get('/:username', async (req, res, next) => {
 router.get('/restaurants/:restaurantId', async (req, res, next) => {
   const restaurantId = req.params.restaurantId;
   const page = Number(req.query.page) || 1;
-  const pageSize = Number(req.query.pageSize) || 10;
+  var pageSize = Number(req.query.pageSize) || 10;
+  if (pageSize && pageSize > 100) {
+    pageSize = 100;
+  }
   const offset = (page - 1) * pageSize;
 
   try {
@@ -139,7 +149,7 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
     const countResult = await db.query(`
       SELECT COUNT(*) AS total 
       FROM reviews 
-      WHERE restaurant_id = $1;`, [restaurantId]);
+      WHERE restaurant_id = $1 AND r.visited = TRUE`, [restaurantId]);
 
     const totalReviews = parseInt(countResult.rows[0].total, 10);
 
@@ -154,7 +164,7 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
 });
 
 
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, requirePermission(), async (req, res) => {
 
   const { restaurant_id, liked, visited, score, description } = req.body;
   const userId = req.user.userId; // Get user ID from authenticated token
@@ -162,22 +172,20 @@ router.post('/', authenticate, async (req, res) => {
   if (!restaurant_id) {
     return res.status(400).json({ message: "restaurant_id is required" });
   }
+  // make sure score is within bounds
+  let fixedScore = score;
+  if(fixedScore > 10)
+    fixedScore = 10;
+
+  if(fixedScore < 0)
+    fixedScore = 0;
+
   try {
-
-    const permission = await getUserPermissions(userId);
-
-    if (!permission) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (isBanned(permission)) {
-      return res.status(403).json({ message: "User is banned" });
-    }
 
     const result = await db.query(
       `INSERT INTO reviews (restaurant_id, user_id, liked, visited, score, description) 
                 VALUES ($1, $2, COALESCE($3, false), COALESCE($4, false), COALESCE($5, 0), $6) RETURNING *`,
-      [restaurant_id, userId, liked, visited, score, description]
+      [restaurant_id, userId, liked, visited, fixedScore, description]
     );
 
     return res.status(200).json(result.rows);

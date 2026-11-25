@@ -2,6 +2,9 @@ import { Response } from "express";
 import db from "./db";
 import * as path from "path";
 import fs from "fs";
+import crypto from "crypto";
+
+const SAFE_ALPHABET = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
 export async function getUserId(username: String, res: Response): Promise<number | void> {
 
@@ -99,4 +102,30 @@ export function isValidUsername(username: string): boolean {
   const regex = /[^A-Za-z0-9\-_]/;
   return !regex.test(username);
 }
+
+/**
+ * Generates a unique 
+ * 1,544,804,416 possible combinations much better than old approach
+ * @returns string, Unique 6 character token
+ */
+export async function generateUniqueToken() {
+  const length = 6;
+  let token = "";
+  let exists = true;
+
+  while (exists) {
+    token = "";
+    for (let i = 0; i < length; i++) {
+      const index = crypto.randomInt(0, SAFE_ALPHABET.length);
+      token += SAFE_ALPHABET[index];
+    }
+    // check If token exists, if it does try again
+    const tokenCheck = await db.query("SELECT 1 FROM sessions WHERE token = $1", [token]);
+    exists = tokenCheck.rows.length > 0; 
+  }
+
+  return token;
+}
+
+
 
