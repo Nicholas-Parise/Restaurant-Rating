@@ -1,4 +1,5 @@
 import express from "express";
+import { rateLimit } from 'express-rate-limit';
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import crypto from "crypto"
@@ -20,6 +21,15 @@ const router = express.Router();
 import * as dotenv from 'dotenv';
 import { generateUniqueToken, isEmail, isValidUsername } from "../utils/util";
 dotenv.config();
+
+// forgot-password and reset-password limiter
+const forgotLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per window
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+});
+
 
 // localhost:3000/auth/register
 // register account
@@ -242,7 +252,7 @@ router.get('/username/:username', async (req, res, next) => {
 // localhost:3000/auth/forgot-password
 // start the account recovery process, 
 // send an email with recovery code to provided email if there is an account linked to it.
-router.post('/forgot-password', async (req, res, next) => {
+router.post('/forgot-password', forgotLimiter, async (req, res, next) => {
 
     const { email } = req.body;
 
@@ -303,7 +313,7 @@ router.post('/forgot-password', async (req, res, next) => {
 
 // localhost:3000/auth/reset-password
 // given one time code, email and password reset password
-router.post("/reset-password", async (req, res) => {
+router.post("/reset-password", forgotLimiter, async (req, res) => {
     const { email, otc, password } = req.body;
 
     if (!email || !otc || !password) {
