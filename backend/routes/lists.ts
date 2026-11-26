@@ -337,7 +337,7 @@ router.post('/:list_id/:restaurant_id', authenticate, requirePermission(), async
 
 
 // remove a restaurant from a list
-router.delete('/:list_id/:restaurant_id', authenticate, async (req, res, next) => {
+router.delete('/:list_id/:restaurant_id', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 

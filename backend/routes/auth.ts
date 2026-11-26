@@ -351,10 +351,10 @@ router.post("/reset-password", async (req, res) => {
             await client.query('BEGIN');
 
             // Update password
-            await db.query("UPDATE users SET password = $1 WHERE id = $2", [hashedPassword, user_id]);
+            await client.query("UPDATE users SET password = $1 WHERE id = $2", [hashedPassword, user_id]);
 
             // Delete used reset token
-            await db.query("DELETE FROM sessions WHERE token = $1", [otc]);
+            await client.query("DELETE FROM sessions WHERE token = $1", [otc]);
 
             await client.query("COMMIT"); // Commit the transaction
 

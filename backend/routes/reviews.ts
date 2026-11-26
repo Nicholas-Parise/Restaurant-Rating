@@ -149,7 +149,7 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
     const countResult = await db.query(`
       SELECT COUNT(*) AS total 
       FROM reviews 
-      WHERE restaurant_id = $1 AND r.visited = TRUE`, [restaurantId]);
+      WHERE restaurant_id = $1 AND visited = TRUE`, [restaurantId]);
 
     const totalReviews = parseInt(countResult.rows[0].total, 10);
 

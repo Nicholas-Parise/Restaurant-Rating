@@ -5,7 +5,7 @@ require("dotenv").config(); // Load environment variables
  * a helper function to handle Authorization,
  * can take several Parameters: 'user', 'moderator', 'admin'
  * With default being for a 'user'
- * When a user is 'banned' they will always return 403
+ * When a user is 'banned' this middleware will always return 403
  */
 
 const requirePermission = (requiredPermissions: string|null= 'user') => {
@@ -38,7 +38,7 @@ const requirePermission = (requiredPermissions: string|null= 'user') => {
         
         } catch (error : any) {
             console.error("Permission check failed: ", error);
-            return res.status(404).json({ message: "Can't find user" });
+            return res.status(500).json({ message: "Internal Server Error" });
         }
     };
 };

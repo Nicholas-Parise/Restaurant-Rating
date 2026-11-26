@@ -140,7 +140,8 @@ router.put('/', authenticate, requirePermission(), async (req, res) => {
   }
 });
 
-
+// This route is a one time account setup if a user creates their account through Oauth.
+// This is the only time a user will be able to set their Username other than through the register endpoint.
 router.put('/complete', authenticate, async (req, res) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
@@ -204,8 +205,8 @@ router.put('/complete', authenticate, async (req, res) => {
 
 
 
-// localhost:3000/users
-// Delete logged-in user's account
+// Delete the logged-in user's account
+// this requires a password from the client
 router.post('/delete', authenticate, async (req, res) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
@@ -254,8 +255,7 @@ router.post('/delete', authenticate, async (req, res) => {
 });
 
 
-// localhost:3000/users
-// get logged in users
+// This endpoint gets a supplied users most recently reviewed/rated restaurants
 router.get('/recent', async (req, res, next) => {
   try {
     const username = req.query.username;
@@ -299,7 +299,7 @@ router.get('/recent', async (req, res, next) => {
 });
 
 
-
+// Search though the DB with fuzzy search for a user that matches either the username or the displayname
 router.get('/search', async (req, res, next) => {
 
   const searchTerm = req.query.q;

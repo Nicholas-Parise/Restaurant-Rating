@@ -168,7 +168,6 @@ router.post('/:type/:id/dismiss', authenticate, requirePermission('moderator'), 
 });
 
 
-
 // Remove review (and resolve reports)
 router.post('/review/:id/remove', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
@@ -203,14 +202,27 @@ router.post('/review/:id/remove', authenticate, requirePermission('moderator'), 
 });
 
 
-// Ban / restrict user
+/**
+ * Ban / restrict a user
+ * only a moderator or admin can use this endpoint.
+ * a admin cannot be banned at all.
+ * a moderator can only be banned by an admin.
+ */
 router.post('/user/:id/ban', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
     
+    const banneePermission = await getUserPermissions(id);
+    const bannerPermission = await getUserPermissions(userId);
+
+    if(banneePermission === 'admin')
+       return res.status(400).json({ message: "Admin cannot be banned" });
+
+    if(banneePermission === 'moderator' && bannerPermission != 'admin')
+      return res.status(400).json({ message: "Only admin can ban a moderator" });
+
     const client = await db.connect();
-    
     try {
         await client.query('BEGIN');
         await client.query(`UPDATE users

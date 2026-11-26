@@ -71,7 +71,7 @@ export function isEmail(email: string): boolean {
 }
 
 
-export async function getUserPermissions(id: number): Promise<string | null> {
+export async function getUserPermissions(id: number|string): Promise<string | null> {
   try {
     const result = await db.query(
       `SELECT permissions FROM users WHERE id = $1`,

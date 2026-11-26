@@ -129,7 +129,7 @@ router.post('/:restaurant_id', authenticate, requirePermission(), async (req, re
 
 
 // remove a favourites restaurant to logged in user
-router.delete('/:restaurant_id', authenticate, async (req, res, next) => {
+router.delete('/:restaurant_id', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 
