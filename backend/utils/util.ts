@@ -118,5 +118,13 @@ export function generateUniqueToken() {
   return token;
 }
 
-
+export function isNumeric(value: unknown): boolean {
+  if (typeof value === 'number') {
+    return Number.isFinite(value);
+  }
+  if (typeof value === 'string' && value.trim() !== '') {
+    return Number.isFinite(Number(value));
+  }
+  return false;
+};
 

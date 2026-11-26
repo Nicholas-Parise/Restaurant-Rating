@@ -6,7 +6,7 @@ import db from "../utils/db";
 import authenticate from "../middleware/authenticate";
 import createNotification from "../middleware/createNotification";
 
-import { getUserPermissions, isBanned, isMod } from "../utils/util";
+import { getUserPermissions, isBanned, isMod, isNumeric } from "../utils/util";
 
 const router = express.Router();
 
@@ -193,19 +193,16 @@ router.post('/', authenticate, requirePermission(), async (req, res) => {
     return res.status(400).json({ message: "restaurant_id is required" });
   }
   // make sure score is within bounds
-  let fixedScore = score;
-  if(fixedScore > 10)
-    fixedScore = 10;
-
-  if(fixedScore < 0)
-    fixedScore = 0;
+  
+  if(!isNumeric(score) || score > 10 || score < 0)
+    return res.status(400).json({ message: "Score is not a number or is out of bounds" });
 
   try {
 
     const result = await db.query(
       `INSERT INTO reviews (restaurant_id, user_id, liked, visited, score, description) 
                 VALUES ($1, $2, COALESCE($3, false), COALESCE($4, false), COALESCE($5, 0), $6) RETURNING *`,
-      [restaurant_id, userId, liked, visited, fixedScore, description]
+      [restaurant_id, userId, liked, visited, score, description]
     );
 
     return res.status(200).json(result.rows);
