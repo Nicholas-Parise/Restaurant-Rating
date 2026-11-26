@@ -6,7 +6,7 @@ import db from "../utils/db";
 import authenticate from "../middleware/authenticate";
 import createNotification from "../middleware/createNotification";
 
-import { getUserPermissions, isBanned, isMod } from "../utils/util";
+import { getUserPermissions, isBanned, isMod, isNumeric } from "../utils/util";
 
 const router = express.Router();
 
@@ -28,23 +28,28 @@ router.get('/', authenticate, async (req, res, next) => {
   const offset = (page - 1) * pageSize;
 
   try {
-    const result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture 
-      FROM reviews r 
-      LEFT JOIN users u ON r.user_id = u.id
-      WHERE r.user_id = $1
-      ORDER BY r.created DESC
-      LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
-
-    const countResult = await db.query(`
-      SELECT COUNT(*) AS total 
-      FROM reviews 
-      WHERE user_id = $1;`, [userId]);
+    
+    const[
+      reviewResult, 
+      countResult
+    ] = await Promise.all([
+      db.query(`
+        SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture 
+        FROM reviews r 
+        LEFT JOIN users u ON r.user_id = u.id
+        WHERE r.user_id = $1
+        ORDER BY r.created DESC
+        LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]),
+      db.query(`
+        SELECT COUNT(*) AS total 
+        FROM reviews 
+        WHERE user_id = $1;`, [userId])
+    ]);
 
     const totalReviews = parseInt(countResult.rows[0].total, 10);
 
     res.json({
-      page, pageSize, totalReviews, reviews: result.rows,
+      page, pageSize, totalReviews, reviews: reviewResult.rows,
     });
 
   } catch (err) {
@@ -80,44 +85,54 @@ router.get('/:username', async (req, res, next) => {
 
     const userId = userResult.rows[0].id;
 
-    let result;
+    let reviewResult;
     let countResult;
 
     if (restaurantId) {
 
-      result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture
-      FROM reviews r 
-      LEFT JOIN users u ON r.user_id = u.id
-      WHERE r.user_id = $1 AND r.restaurant_id = $2
-      ORDER BY r.created DESC
-      LIMIT $3 OFFSET $4;`, [userId, restaurantId, pageSize, offset]);
-
-      countResult = await db.query(`
-      SELECT COUNT(*) AS total 
-      FROM reviews 
-      WHERE user_id = $1 AND restaurant_id = $2;`, [userId, restaurantId]);
+      [
+        reviewResult, 
+        countResult
+      ] = await Promise.all([
+      db.query(`
+        SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture
+        FROM reviews r 
+        LEFT JOIN users u ON r.user_id = u.id
+        WHERE r.user_id = $1 AND r.restaurant_id = $2
+        ORDER BY r.created DESC
+        LIMIT $3 OFFSET $4;`, [userId, restaurantId, pageSize, offset]),
+      db.query(`
+        SELECT COUNT(*) AS total 
+        FROM reviews 
+        WHERE user_id = $1 AND restaurant_id = $2;`, [userId, restaurantId])
+      ]);
 
     } else {
-      result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture, res.name AS restaurant_name, res.pictures, res.type, res.slug
-      FROM reviews r 
-      LEFT JOIN users u ON r.user_id = u.id
-      LEFT JOIN restaurants res ON r.restaurant_id = res.id 
-      WHERE r.user_id = $1 
-      ORDER BY r.created DESC
-      LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]);
+      
+      [
+        reviewResult, 
+        countResult
+      ] = await Promise.all([
+      db.query(`
+        SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture, res.name AS restaurant_name, res.pictures, res.type, res.slug
+        FROM reviews r 
+        LEFT JOIN users u ON r.user_id = u.id
+        LEFT JOIN restaurants res ON r.restaurant_id = res.id 
+        WHERE r.user_id = $1 
+        ORDER BY r.created DESC
+        LIMIT $2 OFFSET $3;`, [userId, pageSize, offset]),
+      db.query(`
+        SELECT COUNT(*) AS total 
+        FROM reviews 
+        WHERE user_id = $1;`, [userId])
+      ]);
 
-      countResult = await db.query(`
-      SELECT COUNT(*) AS total 
-      FROM reviews 
-      WHERE user_id = $1;`, [userId]);
     }
 
     const totalReviews = parseInt(countResult.rows[0].total, 10);
 
     res.json({
-      page, pageSize, totalReviews, reviews: result.rows,
+      page, pageSize, totalReviews, reviews: reviewResult.rows,
     });
 
   } catch (err) {
@@ -138,23 +153,28 @@ router.get('/restaurants/:restaurantId', async (req, res, next) => {
   const offset = (page - 1) * pageSize;
 
   try {
-    const result = await db.query(`
-      SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture 
-      FROM reviews r 
-      LEFT JOIN users u ON r.user_id = u.id
-      WHERE r.restaurant_id = $1 AND r.visited = TRUE
-      ORDER BY r.created DESC
-      LIMIT $2 OFFSET $3;`, [restaurantId, pageSize, offset]);
 
-    const countResult = await db.query(`
-      SELECT COUNT(*) AS total 
-      FROM reviews 
-      WHERE restaurant_id = $1 AND r.visited = TRUE`, [restaurantId]);
-
+    const[
+      reviewResult, 
+      countResult
+    ] = await Promise.all([
+      db.query(`
+        SELECT r.id, r.restaurant_id, r.liked, r.visited, r.score, r.description, r.updated, r.created, u.name, u.username, u.picture 
+        FROM reviews r 
+        LEFT JOIN users u ON r.user_id = u.id
+        WHERE r.restaurant_id = $1 AND r.visited = TRUE
+        ORDER BY r.created DESC
+        LIMIT $2 OFFSET $3;`, [restaurantId, pageSize, offset]),
+      db.query(`
+        SELECT COUNT(*) AS total 
+        FROM reviews 
+        WHERE restaurant_id = $1 AND visited = TRUE`, [restaurantId])
+      ]);
+    
     const totalReviews = parseInt(countResult.rows[0].total, 10);
 
     res.json({
-      page, pageSize, totalReviews, reviews: result.rows,
+      page, pageSize, totalReviews, reviews: reviewResult.rows,
     });
 
   } catch (err) {
@@ -173,19 +193,16 @@ router.post('/', authenticate, requirePermission(), async (req, res) => {
     return res.status(400).json({ message: "restaurant_id is required" });
   }
   // make sure score is within bounds
-  let fixedScore = score;
-  if(fixedScore > 10)
-    fixedScore = 10;
-
-  if(fixedScore < 0)
-    fixedScore = 0;
+  
+  if(!isNumeric(score) || score > 10 || score < 0)
+    return res.status(400).json({ message: "Score is not a number or is out of bounds" });
 
   try {
 
     const result = await db.query(
       `INSERT INTO reviews (restaurant_id, user_id, liked, visited, score, description) 
                 VALUES ($1, $2, COALESCE($3, false), COALESCE($4, false), COALESCE($5, 0), $6) RETURNING *`,
-      [restaurant_id, userId, liked, visited, fixedScore, description]
+      [restaurant_id, userId, liked, visited, score, description]
     );
 
     return res.status(200).json(result.rows);

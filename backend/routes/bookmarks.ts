@@ -1,7 +1,6 @@
 import express from "express";
 import db from "../utils/db";
 import createNotification from "../middleware/createNotification";
-import requirePermission from "../middleware/requirePermission";
 import authenticate from "../middleware/authenticate";
 import { getUserId } from "../utils/util";
 
@@ -85,7 +84,7 @@ router.get('/:username', async (req, res, next) => {
 
 
 // Add a bookmarked restaurant to logged in user
-router.post('/:restaurant_id', authenticate, requirePermission(), async (req, res, next) => {
+router.post('/:restaurant_id', authenticate, async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 

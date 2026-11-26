@@ -71,7 +71,7 @@ export function isEmail(email: string): boolean {
 }
 
 
-export async function getUserPermissions(id: number): Promise<string | null> {
+export async function getUserPermissions(id: number|string): Promise<string | null> {
   try {
     const result = await db.query(
       `SELECT permissions FROM users WHERE id = $1`,
@@ -108,24 +108,23 @@ export function isValidUsername(username: string): boolean {
  * 1,544,804,416 possible combinations much better than old approach
  * @returns string, Unique 6 character token
  */
-export async function generateUniqueToken() {
+export function generateUniqueToken() {
   const length = 6;
   let token = "";
-  let exists = true;
-
-  while (exists) {
-    token = "";
-    for (let i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
       const index = crypto.randomInt(0, SAFE_ALPHABET.length);
       token += SAFE_ALPHABET[index];
-    }
-    // check If token exists, if it does try again
-    const tokenCheck = await db.query("SELECT 1 FROM sessions WHERE token = $1", [token]);
-    exists = tokenCheck.rows.length > 0; 
   }
-
   return token;
 }
 
-
+export function isNumeric(value: unknown): boolean {
+  if (typeof value === 'number') {
+    return Number.isFinite(value);
+  }
+  if (typeof value === 'string' && value.trim() !== '') {
+    return Number.isFinite(Number(value));
+  }
+  return false;
+};
 

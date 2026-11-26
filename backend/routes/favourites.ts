@@ -95,26 +95,42 @@ router.post('/:restaurant_id', authenticate, requirePermission(), async (req, re
   try {
     const restaurantId = parseInt(req.params.restaurant_id);
 
-    const count = await db.query(
-      `SELECT COUNT(fr.*) FROM favorite_restaurant fr
-        WHERE fr.user_id = $1`, [userId]);
+    const client = await db.connect();
+      try {
+          await client.query('BEGIN');
+          // lock this user, if another request comes in it will not be able to run.
+          await client.query('SELECT pg_advisory_xact_lock($1);', [userId]);
+        
+          const count = await client.query(
+          `SELECT COUNT(fr.*) FROM favorite_restaurant fr
+            WHERE fr.user_id = $1`, [userId]);
 
-    const amount = count.rows[0].count;
+          const amount = count.rows[0].count;
 
-    if (amount >= 4) {
-      return res.status(403).json({ error: "only 4 favourites allowed." });
-    }
+          if (amount >= 4) {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ error: "only 4 favourites allowed." });
+          }
 
-    const result = await db.query(`
-        INSERT INTO favorite_restaurant 
-        (user_id, restaurant_id)
-        VALUES ($1, $2) RETURNING restaurant_id;`, [userId, restaurantId]);
+          const result = await client.query(`
+              INSERT INTO favorite_restaurant 
+              (user_id, restaurant_id)
+              VALUES ($1, $2) RETURNING restaurant_id;`, [userId, restaurantId]);
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "restaurant not found." });
-    }
+          if (result.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ error: "restaurant not found." });
+          }
 
-    res.status(200).json("success");
+          await client.query('COMMIT');
+      } catch (err : any) {
+          await client.query('ROLLBACK');
+          throw err;
+      } finally {
+          client.release();
+      }
+  
+    res.status(201).json("success");
 
   } catch (error: any) {
     // Handle duplicate restaurantId error
@@ -129,7 +145,7 @@ router.post('/:restaurant_id', authenticate, requirePermission(), async (req, re
 
 
 // remove a favourites restaurant to logged in user
-router.delete('/:restaurant_id', authenticate, async (req, res, next) => {
+router.delete('/:restaurant_id', authenticate, requirePermission(), async (req, res, next) => {
 
   const userId = req.user.userId; // Get user ID from authenticated token
 

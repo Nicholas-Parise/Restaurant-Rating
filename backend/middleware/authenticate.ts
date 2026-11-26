@@ -30,7 +30,7 @@ const authenticate = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
         // Find the user associated with the token
-        const session = await db.query("SELECT user_id FROM sessions WHERE token = $1;", [token]);
+        const session = await db.query("SELECT user_id FROM sessions WHERE token = $1 AND user_id = $2;", [token, decoded.userId]);
 
         if (session.rows.length === 0) {
             return res.status(403).json({ message: "invalid token" });

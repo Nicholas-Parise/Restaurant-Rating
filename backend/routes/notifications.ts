@@ -3,9 +3,14 @@ import db from "../utils/db";
 import authenticate from "../middleware/authenticate";
 
 const router = express.Router();
+/**
+ * This route handles all notifications.
+ * The only way a user can interact with a notification is to mark as read or delete.
+ * While this feature could be blocked if a user is banned, notification clearing is a non critical feature.
+ */
 
-// localhost:3000/notifications?page=1&pageSize=10
-// get all your notifications
+
+// get all the logged in users notifications
 router.get('/', authenticate, async (req, res, next) => {
   const userId = req.user.userId; // Get user ID from authenticated token
   const page = Number(req.query.page) || 1;
@@ -33,8 +38,7 @@ router.get('/', authenticate, async (req, res, next) => {
 });
 
 
-// localhost:3000/notifications/0
-// edit a notifications
+// allow the logged in user to mark a notification as read.
 router.put('/:id', authenticate, async (req, res, next) => {
 
   const notificationId = parseInt(req.params.id);
@@ -75,8 +79,8 @@ router.put('/:id', authenticate, async (req, res, next) => {
 });
 
 
-// localhost:3000/notifications/0
-// delte a notifications
+
+// allow the logged in user to delete a notification.
 router.delete('/:id', authenticate, async (req, res, next) => {
 
   const notificationId = parseInt(req.params.id);

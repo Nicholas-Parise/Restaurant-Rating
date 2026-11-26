@@ -47,20 +47,22 @@ router.get('/review/:reviewId', authenticate, requirePermission('moderator'), as
     const userId = req.user.userId; // Get user ID from authenticated token
     const reviewId = req.params.reviewId;
 
-    const result = await db.query(`
-    SELECT 
-        rep.reason,
-        rep.description,
-        rep.created,
-        u.username AS reporter
-    FROM reports rep
-    JOIN users u ON rep.reporter_id = u.id
-    WHERE rep.target_type = 'review'
-      AND rep.target_id = $1
-    ORDER BY rep.created DESC;`, [reviewId]);
-
-
-    const result2 = await db.query(
+     const[
+      result, 
+      result2
+    ] = await Promise.all([
+    db.query(`
+      SELECT 
+          rep.reason,
+          rep.description,
+          rep.created,
+          u.username AS reporter
+      FROM reports rep
+      JOIN users u ON rep.reporter_id = u.id
+      WHERE rep.target_type = 'review'
+        AND rep.target_id = $1
+      ORDER BY rep.created DESC;`, [reviewId]),
+    db.query(
       `SELECT 
         r.id, 
         r.restaurant_id, 
@@ -74,14 +76,14 @@ router.get('/review/:reviewId', authenticate, requirePermission('moderator'), as
         u.username, 
         u.picture,
         COUNT(rep.id) AS report_count
-    FROM reviews r
-    JOIN users u ON r.user_id = u.id
-    LEFT JOIN reports rep 
-        ON rep.target_type = 'review' 
-        AND rep.target_id = r.id
-    WHERE r.id = $1
-    GROUP BY r.id, u.id;`, [reviewId]);
-
+      FROM reviews r
+      JOIN users u ON r.user_id = u.id
+      LEFT JOIN reports rep 
+          ON rep.target_type = 'review' 
+          AND rep.target_id = r.id
+      WHERE r.id = $1
+      GROUP BY r.id, u.id;`, [reviewId])
+    ]);
 
     const reports = result.rows;
     const review = result2.rows[0];
@@ -101,33 +103,36 @@ router.get('/user/:userReportId', authenticate, requirePermission('moderator'), 
     const userId = req.user.userId; // Get user ID from authenticated token
     const userReportId = req.params.userReportId;
 
-    const result = await db.query(`
-    SELECT 
-        rep.reason,
-        rep.description,
-        rep.created,
-        u.username AS reporter
-    FROM reports rep
-    JOIN users u ON rep.reporter_id = u.id
-    WHERE rep.target_type = 'user'
-      AND rep.target_id = $1
-    ORDER BY rep.created DESC;`, [userReportId]);
-
-    const result2 = await db.query(
+    const[
+      result, 
+      result2
+    ] = await Promise.all([
+    db.query(`
+      SELECT 
+          rep.reason,
+          rep.description,
+          rep.created,
+          u.username AS reporter
+      FROM reports rep
+      JOIN users u ON rep.reporter_id = u.id
+      WHERE rep.target_type = 'user'
+        AND rep.target_id = $1
+      ORDER BY rep.created DESC;`, [userReportId]),
+    db.query(
       `SELECT 
-        u.id,
-        u.username,
-        u.name,
-        u.bio,
-        u.picture,
-        COUNT(rep.id) AS report_count
-    FROM users u
-    LEFT JOIN reports rep 
-        ON rep.target_type = 'user' 
-        AND rep.target_id = u.id
-    WHERE u.id = $1
-    GROUP BY u.id, u.id;`, [userReportId]);
-
+          u.id,
+          u.username,
+          u.name,
+          u.bio,
+          u.picture,
+          COUNT(rep.id) AS report_count
+      FROM users u
+      LEFT JOIN reports rep 
+          ON rep.target_type = 'user' 
+          AND rep.target_id = u.id
+      WHERE u.id = $1
+      GROUP BY u.id, u.id;`, [userReportId])
+    ]);
 
     const reports = result.rows;
     const user = result2.rows[0];
@@ -168,7 +173,6 @@ router.post('/:type/:id/dismiss', authenticate, requirePermission('moderator'), 
 });
 
 
-
 // Remove review (and resolve reports)
 router.post('/review/:id/remove', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
@@ -203,14 +207,27 @@ router.post('/review/:id/remove', authenticate, requirePermission('moderator'), 
 });
 
 
-// Ban / restrict user
+/**
+ * Ban / restrict a user
+ * only a moderator or admin can use this endpoint.
+ * a admin cannot be banned at all.
+ * a moderator can only be banned by an admin.
+ */
 router.post('/user/:id/ban', authenticate, requirePermission('moderator'), async (req, res, next) => {
   try {
     const userId = req.user.userId; // Get user ID from authenticated token
     const id = req.params.id;
     
+    const banneePermission = await getUserPermissions(id);
+    const bannerPermission = await getUserPermissions(userId);
+
+    if(banneePermission === 'admin')
+       return res.status(400).json({ message: "Admin cannot be banned" });
+
+    if(banneePermission === 'moderator' && bannerPermission != 'admin')
+      return res.status(400).json({ message: "Only admin can ban a moderator" });
+
     const client = await db.connect();
-    
     try {
         await client.query('BEGIN');
         await client.query(`UPDATE users

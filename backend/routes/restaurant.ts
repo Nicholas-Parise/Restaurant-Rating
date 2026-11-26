@@ -65,6 +65,9 @@ router.get('/search', async (req, res, next) => {
   const lng = Number(req.query.lng);
   const radiusInMeters = Number(req.query.rad) * 1000 || 10000;
 
+  const hasLat = req.query.lat !== undefined;
+  const hasLng = req.query.lng !== undefined;
+
   const page = Number(req.query.page) || 1;
   let pageSize = Number(req.query.pageSize) || 10;
   
@@ -166,7 +169,7 @@ router.get('/search', async (req, res, next) => {
         }
         */
 
-    if (!searchTerm && !lat && !lng && !hasTags) {
+    if (!searchTerm && !hasLat && !hasLng && !hasTags) {
       result = await db.query(`
           WITH count_estimate AS (
             SELECT reltuples::bigint AS total_count
@@ -177,8 +180,7 @@ router.get('/search', async (req, res, next) => {
           FROM restaurants r, count_estimate c
           LIMIT $1 OFFSET $2;`, [pageSize, offset]);
     } else {
-  
-
+      
       const latVal = lat ? Number(lat) : null;
       const lngVal = lng ? Number(lng) : null;
       const tags = selectedTags?.length ? selectedTags : null;
@@ -206,8 +208,14 @@ router.get('/search', async (req, res, next) => {
         ($5::text[] IS NULL OR c.slug = ANY($5))
       GROUP BY r.id, l.id
       ORDER BY
-        CASE WHEN $1 IS NOT NULL THEN l.geom <-> ST_SetSRID(ST_MakePoint($1,$2),4326)
-            ELSE 0 END,
+        CASE 
+          WHEN $1 IS NOT NULL THEN 
+            ST_Distance(
+              l.geom::geography,
+              ST_SetSRID(ST_MakePoint($1,$2),4326)::geography)
+          ELSE 
+            0 
+        END,
         similarity(r.name, $4) DESC
       LIMIT $6 OFFSET $7;
       `, [lngVal, latVal, radiusInMeters, searchVal, tags, pageSize, offset]);
@@ -267,33 +275,35 @@ router.get('/:restaurantId', async (req, res, next) => {
       return res.status(400).json({ error: "Invalid ID" });
     }
 
-    const result = await db.query(
-      `SELECT r.*, l.housenumber, l.addr, l.city, l.province, l.country, l.postalcode, l.lat, l.lon,
-      json_agg(
-        json_build_object(
-          'id', c.id,
-          'name', c.name,
-          'slug', c.slug
-        )
-      ) FILTER (WHERE c.id IS NOT NULL) AS categories
-      FROM restaurants r
-      JOIN locations l ON l.id = r.location_id
-      LEFT JOIN restaurant_cats rc ON rc.restaurant_id = r.id
-      LEFT JOIN categories c ON c.id = rc.category_id 
-      WHERE r.id = $1
-      GROUP BY r.id, l.id;`, [restaurantId]);
+    const[
+    restaurantResult, 
+    reviewResult
+    ] = await Promise.all([
+      db.query(
+        `SELECT r.*, l.housenumber, l.addr, l.city, l.province, l.country, l.postalcode, l.lat, l.lon,
+        json_agg(
+          json_build_object(
+            'id', c.id,
+            'name', c.name,
+            'slug', c.slug
+          )
+        ) FILTER (WHERE c.id IS NOT NULL) AS categories
+        FROM restaurants r
+        JOIN locations l ON l.id = r.location_id
+        LEFT JOIN restaurant_cats rc ON rc.restaurant_id = r.id
+        LEFT JOIN categories c ON c.id = rc.category_id 
+        WHERE r.id = $1
+        GROUP BY r.id, l.id;`, [restaurantId]),
+      db.query(`
+            SELECT r.*, u.name, u.username, u.picture 
+            FROM reviews r 
+            LEFT JOIN users u ON r.user_id = u.id
+            WHERE r.restaurant_id = $1 AND r.visited = TRUE
+            ORDER BY r.created DESC
+            LIMIT 20 OFFSET 0;`, [restaurantId])
+    ]);
 
-    const restaurants = result.rows[0];
-
-    const reviewResult = await db.query(`
-          SELECT r.*, u.name, u.username, u.picture 
-          FROM reviews r 
-          LEFT JOIN users u ON r.user_id = u.id
-          WHERE r.restaurant_id = $1 AND r.visited = TRUE
-          ORDER BY r.created DESC
-          LIMIT 20 OFFSET 0;`, [restaurantId]);
-
-
+    const restaurants = restaurantResult.rows[0];
     const reviews = reviewResult.rows;
 
     res.json({

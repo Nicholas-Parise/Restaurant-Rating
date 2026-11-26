@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-
 import authRoutes from'./routes/auth';
 
 import userRoutes from'./routes/users';
@@ -33,6 +32,9 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.text({ type: "text/plain" }));
 app.use(cookieParser());
+
+// 2 = Cloudflare/CDN + Traefik
+app.set('trust proxy', 2);
 
 /*
 // CORS HEADERS

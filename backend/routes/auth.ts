@@ -1,4 +1,5 @@
 import express from "express";
+import { rateLimit } from 'express-rate-limit';
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import crypto from "crypto"
@@ -20,6 +21,15 @@ const router = express.Router();
 import * as dotenv from 'dotenv';
 import { generateUniqueToken, isEmail, isValidUsername } from "../utils/util";
 dotenv.config();
+
+// forgot-password and reset-password limiter
+const forgotLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per window
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+});
+
 
 // localhost:3000/auth/register
 // register account
@@ -242,7 +252,7 @@ router.get('/username/:username', async (req, res, next) => {
 // localhost:3000/auth/forgot-password
 // start the account recovery process, 
 // send an email with recovery code to provided email if there is an account linked to it.
-router.post('/forgot-password', async (req, res, next) => {
+router.post('/forgot-password', forgotLimiter, async (req, res, next) => {
 
     const { email } = req.body;
 
@@ -264,7 +274,9 @@ router.post('/forgot-password', async (req, res, next) => {
 
         const userId = userCheck.rows[0].id;
         const user_name = userCheck.rows[0].name;
-        const resetToken = await generateUniqueToken(); // need to ensure a unique token, don't want a crash
+       
+        const url = process.env.FRONTEND_URL;
+        let resetLink: string;
 
         const client = await db.connect();
 
@@ -272,11 +284,25 @@ router.post('/forgot-password', async (req, res, next) => {
              // BEGIN a transaction
             await client.query('BEGIN');
 
-            await client.query("INSERT INTO sessions (user_id, token, created) VALUES ($1, $2, NOW())", [userId, resetToken]);
+            for(let i = 0; i< 1000; i++){
+                try{
+                // try to set token. We need to ensure a unique token, don't want a crash.
+                const resetToken = generateUniqueToken(); 
+                resetLink = `${url}/recover/${resetToken}`;
+                await client.query("INSERT INTO sessions (user_id, token, created) VALUES ($1, $2, NOW())", [userId, resetToken]);
+                break;
+                }catch(error : any){
+                    // Handle duplicate token error
+                    // error code 23505 means unique constraint violated.
+                    if (error.code === "23505") {
+                        continue;
+                    }else{
+                         throw error;
+                    }
+                }
+            }
 
-            const url = process.env.FRONTEND_URL;
 
-            const resetLink = `${url}/recover/${resetToken}`;
             // disabled while awaiting AWS provisioning.
             //await forgotEmail(email, user_name, resetLink, resetToken, 1);
 
@@ -295,7 +321,7 @@ router.post('/forgot-password', async (req, res, next) => {
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: "Email could not be sent" });
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
@@ -303,7 +329,7 @@ router.post('/forgot-password', async (req, res, next) => {
 
 // localhost:3000/auth/reset-password
 // given one time code, email and password reset password
-router.post("/reset-password", async (req, res) => {
+router.post("/reset-password", forgotLimiter, async (req, res) => {
     const { email, otc, password } = req.body;
 
     if (!email || !otc || !password) {
@@ -351,10 +377,10 @@ router.post("/reset-password", async (req, res) => {
             await client.query('BEGIN');
 
             // Update password
-            await db.query("UPDATE users SET password = $1 WHERE id = $2", [hashedPassword, user_id]);
+            await client.query("UPDATE users SET password = $1 WHERE id = $2", [hashedPassword, user_id]);
 
             // Delete used reset token
-            await db.query("DELETE FROM sessions WHERE token = $1", [otc]);
+            await client.query("DELETE FROM sessions WHERE token = $1", [otc]);
 
             await client.query("COMMIT"); // Commit the transaction
 
