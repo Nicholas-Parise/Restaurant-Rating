@@ -258,7 +258,7 @@ router.post('/delete', authenticate, async (req, res) => {
 // This endpoint gets a supplied users most recently reviewed/rated restaurants
 router.get('/recent', async (req, res, next) => {
   try {
-    const username = req.query.username;
+    const username = String(req.query.username);
     const page = Number(req.query.page) || 1;
     var pageSize = Number(req.query.pageSize) || 10;
     if (pageSize && pageSize > 100) {
@@ -270,14 +270,8 @@ router.get('/recent', async (req, res, next) => {
       return res.status(400).json({ message: 'username required field' });
     }
 
-    const tempUserId = await db.query(
-      `SELECT id FROM users Where username = $1`, [username]);
-
-    if (tempUserId.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const userId = tempUserId.rows[0].id;
+    const userId = await getUserId(username, res);
+    if (!userId) return;
 
     const result = await db.query(
       `SELECT r.id, r.slug, r.name, r.pictures, r.type 
