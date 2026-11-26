@@ -274,7 +274,9 @@ router.post('/forgot-password', forgotLimiter, async (req, res, next) => {
 
         const userId = userCheck.rows[0].id;
         const user_name = userCheck.rows[0].name;
-        const resetToken = await generateUniqueToken(); // need to ensure a unique token, don't want a crash
+       
+        const url = process.env.FRONTEND_URL;
+        let resetLink: string;
 
         const client = await db.connect();
 
@@ -282,11 +284,25 @@ router.post('/forgot-password', forgotLimiter, async (req, res, next) => {
              // BEGIN a transaction
             await client.query('BEGIN');
 
-            await client.query("INSERT INTO sessions (user_id, token, created) VALUES ($1, $2, NOW())", [userId, resetToken]);
+            for(let i = 0; i< 1000; i++){
+                try{
+                // try to set token. We need to ensure a unique token, don't want a crash.
+                const resetToken = generateUniqueToken(); 
+                resetLink = `${url}/recover/${resetToken}`;
+                await client.query("INSERT INTO sessions (user_id, token, created) VALUES ($1, $2, NOW())", [userId, resetToken]);
+                break;
+                }catch(error : any){
+                    // Handle duplicate token error
+                    // error code 23505 means unique constraint violated.
+                    if (error.code === "23505") {
+                        continue;
+                    }else{
+                         throw error;
+                    }
+                }
+            }
 
-            const url = process.env.FRONTEND_URL;
 
-            const resetLink = `${url}/recover/${resetToken}`;
             // disabled while awaiting AWS provisioning.
             //await forgotEmail(email, user_name, resetLink, resetToken, 1);
 
@@ -305,7 +321,7 @@ router.post('/forgot-password', forgotLimiter, async (req, res, next) => {
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: "Email could not be sent" });
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
